@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" auto-import="true">
+
+	<class name="NHibernate.Test.NHSpecificTest.NH517.NH517Parent, NHibernate.Test" table="tstNH517Parent" >
+
+		<composite-id name="Identity" class="NHibernate.Test.NHSpecificTest.NH517.NH517ParentKey, NHibernate.Test" >
+			<key-property name="ParentID" type="Int32" />
+		</composite-id>
+		
+		<bag name="Children" lazy="true" inverse="true" cascade="all-delete-orphan">
+			<key column="ParentID" />
+			<one-to-many class="NHibernate.Test.NHSpecificTest.NH517.NH517Child, NHibernate.Test" />
+		</bag>
+		
+		<bag name="Income" lazy="true" inverse="true" cascade="all-delete-orphan">
+			<key column="ParentID" />
+			<one-to-many class="NHibernate.Test.NHSpecificTest.NH517.Income, NHibernate.Test" />
+		</bag>
+	
+	</class>
+	
+	<class name="NHibernate.Test.NHSpecificTest.NH517.NH517Child, NHibernate.Test" table="tstNH517Child"  >
+
+		<composite-id name="Identity" class="NHibernate.Test.NHSpecificTest.NH517.NH517ChildKey, NHibernate.Test">
+			<key-property name="ParentID" type="Int32" />
+			<key-property name="Counter" type="Int32" column="TijdslijnID"/>
+		</composite-id>
+
+		<many-to-one name="Parent" column="ParentID" class="NHibernate.Test.NHSpecificTest.NH517.NH517Parent, NHibernate.Test"	insert="false" update="false"  />
+		
+		<property name="Name" />
+		
+	</class>
+
+	<class name="NHibernate.Test.NHSpecificTest.NH517.Income, NHibernate.Test" table="tstincome"  >
+
+		<composite-id name="Identity" class="NHibernate.Test.NHSpecificTest.NH517.IncomeKey, NHibernate.Test">
+			<key-many-to-one name="Client" class="NHibernate.Test.NHSpecificTest.NH517.NH517Parent, NHibernate.Test" column="ParentID" />
+			<key-property name="IncomeCategory" column="CATEGORY" />
+		</composite-id>
+
+		
+	</class>
+	
+</hibernate-mapping>
