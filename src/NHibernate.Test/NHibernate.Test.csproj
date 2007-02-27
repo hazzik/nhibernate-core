@@ -1173,6 +1173,9 @@
     <Compile Include="NHSpecificTest\NH3436\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH3141\Entity.cs" />
     <Compile Include="NHSpecificTest\NH3141\ProxyIdFixture.cs" />
+    <Compile Include="NHSpecificTest\NH925\Hobby.cs" />
+    <Compile Include="NHSpecificTest\NH925\Person.cs" />
+    <Compile Include="NHSpecificTest\NH925\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH941\Domain.cs" />
     <Compile Include="NHSpecificTest\NH941\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH941\FixtureUsingList.cs" />
@@ -3059,6 +3062,7 @@
     <EmbeddedResource Include="NHSpecificTest\NH1291AnonExample\Mappings.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="NHSpecificTest\NH925\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3455\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3590\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3377\Mappings.hbm.xml" />

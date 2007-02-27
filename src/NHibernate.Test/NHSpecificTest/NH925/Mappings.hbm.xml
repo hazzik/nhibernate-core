@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test" namespace="NHibernate.Test.NHSpecificTest.NH925">
+  <class name="Person" table="Person">
+    <id name="Id" column="PersonId" type="Guid">
+      <generator class="guid"  />
+    </id>
+    <property column="Name" type="String" name="Name" />
+
+    <bag name="Hobbies" table="PersonHobby" inverse="false" lazy="true" cascade="none">
+      <key>
+        <column name="PersonId" sql-type="uniqueidentifier" not-null="true" />
+      </key>
+      <many-to-many class="Hobby">
+        <column name="HobbyId" sql-type="uniqueidentifier" not-null="true" />
+      </many-to-many>
+
+      <loader query-ref="SelectHobbyByPerson" />
+      <sql-insert>/*CUSTOM*/ insert personhobby values (?, ?)</sql-insert>
+      <sql-delete>/*CUSTOM*/ delete from personhobby where personid = ? and hobbyid = ?</sql-delete>
+    </bag>
+  </class>
+  <class name="Hobby" table="Hobby">
+    <id name="Id" column="HobbyId" type="Guid">
+      <generator class="guid"  />
+    </id>
+    <property column="Name" type="String" name="Name" />
+
+    <bag name="People" table="PersonHobby" inverse="true" lazy="true" cascade="none">
+      <key>
+        <column name="HobbyId" sql-type="uniqueidentifier" not-null="true" />
+      </key>
+      <many-to-many class="Person">
+        <column name="PersonId" sql-type="uniqueidentifier" not-null="true" />
+      </many-to-many>
+
+      <loader query-ref="SelectHobbyByPerson" />
+      <sql-delete>/*CUSTOM*/ delete from personhobby where hobbyid = ? and personid = ?</sql-delete>
+    </bag>
+  </class>
+  <sql-query name="SelectHobbyByPerson">
+    <load-collection alias="hobbybyperson" role="Person.Hobbies"/>
+    <return class="Hobby" />
+    /*CUSTOM*/ select hobbyid, [name] from hobby h (nolock)
+    inner join personhobby ph (nolock)
+    on  h.hobbyid = ph.hobbyid
+    where ph.personid = :PersonId
+  </sql-query>
+  <sql-query name="SelectPersonByHobby">
+    <load-collection alias="personbyhobby" role="Hobby.People"/>
+    <return class="Person" />
+    /*CUSTOM*/ select personid, [name] from person p (nolock)
+    inner join personhobby ph (nolock)
+    on  p.personid = ph.personid
+    where ph.hobbyid = :HobbyId
+  </sql-query>
+</hibernate-mapping>
