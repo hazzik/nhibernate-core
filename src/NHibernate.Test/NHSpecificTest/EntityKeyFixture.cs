@@ -503,6 +503,10 @@ namespace NHibernate.Test.NHSpecificTest
 			throw new NotImplementedException();
 		}
 
+        public void ResetIdentifier(object entity, object currentId, object currentVersion)
+        {
+        }
+
 		#endregion
 	}
 

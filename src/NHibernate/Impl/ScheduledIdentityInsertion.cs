@@ -27,6 +27,8 @@ namespace NHibernate.Impl
 			this.state = state;
 		}
 
+        
+
 		public override void Execute()
 		{
 			IEntityPersister persister = Persister;
@@ -35,8 +37,8 @@ namespace NHibernate.Impl
 
 			// Don't need to lock the cache here, since if someone
 			// else inserted the same pk first, the insert would fail.
-
 			generatedId = persister.Insert(state, obj, session);
+
 			if (persister.HasInsertGeneratedProperties)
 			{
 				persister.ProcessInsertGeneratedProperties(generatedId, obj, state, session);
@@ -66,6 +68,11 @@ namespace NHibernate.Impl
 				persister.Cache.AfterInsert( GeneratedId, cacheEntry );
 			}
 			*/
+
+            if (!sucess)
+            {
+                ResetIdentifier();
+            }
 		}
 
 		/// <summary>
@@ -74,7 +81,7 @@ namespace NHibernate.Impl
 		// TODO: Remove once AfterTransactionCompletion is active
 		public override bool HasAfterTransactionCompletion
 		{
-			get { return false; }
+			get { return true; }
 		}
 
 		public object GeneratedId

@@ -196,6 +196,14 @@ namespace NHibernate.Persister.Entity
 		void SetIdentifier(object obj, object id);
 
 		/// <summary>
+		/// Set the identifier and version of the given instance back to its "unsaved" value
+		/// </summary>
+        /// <param name="entity">Entity for which to reset the identifier</param>
+		/// <param name="currentId">ID to reset</param>
+		/// <param name="currentVersion">Version to reset</param>
+		void ResetIdentifier(object entity, object currentId, object currentVersion/*, EntityMode entityMode*/);
+
+		/// <summary>
 		/// Are instances of this class versioned by a timestamp or version number column?
 		/// </summary>
 		bool IsVersioned { get; }

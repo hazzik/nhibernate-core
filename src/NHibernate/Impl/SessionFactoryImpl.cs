@@ -1056,6 +1056,12 @@ namespace NHibernate.Impl
 			get { return settings.IsShowSqlEnabled; }
 		}
 
+        /// <summary></summary>
+        public bool IsIdentifierRollbackEnabled
+        {
+            get { return settings.IsIdentifierRollbackEnabled; }
+        }
+
 		/// <summary></summary>
 		public int FetchSize
 		{

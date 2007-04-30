@@ -84,6 +84,11 @@ namespace NHibernate.Impl
 					);
 				Persister.Cache.AfterInsert(ck, cacheEntry, version);
 			}
+
+            if (!success)
+            {
+                ResetIdentifier();
+            }
 		}
 	}
 }

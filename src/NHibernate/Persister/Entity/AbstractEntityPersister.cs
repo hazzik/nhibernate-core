@@ -401,6 +401,35 @@ namespace NHibernate.Persister.Entity
 		}
 
 		/// <summary>
+		/// Set the identifier and version of the given instance back to its "unsaved" value
+		/// </summary>
+		/// <param name="currentId">TODO</param>
+		/// <param name="currentVersion">TODO</param>
+		public void ResetIdentifier(object entity, object currentId, object currentVersion/*, EntityMode entityMode*/)
+		{
+			if ( entityMetamodel.IdentifierProperty.IdentifierGenerator is Assigned ) {
+				//return currentId;
+			}
+			else {
+				//reset the id
+				object result = entityMetamodel.IdentifierProperty.UnsavedValue.GetDefaultValue( currentId );
+				SetIdentifier( entity, result );
+				//reset the version
+				VersionProperty versionProperty = entityMetamodel.VersionProperty;
+				if ( entityMetamodel.IsVersioned ) {
+					SetPropertyValue(
+							entity,
+							entityMetamodel.VersionPropertyIndex,
+							versionProperty.UnsavedValue.GetDefaultValue( currentVersion )
+						);
+				}
+				//return the id, so we can use it to reset the proxy id
+				//return result;
+			}
+		}
+
+
+		/// <summary>
 		/// Return a new instance initialized with the given identifier.
 		/// </summary>
 		/// <param name="id"></param>
@@ -3112,6 +3141,7 @@ namespace NHibernate.Persister.Entity
 			for (int j = span - 1; j >= 0; j--)
 			{
 				Delete(id, version, j, obj, deleteStrings[j], session, loadedState);
+
 			}
 		}
 

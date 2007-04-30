@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using log4net;
 using NHibernate.Collection;
+using NHibernate.Id;
 using NHibernate.Impl;
 using NHibernate.Persister.Collection;
 using NHibernate.Persister.Entity;
@@ -389,6 +390,11 @@ namespace NHibernate.Engine
 				return id == null || id.Equals(value);
 			}
 
+			public virtual object GetDefaultValue(object currentValue)
+			{
+				return value;
+			}
+
 			/// <summary>
 			/// Always assume the transient instance is newly instantiated
 			/// </summary>
@@ -400,6 +406,10 @@ namespace NHibernate.Engine
 				{
 					log.Debug("unsaved-value strategy ANY");
 					return true;
+				}
+				public override object GetDefaultValue(object currentValue)
+				{
+					return currentValue;
 				}
 			}
 
@@ -415,6 +425,10 @@ namespace NHibernate.Engine
 					log.Debug("unsaved-value strategy NONE");
 					return false;
 				}
+				public override object GetDefaultValue(object currentValue)
+				{
+					return currentValue;
+				}
 			}
 
 			/// <summary>
@@ -429,6 +443,10 @@ namespace NHibernate.Engine
 				{
 					log.Debug("unsaved-value strategy NULL");
 					return id == null;
+				}
+				public override object GetDefaultValue(object currentValue)
+				{
+					return null;
 				}
 			}
 		}
@@ -471,6 +489,11 @@ namespace NHibernate.Engine
 				return version == null || version.Equals(value);
 			}
 
+			public virtual object GetDefaultValue(object currentValue)
+			{
+				return value;
+			}
+
 			/// <summary>
 			/// Assume the transient instance is newly instantiated if the version
 			/// is null, otherwise assume it is a detached instance.
@@ -483,6 +506,10 @@ namespace NHibernate.Engine
 				{
 					log.Debug("version unsaved-value strategy NULL");
 					return version == null;
+				}
+				public override object GetDefaultValue(object currentValue)
+				{
+					return null;
 				}
 			}
 
@@ -507,6 +534,10 @@ namespace NHibernate.Engine
 						return null;
 					}
 				}
+				public override object GetDefaultValue(object currentValue)
+				{
+					return currentValue;
+				}
 			}
 
 			/// <summary>
@@ -528,6 +559,10 @@ namespace NHibernate.Engine
 					{
 						throw new MappingException("unsaved-value strategy NEGATIVE may only be used with short, int and long types");
 					}
+				}
+				public override object GetDefaultValue(object currentValue)
+				{
+					return IdentifierGeneratorFactory.CreateNumber(-1L, currentValue.GetType());
 				}
 			}
 		}

@@ -43,7 +43,13 @@ namespace NHibernate.Impl
 				lck = Persister.Cache.Lock(ck, version);
 			}
 			Persister.Delete(Id, version, Instance, Session);
+
 			Session.PostDelete(Instance);
+
+            if (!Session.Transaction.IsActive)
+            {
+                ResetIdentifier();
+            }
 		}
 
 		/// <summary></summary>
@@ -59,6 +65,18 @@ namespace NHibernate.Impl
 					);
 				Persister.Cache.Release(ck, lck);
 			}
+            if (success)
+            {
+                ResetIdentifier();
+            }
 		}
+
+        private void ResetIdentifier()
+        {
+            if (Session.Factory.Settings.IsIdentifierRollbackEnabled)
+            {
+                this.Persister.ResetIdentifier(Instance, Id, version);
+            }
+        }
 	}
 }

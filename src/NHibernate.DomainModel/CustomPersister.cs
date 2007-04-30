@@ -215,6 +215,12 @@ namespace NHibernate.DomainModel
 			((Custom) obj).Id = (long) id;
 		}
 
+		public void ResetIdentifier(object entity, object currentId, object currentVersion/*, EntityMode entityMode*/)
+		{
+			//checkEntityMode(entityMode);
+			((Custom)entity).Id = (long)currentId;
+		}
+
 		public bool ImplementsLifecycle
 		{
 			get { return false; }

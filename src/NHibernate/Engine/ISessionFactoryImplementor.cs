@@ -108,6 +108,11 @@ namespace NHibernate.Engine
 		/// </summary>
 		bool IsShowSqlEnabled { get; }
 
+        /// <summary>
+        /// Rollback identifiers on failed inserts, and on successull deletions
+        /// </summary>
+        bool IsIdentifierRollbackEnabled { get;}
+
 		/// <summary>
 		/// Get the default query cache
 		/// </summary>

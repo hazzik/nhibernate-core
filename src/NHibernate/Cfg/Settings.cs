@@ -41,6 +41,8 @@ namespace NHibernate.Cfg
 		// TODO: private bool _wrapDataReadersEnabled;
 		private ConnectionReleaseMode connectionReleaseMode;
 
+		private bool _identifierRollbackEnabled;
+		
 		// New in NH:
 		private IsolationLevel _isolationLevel;
 
@@ -192,6 +194,12 @@ namespace NHibernate.Cfg
 		{
 			get { return connectionReleaseMode; }
 			set { connectionReleaseMode = value; }
+		}
+
+		public bool IsIdentifierRollbackEnabled
+		{
+			get { return _identifierRollbackEnabled; }
+			set { _identifierRollbackEnabled = value; }
 		}
 	}
 }

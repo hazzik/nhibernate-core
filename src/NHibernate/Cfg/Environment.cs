@@ -109,6 +109,7 @@ namespace NHibernate.Cfg
 		public const string QuerySubstitutions = "hibernate.query.substitutions";
 		// The classname of the HQL query parser factory
 		public const string QueryTranslator = "hibernate.query.factory_class";
+		public const string UseIdentifierRollback = "hibernate.use_identifier_rollback";
 
 
 		// Unused, not implemented

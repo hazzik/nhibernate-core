@@ -85,7 +85,7 @@ namespace NHibernate.Impl
 		/// </summary>
 		public virtual bool HasAfterTransactionCompletion
 		{
-			get { return persister.HasCache; }
+			get { return persister.HasCache || Session.Factory.Settings.IsIdentifierRollbackEnabled; }
 		}
 
 		/// <summary>
@@ -122,5 +122,14 @@ namespace NHibernate.Impl
 		}
 
 		#endregion
+
+        protected void ResetIdentifier()
+        {
+            if (Session.Factory.IsIdentifierRollbackEnabled)
+            {
+                object version = Persister.GetVersion(Instance);
+                this.Persister.ResetIdentifier(Instance, Id, version);
+            }
+        }
 	}
 }

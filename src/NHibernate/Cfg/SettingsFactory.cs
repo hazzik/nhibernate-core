@@ -83,6 +83,9 @@ namespace NHibernate.Cfg
 			}
 			settings.ConnectionReleaseMode = releaseMode;
 
+			bool useIdentifierRollback = PropertiesHelper.GetBoolean(Environment.UseIdentifierRollback, properties);
+			log.Info("Deleted entity synthetic identifier rollback: " + useIdentifierRollback);
+			
 			string defaultSchema = properties[Environment.DefaultSchema] as string;
 			if (defaultSchema != null)
 			{
@@ -196,6 +199,7 @@ namespace NHibernate.Cfg
 			settings.IsSecondLevelCacheEnabled = useSecondLevelCache;
 			settings.CacheRegionPrefix = cacheRegionPrefix;
 			settings.IsMinimalPutsEnabled = useMinimalPuts;
+			settings.IsIdentifierRollbackEnabled = useIdentifierRollback;
 			// Not ported - JdbcBatchVersionedData
 			// TODO: SQLExceptionConverter
 			// TODO: WrapResultSetsEnabled
