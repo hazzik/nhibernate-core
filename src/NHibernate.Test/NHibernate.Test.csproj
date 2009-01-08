@@ -1192,6 +1192,11 @@
     <Compile Include="NHSpecificTest\NH2860\SampleTest.cs" />
     <Compile Include="NHSpecificTest\NH3641\Domain.cs" />
     <Compile Include="NHSpecificTest\NH3641\TestFixture.cs" />
+    <Compile Include="NHSpecificTest\NH945\ComponentSubclassTests.cs" />
+    <Compile Include="NHSpecificTest\NH945\Group.cs" />
+    <Compile Include="NHSpecificTest\NH945\IMatcher.cs" />
+    <Compile Include="NHSpecificTest\NH945\RangeMatcher.cs" />
+    <Compile Include="NHSpecificTest\NH945\UnionMatcher.cs" />
     <Compile Include="NHSpecificTest\Properties\CompositePropertyRefTest.cs" />
     <Compile Include="NHSpecificTest\Properties\DynamicEntityTest.cs" />
     <Compile Include="NHSpecificTest\Properties\Model.cs" />
@@ -3059,6 +3064,7 @@
     <EmbeddedResource Include="NHSpecificTest\NH1291AnonExample\Mappings.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="NHSpecificTest\NH945\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3455\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3590\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3377\Mappings.hbm.xml" />

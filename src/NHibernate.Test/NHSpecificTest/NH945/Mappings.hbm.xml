@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test"
+    namespace="NHibernate.Test.NHSpecificTest.NH945">
+  <class name="Group" table="`Group`">
+    <id name="Id">
+      <generator class="native" />
+    </id>
+    <property name="Name" />
+    <component name="Matcher">
+      <discriminator column="MatcherType" type="String" />
+      <subclass name="RangeMatcher" discriminator-value="Range">
+        <property name="Start" />
+        <property name="End" />
+      </subclass>
+      <subclass name="UnionMatcher" discriminator-value="Union">
+        <many-to-one name="GroupA" />
+        <many-to-one name="GroupB" />
+      </subclass>
+    </component>
+  </class>
+</hibernate-mapping>
