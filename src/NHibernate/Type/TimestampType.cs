@@ -30,13 +30,29 @@ namespace NHibernate.Type
 	[Serializable]
 	public class TimestampType : PrimitiveType, IVersionType, ILiteralType
 	{
-		public TimestampType() : base(SqlTypeFactory.DateTime)
+		/// <summary>
+		/// Retrieve the current system Local time.
+		/// </summary>
+		/// <value>DateTime.Now</value>
+		protected virtual DateTime Now { get { return DateTime.Now; } }
+
+		/// <summary>
+		/// Returns the DateTimeKind for type <see cref="TimestampUtcType"/>.
+		/// </summary>
+		/// <value>Returns DateTimeKind.Unspecified</value>
+		protected virtual DateTimeKind Kind { get { return DateTimeKind.Unspecified; } }
+
+		public TimestampType()
+			: base(SqlTypeFactory.DateTime)
 		{
 		}
 
+		/// <summary>
+		/// Gets a datetime value and initializes it with DateTimeKind.Unspecified for type <see cref="TimestampType"/>.
+		/// </summary>
 		public override object Get(IDataReader rs, int index)
 		{
-			return Convert.ToDateTime(rs[index]);
+			return DateTime.SpecifyKind(Convert.ToDateTime(rs[index]), Kind);
 		}
 
 		public override object Get(IDataReader rs, string name)
@@ -60,7 +76,7 @@ namespace NHibernate.Type
 		/// </remarks>
 		public override void Set(IDbCommand st, object value, int index)
 		{
-			((IDataParameter)st.Parameters[index]).Value = (value is DateTime) ? value:DateTime.Now;
+			((IDataParameter)st.Parameters[index]).Value = (value is DateTime) ? value : DateTime.SpecifyKind(Now, Kind);
 		}
 
 		public override string Name
@@ -94,9 +110,9 @@ namespace NHibernate.Type
 		{
 			if (session == null)
 			{
-				return DateTime.Now;
+				return Now;
 			}
-			return Round(DateTime.Now, session.Factory.Dialect.TimestampResolutionInTicks);
+			return Round(Now, session.Factory.Dialect.TimestampResolutionInTicks);
 		}
 
 		public IComparer Comparator
@@ -108,7 +124,7 @@ namespace NHibernate.Type
 
 		public object StringToObject(string xml)
 		{
-			return DateTime.Parse(xml);
+			return FromStringValue(xml);
 		}
 
 		public override System.Type PrimitiveClass
