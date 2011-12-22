@@ -33,6 +33,12 @@ namespace NHibernate.Linq.Visitors
 
 		public void Visit(Expression expression)
 		{
+			var count = expression as NhCountExpression;
+			if (count != null)
+			{
+				expression = count.Expression;
+			}
+
 			var distinct = expression as NhDistinctExpression;
 			if (distinct != null)
 			{
@@ -61,6 +67,12 @@ namespace NHibernate.Linq.Visitors
 					treeNodes.Add(treeNode);
 				}
 				_hqlTreeNodes = new List<HqlExpression>(1) {_hqlTreeBuilder.ExpressionSubTreeHolder(treeNodes)};
+			}
+
+			if (count != null)
+			{
+				_hqlTreeNodes = new List<HqlExpression>(1) { _hqlTreeBuilder.Cast(_hqlTreeBuilder.Count(_hqlTreeNodes.Single()), count.Type) };
+				ProjectionExpression = Expression.Lambda(Expression.Convert(Expression.ArrayIndex(_inputParameter, Expression.Constant(0)), count.Type), _inputParameter);
 			}
 		}
 
