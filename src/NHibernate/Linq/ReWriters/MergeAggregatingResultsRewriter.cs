@@ -54,8 +54,7 @@ namespace NHibernate.Linq.ReWriters
 			}
 			else if (resultOperator is CountResultOperator)
 			{
-				queryModel.SelectClause.Selector = new NhShortCountExpression(TransformCountExpression(queryModel.SelectClause.Selector));
-				queryModel.ResultOperators.Remove(resultOperator);
+				GetValue(resultOperator, queryModel);
 			}
 			else if (resultOperator is LongCountResultOperator)
 			{
@@ -64,6 +63,17 @@ namespace NHibernate.Linq.ReWriters
 			}
 
 			base.VisitResultOperator(resultOperator, queryModel, index);
+		}
+
+		private static void GetValue(ResultOperatorBase resultOperator, QueryModel queryModel)
+		{
+			queryModel.ResultOperators.Remove(resultOperator);
+			var clone = queryModel.Clone();
+			clone.ResultTypeOverride = typeof(IQueryable<>).MakeGenericType(queryModel.SelectClause.Selector.Type);
+
+			var subquery = new SubQueryExpression(clone);
+			queryModel.SelectClause.Selector = new NhShortCountExpression(new NhStarExpression(queryModel.SelectClause.Selector));
+			queryModel.MainFromClause.FromExpression = subquery;
 		}
 
 		public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)

@@ -33,11 +33,11 @@ namespace NHibernate.Linq.Visitors
 
 		public void Visit(Expression expression)
 		{
-			var count = expression as NhCountExpression;
-			if (count != null)
-			{
-				expression = count.Expression;
-			}
+//		    var count = expression as NhCountExpression;
+//            if (count != null)
+//            {
+//                expression = count.Expression;
+//            }
 
 			var distinct = expression as NhDistinctExpression;
 			if (distinct != null)
@@ -59,9 +59,10 @@ namespace NHibernate.Linq.Visitors
 			// Handle any boolean results in the output nodes
 			_hqlTreeNodes = BooleanToCaseConvertor.Convert(_hqlTreeNodes).ToList();
 
+			var hqlTreeNodesCount = _hqlTreeNodes.Count;
 			if (distinct != null)
 			{
-				var treeNodes = new List<HqlTreeNode>(_hqlTreeNodes.Count + 1) {_hqlTreeBuilder.Distinct()};
+				var treeNodes = new List<HqlTreeNode>(hqlTreeNodesCount + 1) {_hqlTreeBuilder.Distinct()};
 				foreach (var treeNode in _hqlTreeNodes)
 				{
 					treeNodes.Add(treeNode);
@@ -69,11 +70,22 @@ namespace NHibernate.Linq.Visitors
 				_hqlTreeNodes = new List<HqlExpression>(1) {_hqlTreeBuilder.ExpressionSubTreeHolder(treeNodes)};
 			}
 
-			if (count != null)
-			{
-				_hqlTreeNodes = new List<HqlExpression>(1) { _hqlTreeBuilder.Cast(_hqlTreeBuilder.Count(_hqlTreeNodes.Single()), count.Type) };
-				ProjectionExpression = Expression.Lambda(Expression.Convert(Expression.ArrayIndex(_inputParameter, Expression.Constant(0)), count.Type), _inputParameter);
-			}
+//            if (count != null)
+//            {
+//                if(distinct!=null && hqlTreeNodesCount > 1)
+//                {
+//                    var hqlSelectFrom = _hqlTreeBuilder.SelectFrom(
+//                        _hqlTreeBuilder.From()/*_hqlTreeBuilder.Range(_hqlTreeNodes.Single(), _hqlTreeBuilder.Alias("x")))*/,
+//                        _hqlTreeBuilder.Select(_hqlTreeBuilder.Count(_hqlTreeBuilder.Star())));
+//
+//                    _hqlTreeNodes = new List<HqlExpression>(1)
+//                                        {
+//                                            _hqlTreeBuilder.Query(hqlSelectFrom).AsExpression()
+//                                        };
+//                }
+//                _hqlTreeNodes = new List<HqlExpression>(1) { _hqlTreeBuilder.Cast(_hqlTreeBuilder.Count(_hqlTreeNodes.Single()), count.Type) };
+//                ProjectionExpression = Expression.Lambda(Expression.Convert(Expression.ArrayIndex(_inputParameter, Expression.Constant(0)), count.Type), _inputParameter);
+//            }
 		}
 
 		public override Expression VisitExpression(Expression expression)

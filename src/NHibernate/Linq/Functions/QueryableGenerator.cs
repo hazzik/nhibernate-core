@@ -47,6 +47,40 @@ namespace NHibernate.Linq.Functions
 					where));
 		}
 	}
+	
+	public class CountHqlGenerator : BaseHqlGeneratorForMethod
+	{
+		public CountHqlGenerator()
+		{
+			SupportedMethods = new[]
+								{
+									ReflectionHelper.GetMethodDefinition(() => Queryable.Count<object>(null)),
+//			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.Count<object>(null, null)),
+									ReflectionHelper.GetMethodDefinition(() => Queryable.LongCount<object>(null)),
+//			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.LongCount<object>(null, null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.Count<object>(null)),
+//			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.Count<object>(null, null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.LongCount<object>(null)),
+//			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.LongCount<object>(null, null)),
+								};
+		}
+
+		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
+		{
+			HqlAlias alias = null;
+			HqlWhere where = null;
+
+			if (arguments.Count > 1)
+			{
+				var expr = (LambdaExpression) arguments[1];
+
+				alias = treeBuilder.Alias(expr.Parameters[0].Name);
+				where = treeBuilder.Where(visitor.Visit(arguments[1]).AsExpression());
+			}
+
+			return treeBuilder.Count(visitor.Visit(arguments[1]).AsExpression());
+		}
+	}
 
 	public class AllHqlGenerator : BaseHqlGeneratorForMethod
 	{

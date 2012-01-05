@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Linq;
 using NHibernate.Cfg;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using NUnit.Framework;
 
@@ -79,6 +80,36 @@ namespace NHibernate.Test.NHSpecificTest.NH2722
 				var result = session.Query<Entity>()
 					.Select(x => new {x.Property})
 					.Distinct()
+					.Count();
+
+				Assert.That(result, Is.EqualTo(4));
+			}
+		}
+
+		[Test]
+		public void CountDistinctAnonymousObjectTwoPropertes_ReturnsNumberOfDistinctEntriesForThatProperty()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+//
+//			    var v = session.CreateQuery("from (select Id, Property from Entity)")
+////                    .SetResultTransformer(new )
+//                    .List<object>();
+
+				var s = session.CreateCriteria<Entity>()
+					.SetProjection(
+						Projections.CountDistinct(
+							"Id"
+								)
+					).UniqueResult();
+//			    var count = CriteriaTransformer.TransformToRowCount(s).UniqueResult();
+				var result = session.Query<Entity>()
+					.Select(x => new
+									 {
+//                                         x.Id,
+										 x.Property
+									 })
 					.Count();
 
 				Assert.That(result, Is.EqualTo(4));
