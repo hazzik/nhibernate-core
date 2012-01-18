@@ -7,6 +7,9 @@ using Remotion.Linq.Clauses.Expressions;
 
 namespace NHibernate.Linq.Visitors.ResultOperatorProcessors
 {
+    using System.Linq;
+    using Type = System.Type;
+
     public class ProcessNonAggregatingGroupBy : IResultOperatorProcessor<NonAggregatingGroupBy>
     {
         public void Process(NonAggregatingGroupBy resultOperator, QueryModelVisitor queryModelVisitor, IntermediateHqlTree tree)
@@ -54,13 +57,18 @@ namespace NHibernate.Linq.Visitors.ResultOperatorProcessors
 
             var toList = EnumerableHelper.GetMethod("ToList", new[] { typeof(IEnumerable<>) }, new[] { resultOperator.GroupBy.ItemType });
 
-            LambdaExpression keySelectorExpr = Expression.Lambda(keySelector, itemParam);
+            var keySelectorExpr = Expression.Lambda(keySelector, itemParam);
 
-            LambdaExpression elementSelectorExpr = Expression.Lambda(elementSelector, itemParam);
+            var elementSelectorExpr = Expression.Lambda(elementSelector, itemParam);
 
-            Expression castToItemExpr = Expression.Call(castToItem, listParameter);
+            var castToItemExpr = Expression.Call(castToItem, listParameter);
 
             var groupByExpr = Expression.Call(groupByMethod, castToItemExpr, keySelectorExpr, elementSelectorExpr);
+
+            foreach (var predicate in resultOperator.Predicates)
+            {
+                groupByExpr = Expression.Call(typeof (Enumerable), "Where", new[] {resultOperator.GroupBy.ItemType}, groupByExpr, predicate);
+            }
 
             var toListExpr = Expression.Call(toList, groupByExpr);
 

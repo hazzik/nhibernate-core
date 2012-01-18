@@ -18,6 +18,32 @@ namespace NHibernate.Test.Linq.ByMethod
 		}
 
 		[Test]
+		public void HavingCountSelectCount()
+		{
+		    var list = (from o in db.Orders
+		                where o.RequiredDate < DateTime.Now
+		                group o by o.OrderDate
+		                into g
+		                where g.Count() > 4 && g.Key < DateTime.Now
+		                select g.Count()).ToList();
+
+			Assert.AreEqual(1, list.Count);
+		}
+
+        [Test]
+		public void HavingCountSelectKey()
+		{
+			var list = (from o in db.Orders
+						where o.RequiredDate < DateTime.Now
+						group o by o.OrderDate
+						into g
+						where g.Count() > 4 && g.Key < DateTime.Now
+						select g).ToList();
+
+			Assert.AreEqual(1, list.Count);
+		}
+
+		[Test]
 		public void SingleKeyGroupAndCount()
 		{
 			var orderCounts = db.Orders.GroupBy(o => o.Customer).Select(g => g.Count()).ToList();
@@ -28,7 +54,7 @@ namespace NHibernate.Test.Linq.ByMethod
 		[Test]
 		public void MultipleKeyGroupAndCount()
 		{
-			var orderCounts = db.Orders.GroupBy(o => new { o.Customer, o.Employee }).Select(g => g.Count()).ToList();
+			var orderCounts = db.Orders.GroupBy(o => new {o.Customer, o.Employee}).Select(g => g.Count()).ToList();
 			Assert.AreEqual(464, orderCounts.Count);
 			Assert.AreEqual(830, orderCounts.Sum());
 		}

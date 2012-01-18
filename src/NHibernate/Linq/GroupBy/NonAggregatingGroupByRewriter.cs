@@ -10,7 +10,9 @@ using Remotion.Linq.Clauses.ResultOperators;
 
 namespace NHibernate.Linq.GroupBy
 {
-	public class NonAggregatingGroupByRewriter
+    using System.Collections.Generic;
+
+    public class NonAggregatingGroupByRewriter
 	{
 		private NonAggregatingGroupByRewriter() { }
 
@@ -22,7 +24,7 @@ namespace NHibernate.Linq.GroupBy
 			{
 				var resultOperator = (GroupResultOperator)queryModel.ResultOperators[0];
 				queryModel.ResultOperators.Clear();
-				queryModel.ResultOperators.Add(new NonAggregatingGroupBy(resultOperator));
+				queryModel.ResultOperators.Add(new NonAggregatingGroupBy(resultOperator, new List<LambdaExpression>()));
 				return;
 			}
 
@@ -42,10 +44,16 @@ namespace NHibernate.Linq.GroupBy
 		{
 			// Create a new client-side select for the outer
 			// TODO - don't like calling GetGenericArguments here...
-			var clientSideSelect = new ClientSideSelect(
-				new NonAggregatingGroupBySelectRewriter()
-					.Visit(queryModel.SelectClause.Selector, subQueryExpression.Type.GetGenericArguments()[0], queryModel.MainFromClause));
+		    var rewriter = new NonAggregatingGroupBySelectRewriter();
+		    
+            var clientSideSelect = new ClientSideSelect(rewriter.Visit(queryModel.SelectClause.Selector, subQueryExpression.Type.GetGenericArguments()[0], queryModel.MainFromClause));
 
+            var predicates = new List<LambdaExpression>();
+		    foreach (var whereClause in queryModel.BodyClauses.OfType<WhereClause>().ToArray())
+		    {
+		        predicates.Add(rewriter.Visit(whereClause.Predicate, subQueryExpression.Type.GetGenericArguments()[0], queryModel.MainFromClause));
+		        queryModel.BodyClauses.Remove(whereClause);
+		    }
 			// Replace the outer select clause...
 			queryModel.SelectClause = subQueryExpression.QueryModel.SelectClause;
 
@@ -63,7 +71,8 @@ namespace NHibernate.Linq.GroupBy
 				throw new NotImplementedException();
 			}
 
-			queryModel.ResultOperators.Add(new NonAggregatingGroupBy((GroupResultOperator)subQueryExpression.QueryModel.ResultOperators[0]));
+		    var groupBy = (GroupResultOperator) subQueryExpression.QueryModel.ResultOperators[0];
+		    queryModel.ResultOperators.Add(new NonAggregatingGroupBy(groupBy, predicates));
 			queryModel.ResultOperators.Add(clientSideSelect);
 		}
 
