@@ -15,6 +15,7 @@ namespace NHibernate.Linq.ReWriters
 		private static readonly System.Type[] FlattenableResultOperators = new[]
 																				{
 																					typeof(CacheableResultOperator),
+																					typeof(DefaultIfEmptyResultOperator)
 																				};
 
 		private QueryReferenceExpressionFlattener(QueryModel model)

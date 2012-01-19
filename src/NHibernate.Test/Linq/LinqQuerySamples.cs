@@ -1500,7 +1500,7 @@ namespace NHibernate.Test.Linq
 			Description =
 				"This sample shows how to get LEFT OUTER JOIN by using DefaultIfEmpty(). The DefaultIfEmpty() method returns null when there is no Order for the Employee."
 			)]
-		[Ignore("TODO left outer join")]
+//        [Ignore("TODO left outer join")]
 		public void DLinqJoin7()
 		{
 			var q =
@@ -1511,6 +1511,12 @@ namespace NHibernate.Test.Linq
 
 			ObjectDumper.Write(q);
 		}
+
+        protected override void Configure(Cfg.Configuration configuration)
+        {
+            base.Configure(configuration);
+            configuration.SetProperty(Cfg.Environment.ShowSql, "true");
+        }
 
 		[Category("JOIN")]
 		[Test(Description = "This sample projects a 'let' expression resulting from a join.")]

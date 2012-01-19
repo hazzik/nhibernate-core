@@ -55,7 +55,11 @@ namespace NHibernate.Test.NHSpecificTest.NH2379
                 Assert.AreEqual(2, result[0].Id);
             }
         }
-
+        protected override void Configure(Cfg.Configuration configuration)
+        {
+            base.Configure(configuration);
+            configuration.SetProperty(Cfg.Environment.ShowSql, "true");
+        }
         [Test]
         public void can_get_ids_of_children_and_parents()
         {

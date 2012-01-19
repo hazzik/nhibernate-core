@@ -32,6 +32,10 @@ namespace NHibernate.Linq.ReWriters
 			{
 				Array.ForEach(queryModel.ResultOperators.OfType<CastResultOperator>().ToArray(), castOperator=> queryModel.ResultOperators.Remove(castOperator));
 			}
+            if (resultOperator is DefaultIfEmptyResultOperator)
+			{
+                Array.ForEach(queryModel.ResultOperators.OfType<DefaultIfEmptyResultOperator>().ToArray(), @operator => queryModel.ResultOperators.Remove(@operator));
+			}
 
 			base.VisitResultOperator(resultOperator, queryModel, index);
 		}

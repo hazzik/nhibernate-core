@@ -79,6 +79,26 @@ namespace NHibernate.Linq.GroupJoin
 					}
 				}
 			}
+		    var subQuery = fromClause.FromExpression as SubQueryExpression;
+            if (subQuery != null)
+            {
+                querySourceReference = subQuery.QueryModel.MainFromClause.FromExpression as QuerySourceReferenceExpression;
+                subQuery.QueryModel.ResultOperators.Clear();
+                if (querySourceReference != null)
+                {
+                    if (_groupJoinClauses.Contains(querySourceReference.ReferencedQuerySource as GroupJoinClause))
+                    {
+                        if (_inAggregate.FlagIsFalse)
+                        {
+                            _nonAggregatingGroupJoins.Add((GroupJoinClause)querySourceReference.ReferencedQuerySource);
+                        }
+                        else
+                        {
+                            _aggregatingGroupJoins.Add((GroupJoinClause)querySourceReference.ReferencedQuerySource);
+                        }
+                    }
+                }
+            }
 
 			return base.VisitQuerySourceReferenceExpression(expression);
 		}

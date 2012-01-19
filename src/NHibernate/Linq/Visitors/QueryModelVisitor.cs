@@ -13,6 +13,7 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Clauses.StreamedData;
 using Remotion.Linq.EagerFetching;
+using Remotion.Linq.Transformations;
 
 namespace NHibernate.Linq.Visitors
 {
@@ -21,6 +22,8 @@ namespace NHibernate.Linq.Visitors
 		public static ExpressionToHqlTranslationResults GenerateHqlQuery(QueryModel queryModel, VisitorParameters parameters, bool root)
 		{
 			SubQueryFromClauseFlattener.ReWrite(queryModel);
+
+            LeftJoinRewriter.ReWrite(queryModel);
 
 			NestedSelectRewriter.ReWrite(queryModel, parameters.SessionFactory);
 
@@ -245,7 +248,29 @@ namespace NHibernate.Linq.Visitors
 
 		public override void VisitJoinClause(JoinClause joinClause, QueryModel queryModel, int index)
 		{
+            if (joinClause is LeftJoinClause)
+            {
 			var equalityVisitor = new EqualityHqlGenerator(VisitorParameters);
+                var clause1 = equalityVisitor.Visit(joinClause.InnerKeySelector, joinClause.OuterKeySelector);
+
+
+                var hqlTreeNode = HqlGeneratorExpressionTreeVisitor.Visit(joinClause.InnerKeySelector, VisitorParameters);
+
+                var clause2 = _hqlTree.TreeBuilder.IsNull(hqlTreeNode.AsExpression());
+
+                var where = _hqlTree.TreeBuilder.BooleanOr(clause1, clause2);
+
+                _hqlTree.AddWhereClause(where);
+
+                _hqlTree.AddFromClause(
+                    _hqlTree.TreeBuilder.Range(
+                        HqlGeneratorExpressionTreeVisitor.Visit(joinClause.InnerSequence, VisitorParameters),
+                        _hqlTree.TreeBuilder.Alias(joinClause.ItemName)));
+
+            }
+            else
+            {
+                var equalityVisitor = new EqualityHqlGenerator(VisitorParameters);
 			var whereClause = equalityVisitor.Visit(joinClause.InnerKeySelector, joinClause.OuterKeySelector);
 
 			_hqlTree.AddWhereClause(whereClause);
@@ -254,6 +279,7 @@ namespace NHibernate.Linq.Visitors
 				_hqlTree.TreeBuilder.Range(
 					HqlGeneratorExpressionTreeVisitor.Visit(joinClause.InnerSequence, VisitorParameters),
 					_hqlTree.TreeBuilder.Alias(joinClause.ItemName)));
+		}
 		}
 
 		public override void VisitGroupJoinClause(GroupJoinClause groupJoinClause, QueryModel queryModel, int index)

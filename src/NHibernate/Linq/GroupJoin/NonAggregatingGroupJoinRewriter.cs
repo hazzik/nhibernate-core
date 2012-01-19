@@ -82,8 +82,8 @@ namespace NHibernate.Linq.Visitors
 				}
 				else if (IsOuterJoin(nonAggregatingJoin))
 				{
-
-				}
+                    ProcessOuterJoin(nonAggregatingJoin);
+                }
 				else
 				{
 					// Wonder what this is?
@@ -92,7 +92,26 @@ namespace NHibernate.Linq.Visitors
 			}
 		}
 
-		private void ProcessFlattenedJoin(GroupJoinClause nonAggregatingJoin)
+	    private void ProcessOuterJoin(GroupJoinClause nonAggregatingJoin)
+	    {
+	        // Need to:
+	        // 1. Remove the group join and replace it with a join
+	        // 2. Remove the corresponding "from" clause (the thing that was doing the flattening)
+	        // 3. Rewrite the selector to reference the "join" rather than the "from" clause
+	        var joinClause = LeftJoinClause.Create(nonAggregatingJoin.JoinClause);
+	        joinClause.ItemName = "xxxxxxxxx";
+	        SwapClause(nonAggregatingJoin, joinClause);
+
+	        // TODO - don't like use of _locator here; would rather we got this passed in.  Ditto on next line (esp. the cast)
+	        _model.BodyClauses.Remove(_locator.Clauses[0]);
+
+            var querySourceSwapper1 = new SwapQuerySourceVisitor((IQuerySource)_locator.Clauses[0], nonAggregatingJoin.JoinClause);
+	        _model.TransformExpressions(querySourceSwapper1.Swap);
+            var querySourceSwapper2 = new SwapQuerySourceVisitor(nonAggregatingJoin.JoinClause, joinClause);
+	        _model.TransformExpressions(querySourceSwapper2.Swap);
+	    }
+
+	    private void ProcessFlattenedJoin(GroupJoinClause nonAggregatingJoin)
 		{
 			// Need to:
 			// 1. Remove the group join and replace it with a join
@@ -122,22 +141,29 @@ namespace NHibernate.Linq.Visitors
 
 		private bool IsOuterJoin(GroupJoinClause nonAggregatingJoin)
 		{
-			return false;
-		}
+            if (_locator.Clauses.Count == 1)
+            {
+                var from = _locator.Clauses[0] as NhJoinClause;
+
+                if (from != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
 		private bool IsFlattenedJoin(GroupJoinClause nonAggregatingJoin)
 		{
 			if (_locator.Clauses.Count == 1)
 			{
-				var from = _locator.Clauses[0] as AdditionalFromClause;
-
-				if (from != null)
-				{
-					return true;
-				}
+			    var clause = _locator.Clauses[0];
+			    return clause is AdditionalFromClause &&
+			           !(clause is NhJoinClause);
 			}
 
-			return false;
+		    return false;
 		}
 
 		private bool IsHierarchicalJoin(GroupJoinClause nonAggregatingJoin)
@@ -193,8 +219,14 @@ namespace NHibernate.Linq.Visitors
 			{
 				_references = true;
 			}
-
-			return expression;
+		    
+            return expression;
 		}
+
+        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        {
+            expression.QueryModel.TransformExpressions(ExpressionSearcher);
+            return expression;
+        }
 	}
 }

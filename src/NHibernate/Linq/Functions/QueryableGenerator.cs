@@ -14,12 +14,12 @@ namespace NHibernate.Linq.Functions
 		public AnyHqlGenerator()
 		{
 			SupportedMethods = new[]
-			                   	{
-			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.Any<object>(null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.Any<object>(null, null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.Any<object>(null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.Any<object>(null, null))
-			                   	};
+								{
+									ReflectionHelper.GetMethodDefinition(() => Queryable.Any<object>(null)),
+									ReflectionHelper.GetMethodDefinition(() => Queryable.Any<object>(null, null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.Any<object>(null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.Any<object>(null, null))
+								};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
@@ -53,10 +53,10 @@ namespace NHibernate.Linq.Functions
 		public AllHqlGenerator()
 		{
 			SupportedMethods = new[]
-			                   	{
-			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.All<object>(null, null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.All<object>(null, null))
-			                   	};
+								{
+									ReflectionHelper.GetMethodDefinition(() => Queryable.All<object>(null, null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.All<object>(null, null))
+								};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
@@ -88,10 +88,10 @@ namespace NHibernate.Linq.Functions
 		public MinHqlGenerator()
 		{
 			SupportedMethods = new[]
-			                   	{
-			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.Min<object>(null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.Min<object>(null))
-			                   	};
+								{
+									ReflectionHelper.GetMethodDefinition(() => Queryable.Min<object>(null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.Min<object>(null))
+								};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
@@ -105,10 +105,10 @@ namespace NHibernate.Linq.Functions
 		public MaxHqlGenerator()
 		{
 			SupportedMethods = new[]
-			                   	{
-			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.Max<object>(null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.Max<object>(null))
-			                   	};
+								{
+									ReflectionHelper.GetMethodDefinition(() => Queryable.Max<object>(null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.Max<object>(null))
+								};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
@@ -142,10 +142,10 @@ namespace NHibernate.Linq.Functions
 		public CollectionContainsGenerator()
 		{
 			SupportedMethods = new[]
-			                   	{
-			                   		ReflectionHelper.GetMethodDefinition(() => Queryable.Contains<object>(null, null)),
-			                   		ReflectionHelper.GetMethodDefinition(() => Enumerable.Contains<object>(null, null))
-			                   	};
+								{
+									ReflectionHelper.GetMethodDefinition(() => Queryable.Contains<object>(null, null)),
+									ReflectionHelper.GetMethodDefinition(() => Enumerable.Contains<object>(null, null))
+								};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
@@ -156,7 +156,7 @@ namespace NHibernate.Linq.Functions
 			ParameterExpression param = Expression.Parameter(targetObject.Type, "x");
 			HqlWhere where = treeBuilder.Where(visitor.Visit(Expression.Lambda(
 				Expression.Equal(param, arguments[0]), param))
-			                                   	.AsExpression());
+												.AsExpression());
 
 			return treeBuilder.Exists(
 				treeBuilder.Query(

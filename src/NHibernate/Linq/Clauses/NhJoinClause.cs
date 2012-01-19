@@ -13,11 +13,34 @@ namespace NHibernate.Linq.Visitors
     public class NhJoinClause : AdditionalFromClause
     {
         public bool IsInner { get; private set; }
-        public void MakeInner() {
+        
+        public void MakeInner() 
+        {
             IsInner = true;
         }
-        public NhJoinClause(string itemName, System.Type itemType, Expression fromExpression) : base(itemName, itemType, fromExpression) {
+        
+        public NhJoinClause(string itemName, System.Type itemType, Expression fromExpression) 
+            : base(itemName, itemType, fromExpression) 
+        {
             IsInner = false;
+        }
+
+        public static NhJoinClause Create(FromClauseBase fromClause)
+        {
+            return new NhJoinClause(fromClause.ItemName, fromClause.ItemType, fromClause.FromExpression);
+        }
+    }
+
+    public class LeftJoinClause : JoinClause
+    {
+        public LeftJoinClause(string itemName, System.Type itemType, Expression innerSequence, Expression outerKeySelector, Expression innerKeySelector)
+            : base(itemName, itemType, innerSequence, outerKeySelector, innerKeySelector)
+        {
+        }
+
+        public static LeftJoinClause Create(JoinClause joinClause)
+        {
+            return new LeftJoinClause(joinClause.ItemName, joinClause.ItemType, joinClause.InnerSequence, joinClause.OuterKeySelector, joinClause.InnerKeySelector);
         }
     }
 }
