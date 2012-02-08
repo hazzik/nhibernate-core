@@ -17,4 +17,30 @@
     </id>
     <property name="DateOfBirth" not-null="true"/>
   </class>
+  <class name="Organisation" abstract ="false" table="tblTrnOrganisation">
+    <id name="OrganisationId">
+      <generator class="guid"></generator>
+    </id>
+
+
+    <set name="ResponsibleLegalPersons" table="tblTrnRtoResponsibleLegalPerson" cascade="all-delete-orphan"  fetch="join" lazy="false">
+      <key column="OrganisationId"></key>
+      <one-to-many class="ResponsibleLegalPerson"/>
+    </set>
+
+
+  </class>
+
+  <class name="ResponsibleLegalPerson" table="tblTrnRtoResponsibleLegalPerson" dynamic-insert="true" dynamic-update="true" >
+    <id name="ResponsibleLegalPersonId" column="ResponsibleLegalPersonId">
+      <generator class="guid"></generator>
+    </id>
+
+    <many-to-one name="Organisation" column="OrganisationId" class="Organisation" not-null="true"/>
+    <property name="StartDate" column="ResponsibleLegalPersonStartDate" not-null="true"/>
+    <property name="EndDate" column="ResponsibleLegalPersonEndDate"/>
+    <property name="Name" column="ResponsibleLegalPersonName" not-null="true"/>
+    <property name="Abn" length="11"/>
+    <property name="Acn" length="9"/>
+  </class>
 </hibernate-mapping>

@@ -668,7 +668,10 @@
     <Compile Include="NHSpecificTest\NH2789\Entities.cs" />
     <Compile Include="NHSpecificTest\NH2789\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH2379\Child.cs" />
+    <Compile Include="NHSpecificTest\NH2379\JoinTest.cs" />
+    <Compile Include="NHSpecificTest\NH2379\Organisation.cs" />
     <Compile Include="NHSpecificTest\NH2379\Parent.cs" />
+    <Compile Include="NHSpecificTest\NH2379\ResponsibleLegalPerson.cs" />
     <Compile Include="NHSpecificTest\NH2379\SampleTest.cs" />
     <Compile Include="NHSpecificTest\NH2347\Entity.cs" />
     <Compile Include="NHSpecificTest\NH2347\Fixture.cs" />
