@@ -8,13 +8,13 @@ namespace NHibernate.Engine.Query
 	/// being filtered. 
 	/// </summary>
 	[Serializable]
-	public class FilterQueryPlan : HQLStringQueryPlan
+	public class FilterQueryPlan : HQLExpressionQueryPlan
 	{
 		private readonly string collectionRole;
 
-		public FilterQueryPlan(string hql, string collectionRole, bool shallow, 
-		                       IDictionary<string, IFilter> enabledFilters, ISessionFactoryImplementor factory)
-			: base(hql, collectionRole, shallow, enabledFilters, factory)
+		public FilterQueryPlan(string hql, IQueryExpression queryExpression, string collectionRole, bool shallow, 
+							   IDictionary<string, IFilter> enabledFilters, ISessionFactoryImplementor factory)
+			: base(hql, queryExpression, collectionRole, shallow, enabledFilters, factory)
 		{
 			this.collectionRole = collectionRole;
 		}

@@ -624,6 +624,7 @@
     <Compile Include="SqlTypes\StringFixedLengthSqlType.cs" />
     <Compile Include="SqlTypes\StringSqlType.cs" />
     <Compile Include="StaleObjectStateException.cs" />
+    <Compile Include="StringQueryExpression.cs" />
     <Compile Include="Tool\hbm2ddl\SchemaExport.cs" />
     <Compile Include="TransactionException.cs" />
     <Compile Include="Transaction\AdoNetWithDistributedTransactionFactory.cs" />

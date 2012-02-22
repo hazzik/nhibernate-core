@@ -222,6 +222,11 @@ namespace NHibernate.Impl
 			}
 		}
 
+		protected internal virtual IQueryExpression ExpandParameters(IDictionary<string, TypedValue> namedParamsCopy)
+		{
+			return new StringQueryExpression(ExpandParameterLists(namedParamsCopy));
+		}
+
 		/// <summary>
 		/// Warning: adds new parameters to the argument by side-effect, as well as mutating the query string!
 		/// </summary>
@@ -240,30 +245,35 @@ namespace NHibernate.Impl
 		private string ExpandParameterList(string query, string name, TypedValue typedList, IDictionary<string, TypedValue> namedParamsCopy)
 		{
 			var vals = (ICollection)typedList.Value;
-			IType type = typedList.Type;
+			var type = typedList.Type;
+			string result;
 			if (vals.Count == 1)
 			{
 				// short-circuit for performance...
 				IEnumerator iter = vals.GetEnumerator();
 				iter.MoveNext();
 				namedParamsCopy[name] = new TypedValue(type, iter.Current, session.EntityMode);
-				return query;
+				result = query;
 			}
-
-			var list = new StringBuilder(16);
-			int i = 0;
-			bool isJpaPositionalParam = parameterMetadata.GetNamedParameterDescriptor(name).JpaStyle;
-			foreach (object obj in vals)
+			else
 			{
-				if (i > 0)
-					list.Append(StringHelper.CommaSpace);
+				var list = new StringBuilder(16);
+				int i = 0;
+				bool isJpaPositionalParam = parameterMetadata.GetNamedParameterDescriptor(name).JpaStyle;
+				foreach (object obj in vals)
+				{
+					if (i > 0)
+						list.Append(StringHelper.CommaSpace);
 
-				string alias = (isJpaPositionalParam ? 'x' + name : name + StringHelper.Underscore) + i++ + StringHelper.Underscore;
-				namedParamsCopy[alias] = new TypedValue(type, obj, session.EntityMode);
-				list.Append(ParserHelper.HqlVariablePrefix).Append(alias);
+					string alias = (isJpaPositionalParam ? 'x' + name : name + StringHelper.Underscore) + i++ + StringHelper.Underscore;
+					namedParamsCopy[alias] = new TypedValue(type, obj, session.EntityMode);
+					list.Append(ParserHelper.HqlVariablePrefix).Append(alias);
+				}
+				string paramPrefix = isJpaPositionalParam ? StringHelper.SqlParameter : ParserHelper.HqlVariablePrefix;
+				string replace = StringHelper.Replace(query, paramPrefix + name, list.ToString(), true);
+				result = replace;
 			}
-			string paramPrefix = isJpaPositionalParam ? StringHelper.SqlParameter : ParserHelper.HqlVariablePrefix;
-			return StringHelper.Replace(query, paramPrefix + name, list.ToString(), true);
+			return result;
 		}
 
 		#region Parameters

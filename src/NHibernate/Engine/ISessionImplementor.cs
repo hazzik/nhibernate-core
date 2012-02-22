@@ -80,15 +80,16 @@ namespace NHibernate.Engine
 		/// <param name="query"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
+		[Obsolete]
 		IList List(string query, QueryParameters parameters);
 
-        /// <summary>
-        /// Execute a <c>List()</c> expression query
-        /// </summary>
-        /// <param name="queryExpression"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        IList List(IQueryExpression queryExpression, QueryParameters parameters);
+		/// <summary>
+		/// Execute a <c>List()</c> expression query
+		/// </summary>
+		/// <param name="queryExpression"></param>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		IList List(IQueryExpression queryExpression, QueryParameters parameters);
 
 		/// <summary>
 		/// Create a new instance of <c>Query</c> for the given query expression
@@ -97,12 +98,21 @@ namespace NHibernate.Engine
 		/// </summary>
 		IQuery CreateQuery(IQueryExpression queryExpression);
 
+		[Obsolete]
 		void List(string query, QueryParameters parameters, IList results);
+		
+		void List(IQueryExpression queryExpression, QueryParameters queryParameters, IList results);
 
 		/// <summary>
-		/// Strongly-typed version of <see cref="List(string,QueryParameters)" />
+		/// Strongly-typed version of <see cref="List(string, QueryParameters)" />
 		/// </summary>
+		[Obsolete]
 		IList<T> List<T>(string query, QueryParameters queryParameters);
+
+		/// <summary>
+		/// Strongly-typed version of <see cref="List(IQueryExpression, QueryParameters)" />
+		/// </summary>
+		IList<T> List<T>(IQueryExpression query, QueryParameters queryParameters);
 
 		/// <summary>
 		/// Strongly-typed version of <see cref="List(CriteriaImpl)" />
@@ -119,12 +129,27 @@ namespace NHibernate.Engine
 		/// <param name="query"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
+		[Obsolete]
 		IEnumerable Enumerable(string query, QueryParameters parameters);
+		
+		/// <summary>
+		/// Execute an <c>Iterate()</c> query
+		/// </summary>
+		/// <param name="queryExpression"></param>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		IEnumerable Enumerable(IQueryExpression queryExpression, QueryParameters parameters);
 
 		/// <summary>
 		/// Strongly-typed version of <see cref="Enumerable(string, QueryParameters)" />
 		/// </summary>
+		[Obsolete]
 		IEnumerable<T> Enumerable<T>(string query, QueryParameters queryParameters);
+
+		/// <summary>
+		/// Strongly-typed version of <see cref="Enumerable(IQueryExpression, QueryParameters)" />
+		/// </summary>
+		IEnumerable<T> Enumerable<T>(IQueryExpression queryExpression, QueryParameters queryParameters);
 
 		/// <summary>
 		/// Execute a filter
@@ -132,9 +157,19 @@ namespace NHibernate.Engine
 		IList ListFilter(object collection, string filter, QueryParameters parameters);
 
 		/// <summary>
+		/// Execute a filter
+		/// </summary>
+		IList ListFilter(object collection, IQueryExpression filter, QueryParameters parameters);
+
+		/// <summary>
 		/// Execute a filter (strongly-typed version).
 		/// </summary>
 		IList<T> ListFilter<T>(object collection, string filter, QueryParameters parameters);
+
+		/// <summary>
+		/// Execute a filter (strongly-typed version).
+		/// </summary>
+		IList<T> ListFilter<T>(object collection, IQueryExpression filter, QueryParameters parameters);
 
 		/// <summary>
 		/// Collection from a filter
@@ -142,9 +177,19 @@ namespace NHibernate.Engine
 		IEnumerable EnumerableFilter(object collection, string filter, QueryParameters parameters);
 
 		/// <summary>
+		/// Collection from a filter
+		/// </summary>
+		IEnumerable EnumerableFilter(object collection, IQueryExpression filter, QueryParameters parameters);
+
+		/// <summary>
 		/// Strongly-typed version of <see cref="EnumerableFilter(object, string, QueryParameters)" />
 		/// </summary>
 		IEnumerable<T> EnumerableFilter<T>(object collection, string filter, QueryParameters parameters);
+
+		/// <summary>
+		/// Strongly-typed version of <see cref="EnumerableFilter(object, string, QueryParameters)" />
+		/// </summary>
+		IEnumerable<T> EnumerableFilter<T>(object collection, IQueryExpression filter, QueryParameters parameters);
 
 		/// <summary> Get the <see cref="IEntityPersister"/> for any instance</summary>
 		/// <param name="entityName">optional entity name </param>
@@ -221,7 +266,9 @@ namespace NHibernate.Engine
 
 		IQuery GetNamedSQLQuery(string name);
 
+		[Obsolete]
 		IQueryTranslator[] GetQueries(string query, bool scalar); // NH specific for MultiQuery
+		IQueryTranslator[] GetQueries(IQueryExpression queryExpression, bool scalar); // NH specific for MultiQuery
 
 		IInterceptor Interceptor { get; }
 
@@ -294,6 +341,9 @@ namespace NHibernate.Engine
 
 		/// <summary> Execute a HQL update or delete query</summary>
 		int ExecuteUpdate(string query, QueryParameters queryParameters);
+		
+		/// <summary> Execute a HQL update or delete query</summary>
+		int ExecuteUpdate(IQueryExpression queryExpression, QueryParameters queryParameters);
 
 		FutureCriteriaBatch FutureCriteriaBatch { get; }
 

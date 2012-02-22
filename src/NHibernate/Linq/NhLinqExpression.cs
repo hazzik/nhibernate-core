@@ -16,8 +16,6 @@ namespace NHibernate.Linq
 
 		public System.Type Type { get; private set; }
 
-		public IList<NamedParameterDescriptor> ParameterDescriptors { get; private set; }
-
 		public NhLinqExpressionReturnType ReturnType { get; private set; }
 
 		public IDictionary<string, Tuple<object, IType>> ParameterValuesByName { get; private set; }
@@ -52,7 +50,7 @@ namespace NHibernate.Linq
 			}
 		}
 
-		public IASTNode Translate(ISessionFactoryImplementor sessionFactory)
+		public IASTNode Translate(ISessionFactoryImplementor sessionFactory, bool filter)
 		{
 			var requiredHqlParameters = new List<NamedParameterDescriptor>();
 			var querySourceNamer = new QuerySourceNamer();

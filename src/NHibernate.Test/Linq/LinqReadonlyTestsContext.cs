@@ -52,6 +52,7 @@ namespace NHibernate.Test.Linq
 		public void CreateNorthwindDb()
 		{
 			Configuration configuration = Configure();
+			try { new SchemaExport(configuration).Drop(false, true); }catch{}
 			string scripFileName = GetScripFileName(configuration, "LinqReadonlyCreateScript");
 			if (File.Exists(scripFileName))
 			{

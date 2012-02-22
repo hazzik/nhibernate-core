@@ -110,32 +110,7 @@ namespace NHibernate.Impl
 
 		public override void List(string query, QueryParameters queryParameters, IList results)
 		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				CheckAndUpdateSessionStatus();
-				queryParameters.ValidateParameters();
-				var plan = GetHQLQueryPlan(query, false);
-				bool success = false;
-				try
-				{
-					plan.PerformList(queryParameters, this, results);
-					success = true;
-				}
-				catch (HibernateException)
-				{
-					// Do not call Convert on HibernateExceptions
-					throw;
-				}
-				catch (Exception e)
-				{
-					throw Convert(e, "Could not execute query");
-				}
-				finally
-				{
-					AfterOperation(success);
-				}
-				temporaryPersistenceContext.Clear();
-			}
+			List(new StringQueryExpression(query), queryParameters, results);
 		}
 
 		public override void List(IQueryExpression queryExpression, QueryParameters queryParameters, IList results)
@@ -177,7 +152,7 @@ namespace NHibernate.Impl
 				string[] implementors = Factory.GetImplementors(criteria.EntityOrClassName);
 				int size = implementors.Length;
 
-				CriteriaLoader[] loaders = new CriteriaLoader[size];
+				var loaders = new CriteriaLoader[size];
 				for (int i = 0; i < size; i++)
 				{
 					loaders[i] = new CriteriaLoader(GetOuterJoinLoadable(implementors[i]), Factory,
@@ -224,32 +199,32 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IEnumerable Enumerable(string query, QueryParameters parameters)
+		public override IEnumerable Enumerable(IQueryExpression queryExpression, QueryParameters parameters)
 		{
 			throw new NotSupportedException();
 		}
 
-		public override IEnumerable<T> Enumerable<T>(string query, QueryParameters queryParameters)
+		public override IEnumerable<T> Enumerable<T>(IQueryExpression queryExpression, QueryParameters queryParameters)
 		{
 			throw new NotSupportedException();
 		}
 
-		public override IList ListFilter(object collection, string filter, QueryParameters parameters)
+		public override IList ListFilter(object collection, IQueryExpression filter, QueryParameters parameters)
 		{
 			throw new NotSupportedException();
 		}
 
-		public override IList<T> ListFilter<T>(object collection, string filter, QueryParameters parameters)
+		public override IList<T> ListFilter<T>(object collection, IQueryExpression filter, QueryParameters parameters)
 		{
 			throw new NotSupportedException();
 		}
 
-		public override IEnumerable EnumerableFilter(object collection, string filter, QueryParameters parameters)
+		public override IEnumerable EnumerableFilter(object collection, IQueryExpression filter, QueryParameters parameters)
 		{
 			throw new NotSupportedException();
 		}
 
-		public override IEnumerable<T> EnumerableFilter<T>(object collection, string filter, QueryParameters parameters)
+		public override IEnumerable<T> EnumerableFilter<T>(object collection, IQueryExpression filter, QueryParameters parameters)
 		{
 			throw new NotSupportedException();
 		}
@@ -322,12 +297,12 @@ namespace NHibernate.Impl
 			get { return new CollectionHelper.EmptyMapClass<string, IFilter>(); }
 		}
 
-		public override IQueryTranslator[] GetQueries(string query, bool scalar)
+		public override IQueryTranslator[] GetQueries(IQueryExpression queryExpression, bool scalar)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				// take the union of the query spaces (ie the queried tables)
-				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(query, scalar, EnabledFilters);
+				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(queryExpression, scalar, EnabledFilters);
 				return plan.Translators;
 			}
 		}
@@ -960,13 +935,13 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override int ExecuteUpdate(string query, QueryParameters queryParameters)
+		public override int ExecuteUpdate(IQueryExpression queryExpression, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
 				queryParameters.ValidateParameters();
-				var plan = GetHQLQueryPlan(query, false);
+				var plan = GetHQLQueryPlan(queryExpression, false);
 				bool success = false;
 				int result;
 				try

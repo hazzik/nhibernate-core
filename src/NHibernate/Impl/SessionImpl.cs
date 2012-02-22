@@ -597,46 +597,13 @@ namespace NHibernate.Impl
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
-				return List(query, new QueryParameters(types, values));
+				return List(new StringQueryExpression(query), new QueryParameters(types, values));
 			}
 		}
 
 		public override void CloseSessionFromDistributedTransaction()
 		{
 			Dispose(true);
-		}
-
-		public override void List(string query, QueryParameters queryParameters, IList results)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				CheckAndUpdateSessionStatus();
-				queryParameters.ValidateParameters();
-				var plan = GetHQLQueryPlan(query, false);
-				AutoFlushIfRequired(plan.QuerySpaces);
-
-				bool success = false;
-				dontFlushFromFind++; //stops flush being called multiple times if this method is recursively called
-				try
-				{
-					plan.PerformList(queryParameters, this, results);
-					success = true;
-				}
-				catch (HibernateException)
-				{
-					// Do not call Convert on HibernateExceptions
-					throw;
-				}
-				catch (Exception e)
-				{
-					throw Convert(e, "Could not execute query");
-				}
-				finally
-				{
-					dontFlushFromFind--;
-					AfterOperation(success);
-				}
-			}
 		}
 
 		public override void List(IQueryExpression queryExpression, QueryParameters queryParameters, IList results)
@@ -672,23 +639,23 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IQueryTranslator[] GetQueries(string query, bool scalar)
+		public override IQueryTranslator[] GetQueries(IQueryExpression queryExpression, bool scalar)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
-				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(query, scalar, enabledFilters);
+				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(queryExpression, scalar, enabledFilters);
 				AutoFlushIfRequired(plan.QuerySpaces);
 				return plan.Translators;
 			}
 		}
 
-		public override IEnumerable<T> Enumerable<T>(string query, QueryParameters queryParameters)
+		public override IEnumerable<T> Enumerable<T>(IQueryExpression queryExpression, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
 				queryParameters.ValidateParameters();
-				var plan = GetHQLQueryPlan(query, true);
+				var plan = GetHQLQueryPlan(queryExpression, true);
 				AutoFlushIfRequired(plan.QuerySpaces);
 
 				dontFlushFromFind++; //stops flush being called multiple times if this method is recursively called
@@ -703,13 +670,13 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IEnumerable Enumerable(string query, QueryParameters queryParameters)
+		public override IEnumerable Enumerable(IQueryExpression queryExpression, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
 				queryParameters.ValidateParameters();
-				var plan = GetHQLQueryPlan(query, true);
+				var plan = GetHQLQueryPlan(queryExpression, true);
 				AutoFlushIfRequired(plan.QuerySpaces);
 
 				dontFlushFromFind++; //stops flush being called multiple times if this method is recursively called
@@ -801,15 +768,12 @@ namespace NHibernate.Impl
 				CheckAndUpdateSessionStatus();
 
 				CheckAndUpdateSessionStatus();
-				CollectionFilterImpl filter =
-					new CollectionFilterImpl(queryString, collection, this,
-											 GetFilterQueryPlan(collection, queryString, null, false).ParameterMetadata);
-				//filter.SetComment(queryString);
-				return filter;
+
+				return new CollectionFilterImpl(queryString, collection, this, GetFilterQueryPlan(collection, new StringQueryExpression(queryString), null, false).ParameterMetadata);
 			}
 		}
 
-		private FilterQueryPlan GetFilterQueryPlan(object collection, string filter, QueryParameters parameters, bool shallow)
+		private FilterQueryPlan GetFilterQueryPlan(object collection, IQueryExpression filter, QueryParameters parameters, bool shallow)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
@@ -1740,7 +1704,7 @@ namespace NHibernate.Impl
 
 		#endregion
 
-		private void Filter(object collection, string filter, QueryParameters queryParameters, IList results)
+		private void Filter(object collection, IQueryExpression filter, QueryParameters queryParameters, IList results)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
@@ -1771,7 +1735,7 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IList ListFilter(object collection, string filter, QueryParameters queryParameters)
+		public override IList ListFilter(object collection, IQueryExpression filter, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
@@ -1781,32 +1745,32 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IList<T> ListFilter<T>(object collection, string filter, QueryParameters queryParameters)
+		public override IList<T> ListFilter<T>(object collection, IQueryExpression filter, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
-				List<T> results = new List<T>();
+				var results = new List<T>();
 				Filter(collection, filter, queryParameters, results);
 				return results;
 			}
 		}
 
-		public override IEnumerable EnumerableFilter(object collection, string filter, QueryParameters queryParameters)
+		public override IEnumerable EnumerableFilter(object collection, IQueryExpression filter, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
-				FilterQueryPlan plan = GetFilterQueryPlan(collection, filter, queryParameters, true);
+				var plan = GetFilterQueryPlan(collection, filter, queryParameters, true);
 				return plan.PerformIterate(queryParameters, this);
 			}
 		}
 
-		public override IEnumerable<T> EnumerableFilter<T>(object collection, string filter, QueryParameters queryParameters)
+		public override IEnumerable<T> EnumerableFilter<T>(object collection, IQueryExpression filter, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
-				FilterQueryPlan plan = GetFilterQueryPlan(collection, filter, queryParameters, true);
+				var plan = GetFilterQueryPlan(collection, filter, queryParameters, true);
 				return plan.PerformIterate<T>(queryParameters, this);
 			}
 		}
@@ -2037,7 +2001,7 @@ namespace NHibernate.Impl
 			{
 				CheckAndUpdateSessionStatus();
 
-				CustomLoader loader = new CustomLoader(customQuery, Factory);
+				var loader = new CustomLoader(customQuery, Factory);
 				AutoFlushIfRequired(loader.QuerySpaces);
 
 				bool success = false;
@@ -2683,13 +2647,13 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override int ExecuteUpdate(string query, QueryParameters queryParameters)
+		public override int ExecuteUpdate(IQueryExpression queryExpression, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
 				queryParameters.ValidateParameters();
-				var plan = GetHQLQueryPlan(query, false);
+				var plan = GetHQLQueryPlan(queryExpression, false);
 				AutoFlushIfRequired(plan.QuerySpaces);
 
 				bool success = false;

@@ -23,28 +23,28 @@ namespace NHibernate.Impl
 		{
 			VerifyParameters();
 			IDictionary<string, TypedValue> namedParams = NamedParams;
-			return Session.EnumerableFilter(collection, ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+			return Session.EnumerableFilter(collection, ExpandParameters(namedParams), GetQueryParameters(namedParams));
 		}
 
 		public override IEnumerable<T> Enumerable<T>()
 		{
 			VerifyParameters();
 			IDictionary<string, TypedValue> namedParams = NamedParams;
-			return Session.EnumerableFilter<T>(collection, ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+			return Session.EnumerableFilter<T>(collection, ExpandParameters(namedParams), GetQueryParameters(namedParams));
 		}
 
 		public override IList List()
 		{
 			VerifyParameters();
 			IDictionary<string, TypedValue> namedParams = NamedParams;
-			return Session.ListFilter(collection, ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+			return Session.ListFilter(collection, ExpandParameters(namedParams), GetQueryParameters(namedParams));
 		}
 
 		public override IList<T> List<T>()
 		{
 			VerifyParameters();
 			IDictionary<string, TypedValue> namedParams = NamedParams;
-			return Session.ListFilter<T>(collection, ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+			return Session.ListFilter<T>(collection, ExpandParameters(namedParams), GetQueryParameters(namedParams));
 		}
 
 		public override IType[] TypeArray()

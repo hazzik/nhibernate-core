@@ -47,60 +47,39 @@ namespace NHibernate.Engine.Query
 
 		public IQueryPlan GetHQLQueryPlan(string queryString, bool shallow, IDictionary<string, IFilter> enabledFilters)
 		{
-			var key = new HQLQueryPlanKey(queryString, shallow, enabledFilters);
-			var plan = (IQueryPlan)planCache[key];
+			return GetHQLQueryPlan(new StringQueryExpression(queryString), shallow, enabledFilters);
+		}
+
+		public IQueryExpressionPlan GetHQLQueryPlan(IQueryExpression queryExpression, bool shallow, IDictionary<string, IFilter> enabledFilters)
+		{
+			string expressionStr = queryExpression.Key;
+
+			var key = new HQLQueryPlanKey(expressionStr, shallow, enabledFilters);
+			var plan = (IQueryExpressionPlan)planCache[key];
 
 			if (plan == null)
 			{
 				if (log.IsDebugEnabled)
 				{
-					log.Debug("unable to locate HQL query plan in cache; generating (" + queryString + ")");
+					log.Debug("unable to locate HQL query plan in cache; generating (" + expressionStr + ")");
 				}
-				plan = new HQLStringQueryPlan(queryString, shallow, enabledFilters, factory);
+				plan = new HQLExpressionQueryPlan(expressionStr, queryExpression, shallow, enabledFilters, factory);
 				planCache.Put(key, plan);
 			}
 			else
 			{
 				if (log.IsDebugEnabled)
 				{
-					log.Debug("located HQL query plan in cache (" + queryString + ")");
+					log.Debug("located HQL query plan in cache (" + expressionStr + ")");
 				}
 			}
 
 			return plan;
 		}
 
-        public IQueryExpressionPlan GetHQLQueryPlan(IQueryExpression queryExpression, bool shallow, IDictionary<string, IFilter> enabledFilters)
-        {
-            string expressionStr = queryExpression.Key;
-
-            var key = new HQLQueryPlanKey(expressionStr, shallow, enabledFilters);
-            var plan = (IQueryExpressionPlan)planCache[key];
-
-            if (plan == null)
-            {
-                if (log.IsDebugEnabled)
-                {
-                    log.Debug("unable to locate HQL query plan in cache; generating (" + expressionStr + ")");
-                }
-                plan = new HQLExpressionQueryPlan(expressionStr, queryExpression, shallow, enabledFilters, factory);
-                planCache.Put(key, plan);
-            }
-            else
-            {
-                if (log.IsDebugEnabled)
-                {
-                    log.Debug("located HQL query plan in cache (" + expressionStr + ")");
-                }
-            }
-
-            return plan;
-        }
-
-
-		public FilterQueryPlan GetFilterQueryPlan(string filterString, string collectionRole, bool shallow, IDictionary<string, IFilter> enabledFilters)
+		public FilterQueryPlan GetFilterQueryPlan(IQueryExpression filter, string collectionRole, bool shallow, IDictionary<string, IFilter> enabledFilters)
 		{
-			var key = new FilterQueryPlanKey(filterString, collectionRole, shallow, enabledFilters);
+			var key = new FilterQueryPlanKey(filter, collectionRole, shallow, enabledFilters);
 			var plan = (FilterQueryPlan) planCache[key];
 
 			if (plan == null)
@@ -108,16 +87,16 @@ namespace NHibernate.Engine.Query
 				if (log.IsDebugEnabled)
 				{
 					log.Debug("unable to locate collection-filter query plan in cache; generating (" + collectionRole + " : "
-					          + filterString + ")");
+							  + filter + ")");
 				}
-				plan = new FilterQueryPlan(filterString, collectionRole, shallow, enabledFilters, factory);
+				plan = new FilterQueryPlan(filter.Key, filter, collectionRole, shallow, enabledFilters, factory);
 				planCache.Put(key, plan);
 			}
 			else
 			{
 				if (log.IsDebugEnabled)
 				{
-					log.Debug("located collection-filter query plan in cache (" + collectionRole + " : " + filterString + ")");
+					log.Debug("located collection-filter query plan in cache (" + collectionRole + " : " + filter + ")");
 				}
 			}
 
@@ -148,7 +127,7 @@ namespace NHibernate.Engine.Query
 			return plan;
 		}
 
-		private ParameterMetadata BuildNativeSQLParameterMetadata(string sqlString)
+		private static ParameterMetadata BuildNativeSQLParameterMetadata(string sqlString)
 		{
 			ParamLocationRecognizer recognizer = ParamLocationRecognizer.ParseLocations(sqlString);
 
@@ -239,13 +218,13 @@ namespace NHibernate.Engine.Query
 		[Serializable]
 		private class FilterQueryPlanKey
 		{
-			private readonly string query;
+			private readonly IQueryExpression query;
 			private readonly string collectionRole;
 			private readonly bool shallow;
 			private readonly HashSet<string> filterNames;
 			private readonly int hashCode;
 
-			public FilterQueryPlanKey(string query, string collectionRole, bool shallow, IDictionary<string, IFilter> enabledFilters)
+			public FilterQueryPlanKey(IQueryExpression query, string collectionRole, bool shallow, IDictionary<string, IFilter> enabledFilters)
 			{
 				this.query = query;
 				this.collectionRole = collectionRole;

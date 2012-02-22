@@ -31,7 +31,7 @@ namespace NHibernate.Impl
 			Before();
 			try
 			{
-				return Session.Enumerable(ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+				return Session.Enumerable(ExpandParameters(namedParams), GetQueryParameters(namedParams));
 			}
 			finally
 			{
@@ -46,7 +46,7 @@ namespace NHibernate.Impl
 			Before();
 			try
 			{
-				return Session.Enumerable<T>(ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+				return Session.Enumerable<T>(ExpandParameters(namedParams), GetQueryParameters(namedParams));
 			}
 			finally
 			{
@@ -61,7 +61,7 @@ namespace NHibernate.Impl
 			Before();
 			try
 			{
-                return Session.List(ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+				return Session.List(ExpandParameters(namedParams), GetQueryParameters(namedParams));
 			}
 			finally
 			{
@@ -76,7 +76,7 @@ namespace NHibernate.Impl
 			Before();
 			try
 			{
-				Session.List(ExpandParameterLists(namedParams), GetQueryParameters(namedParams), results);
+				Session.List(ExpandParameters(namedParams), GetQueryParameters(namedParams), results);
 			}
 			finally
 			{
@@ -91,7 +91,7 @@ namespace NHibernate.Impl
 			Before();
 			try
 			{
-				return Session.List<T>(ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+				return Session.List<T>(ExpandParameters(namedParams), GetQueryParameters(namedParams));
 			}
 			finally
 			{
@@ -117,7 +117,7 @@ namespace NHibernate.Impl
 			Before();
 			try
 			{
-				return Session.ExecuteUpdate(ExpandParameterLists(namedParams), GetQueryParameters(namedParams));
+				return Session.ExecuteUpdate(ExpandParameters(namedParams), GetQueryParameters(namedParams));
 			}
 			finally
 			{

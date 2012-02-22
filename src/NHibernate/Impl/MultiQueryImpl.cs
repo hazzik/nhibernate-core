@@ -650,7 +650,7 @@ namespace NHibernate.Impl
 		private IEnumerable<ITranslator> GetTranslators(AbstractQueryImpl query, QueryParameters queryParameters)
 		{
 			// NOTE: updates queryParameters.NamedParameters as (desired) side effect
-			var queryString = query.ExpandParameterLists(queryParameters.NamedParameters);
+			var queryExpression = query.ExpandParameters(queryParameters.NamedParameters);
 
 			var sqlQuery = query as ISQLQuery;
 			if (sqlQuery != null)
@@ -659,7 +659,7 @@ namespace NHibernate.Impl
 				yield break;
 			}
 
-			foreach (var queryTranslator in session.GetQueries(queryString, false))
+			foreach (var queryTranslator in session.GetQueries(queryExpression, false))
 			{
 				yield return new HqlTranslatorWrapper(queryTranslator);
 			}

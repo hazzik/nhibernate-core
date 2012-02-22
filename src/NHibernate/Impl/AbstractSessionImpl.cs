@@ -38,8 +38,6 @@ namespace NHibernate.Impl
 
 		private bool isAlreadyDisposed;
 
-		private static readonly IInternalLogger logger = LoggerProvider.LoggerFor(typeof(AbstractSessionImpl));
-
 		public Guid SessionId
 		{
 			get { return sessionId; }
@@ -97,37 +95,46 @@ namespace NHibernate.Impl
 
 		public abstract IBatcher Batcher { get; }
 		public abstract void CloseSessionFromDistributedTransaction();
-
+		
 		public virtual IList List(string query, QueryParameters parameters)
 		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				IList results = new ArrayList();
-				List(query, parameters, results);
-				return results;
-			}
+			return List(new StringQueryExpression(query), parameters);
 		}
 
-		public abstract void List(string query, QueryParameters parameters, IList results);
+		public virtual void List(string query, QueryParameters queryParameters, IList results)
+		{
+			List(new StringQueryExpression(query), queryParameters, results);
+		}
 
 		public virtual IList List(IQueryExpression queryExpression, QueryParameters parameters)
 		{
-			IList results = (IList)typeof(List<>).MakeGenericType(queryExpression.Type)
-																			.GetConstructor(System.Type.EmptyTypes)
-																			.Invoke(null);
-
+			var results = (IList)Activator.CreateInstance(typeof (List<>).MakeGenericType(queryExpression.Type));
 			List(queryExpression, parameters, results);
 			return results;
 		}
 
 		public abstract void List(IQueryExpression queryExpression, QueryParameters queryParameters, IList results);
+		public virtual IList<T> List<T>(string query, QueryParameters parameters)
+		{
+			return List<T>(new StringQueryExpression(query), parameters);
+		}
 
-		public virtual IList<T> List<T>(string query, QueryParameters queryParameters)
+		public virtual IList<T> List<T>(IQueryExpression query, QueryParameters queryParameters)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				var results = new List<T>();
 				List(query, queryParameters, results);
+				return results;
+			}
+		}
+
+		public virtual IList List(CriteriaImpl criteria)
+		{
+			using (new SessionIdLoggingContext(SessionId))
+			{
+				var results = new ArrayList();
+				List(criteria, results);
 				return results;
 			}
 		}
@@ -141,25 +148,43 @@ namespace NHibernate.Impl
 				return results;
 			}
 		}
-
 		public abstract void List(CriteriaImpl criteria, IList results);
-
-		public virtual IList List(CriteriaImpl criteria)
+		public virtual IEnumerable Enumerable(string query, QueryParameters parameters)
 		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				var results = new ArrayList();
-				List(criteria, results);
-				return results;
-			}
+			return Enumerable(new StringQueryExpression(query), parameters);
 		}
 
-		public abstract IEnumerable Enumerable(string query, QueryParameters parameters);
-		public abstract IEnumerable<T> Enumerable<T>(string query, QueryParameters queryParameters);
-		public abstract IList ListFilter(object collection, string filter, QueryParameters parameters);
-		public abstract IList<T> ListFilter<T>(object collection, string filter, QueryParameters parameters);
-		public abstract IEnumerable EnumerableFilter(object collection, string filter, QueryParameters parameters);
-		public abstract IEnumerable<T> EnumerableFilter<T>(object collection, string filter, QueryParameters parameters);
+		public abstract IEnumerable Enumerable(IQueryExpression queryExpression, QueryParameters parameters);
+		public virtual IEnumerable<T> Enumerable<T>(string query, QueryParameters parameters)
+		{
+			return Enumerable<T>(new StringQueryExpression(query), parameters);
+		}
+
+		public abstract IEnumerable<T> Enumerable<T>(IQueryExpression queryExpression, QueryParameters queryParameters);
+		public virtual IList ListFilter(object collection, string filter, QueryParameters parameters)
+		{
+			return ListFilter(collection, new StringQueryExpression(filter), parameters);
+		}
+
+		public virtual IList<T> ListFilter<T>(object collection, string filter, QueryParameters parameters)
+		{
+			return ListFilter<T>(collection, new StringQueryExpression(filter), parameters);
+		}
+
+		public abstract IList ListFilter(object collection, IQueryExpression filter, QueryParameters parameters);
+		public abstract IList<T> ListFilter<T>(object collection, IQueryExpression filter, QueryParameters parameters);
+		public virtual IEnumerable EnumerableFilter(object collection, string filter, QueryParameters parameters)
+		{
+			return EnumerableFilter(collection, new StringQueryExpression(filter), parameters);
+		}
+
+		public virtual IEnumerable<T> EnumerableFilter<T>(object collection, string filter, QueryParameters parameters)
+		{
+			return EnumerableFilter<T>(collection, new StringQueryExpression(filter), parameters);
+		}
+
+		public abstract IEnumerable EnumerableFilter(object collection, IQueryExpression filter, QueryParameters parameters);
+		public abstract IEnumerable<T> EnumerableFilter<T>(object collection, IQueryExpression filter, QueryParameters parameters);
 		public abstract IEntityPersister GetEntityPersister(string entityName, object obj);
 		public abstract void AfterTransactionBegin(ITransaction tx);
 		public abstract void BeforeTransactionCompletion(ITransaction tx);
@@ -234,7 +259,13 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public abstract IQueryTranslator[] GetQueries(string query, bool scalar);
+		public virtual IQueryTranslator[] GetQueries(string query, bool scalar)
+		{
+			return GetQueries(new StringQueryExpression(query), scalar);
+		}
+
+		public abstract IQueryTranslator[] GetQueries(IQueryExpression queryExpression, bool scalar);
+
 		public abstract IInterceptor Interceptor { get; }
 		public abstract EventListeners Listeners { get; }
 		public abstract int DontFlushFromFind { get; }
@@ -251,7 +282,12 @@ namespace NHibernate.Impl
 		public abstract string GuessEntityName(object entity);
 		public abstract IDbConnection Connection { get; }
 		public abstract int ExecuteNativeUpdate(NativeSQLQuerySpecification specification, QueryParameters queryParameters);
-		public abstract int ExecuteUpdate(string query, QueryParameters queryParameters);
+		public virtual int ExecuteUpdate(string query, QueryParameters queryParameters)
+		{
+			return ExecuteUpdate(new StringQueryExpression(query), queryParameters);
+		}
+		public abstract int ExecuteUpdate(IQueryExpression queryExpression, QueryParameters queryParameters);
+
 		public abstract FutureCriteriaBatch FutureCriteriaBatch { get; internal set; }
 		public abstract FutureQueryBatch FutureQueryBatch { get; internal set; }
 
@@ -295,7 +331,7 @@ namespace NHibernate.Impl
 		{
 			ErrorIfClosed();
 			EnlistInAmbientTransactionIfNeeded();
-	    }
+		}
 
 		protected internal virtual void ErrorIfClosed()
 		{
@@ -357,27 +393,27 @@ namespace NHibernate.Impl
 			}
 		}
 
-        public virtual IQuery CreateQuery(IQueryExpression queryExpression)
-        {
-            using (new SessionIdLoggingContext(SessionId))
-            {
-                CheckAndUpdateSessionStatus();
-                var queryPlan = GetHQLQueryPlan(queryExpression, false);
+		public virtual IQuery CreateQuery(IQueryExpression queryExpression)
+		{
+			using (new SessionIdLoggingContext(SessionId))
+			{
+				CheckAndUpdateSessionStatus();
+				var queryPlan = GetHQLQueryPlan(queryExpression, false);
 				var query = new ExpressionQueryImpl(queryPlan.QueryExpression, 
 												this,
-                                                queryPlan.ParameterMetadata
+												queryPlan.ParameterMetadata
 												);
-                query.SetComment("[expression]");
-                return query;
-            }
-        }
+				query.SetComment("[expression]");
+				return query;
+			}
+		}
 
 		public virtual IQuery CreateQuery(string queryString)
 		{
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
-				QueryImpl query = new QueryImpl(queryString, this, GetHQLQueryPlan(queryString, false).ParameterMetadata);
+				var query = new QueryImpl(queryString, this, GetHQLQueryPlan(queryString, false).ParameterMetadata);
 				query.SetComment(queryString);
 				return query;
 			}
@@ -388,7 +424,7 @@ namespace NHibernate.Impl
 			using (new SessionIdLoggingContext(SessionId))
 			{
 				CheckAndUpdateSessionStatus();
-				SqlQueryImpl query = new SqlQueryImpl(sql, this, factory.QueryPlanCache.GetSQLParameterMetadata(sql));
+				var query = new SqlQueryImpl(sql, this, factory.QueryPlanCache.GetSQLParameterMetadata(sql));
 				query.SetComment("dynamic native SQL query");
 				return query;
 			}
@@ -396,19 +432,16 @@ namespace NHibernate.Impl
 
 		protected internal virtual IQueryPlan GetHQLQueryPlan(string query, bool shallow)
 		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				return factory.QueryPlanCache.GetHQLQueryPlan(query, shallow, EnabledFilters);
-			}
+			return GetHQLQueryPlan(new StringQueryExpression(query), shallow);
 		}
 
-        protected internal virtual IQueryExpressionPlan GetHQLQueryPlan(IQueryExpression queryExpression, bool shallow)
-        {
-            using (new SessionIdLoggingContext(SessionId))
-            {
-                return factory.QueryPlanCache.GetHQLQueryPlan(queryExpression, shallow, EnabledFilters);
-            }
-        }
+		protected internal virtual IQueryExpressionPlan GetHQLQueryPlan(IQueryExpression queryExpression, bool shallow)
+		{
+			using (new SessionIdLoggingContext(SessionId))
+			{
+				return factory.QueryPlanCache.GetHQLQueryPlan(queryExpression, shallow, EnabledFilters);
+			}
+		}
 
 		protected internal virtual NativeSQLQueryPlan GetNativeSQLQueryPlan(NativeSQLQuerySpecification spec)
 		{
@@ -439,7 +472,7 @@ namespace NHibernate.Impl
 
 		protected void EnlistInAmbientTransactionIfNeeded()
 		{
-		    factory.TransactionFactory.EnlistInDistributedTransactionIfNeeded(this);
+			factory.TransactionFactory.EnlistInDistributedTransactionIfNeeded(this);
 		}
 	}
 }

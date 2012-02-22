@@ -13,7 +13,7 @@ using NHibernate.Util;
 
 namespace NHibernate.Impl
 {
-	internal class ExpressionQueryImpl : AbstractQueryImpl
+	internal class ExpressionQueryImpl : QueryImpl
 	{
 		private readonly Dictionary<string, LockMode> _lockModes = new Dictionary<string, LockMode>(2);
 
@@ -25,51 +25,16 @@ namespace NHibernate.Impl
 
 		public IQueryExpression QueryExpression { get; private set; }
 
-		protected internal override IDictionary<string, LockMode> LockModes
-		{
-			get { return _lockModes; }
-		}
-
 		public override IQuery SetLockMode(string alias, LockMode lockMode)
 		{
 			_lockModes[alias] = lockMode;
 			return this;
 		}
 
-		public override int ExecuteUpdate()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override IEnumerable Enumerable()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override IEnumerable<T> Enumerable<T>()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override IList List()
-		{
-			VerifyParameters();
-			IDictionary<string, TypedValue> namedParams = NamedParams;
-			Before();
-			try
-			{
-				return Session.List(ExpandParameters(namedParams), GetQueryParameters(namedParams));
-			}
-			finally
-			{
-				After();
-			}
-		}
-
 		/// <summary> 
 		/// Warning: adds new parameters to the argument by side-effect, as well as mutating the query expression tree!
 		/// </summary>
-		protected IQueryExpression ExpandParameters(IDictionary<string, TypedValue> namedParamsCopy)
+		protected internal override IQueryExpression ExpandParameters(IDictionary<string, TypedValue> namedParamsCopy)
 		{
 			if (namedParameterLists.Count == 0)
 			{
@@ -110,9 +75,9 @@ namespace NHibernate.Impl
 				map.Add(name, aliases);
 			}
 
-			var newTree = ParameterExpander.Expand(QueryExpression.Translate(Session.Factory), map);
-			var key = new StringBuilder(QueryExpression.Key);
+			var newTree = ParameterExpander.Expand(QueryExpression.Translate(Session.Factory, false), map);
 
+			var key = new StringBuilder(QueryExpression.Key);
 			foreach (var pair in map)
 			{
 				key.Append(' ');
@@ -123,16 +88,6 @@ namespace NHibernate.Impl
 			}
 
 			return new ExpandedQueryExpression(QueryExpression, newTree, key.ToString());
-		}
-
-		public override void List(IList results)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override IList<T> List<T>()
-		{
-			throw new NotImplementedException();
 		}
 	}
 
@@ -149,7 +104,7 @@ namespace NHibernate.Impl
 
 		#region IQueryExpression Members
 
-		public IASTNode Translate(ISessionFactoryImplementor sessionFactory)
+		public IASTNode Translate(ISessionFactoryImplementor sessionFactory, bool filter)
 		{
 			return _tree;
 		}
@@ -174,9 +129,7 @@ namespace NHibernate.Impl
 
 		public static IASTNode Expand(IASTNode tree, Dictionary<string, List<string>> map)
 		{
-			var expander = new ParameterExpander(tree, map);
-
-			return expander.Expand();
+			return new ParameterExpander(tree, map).Expand();
 		}
 
 		private IASTNode Expand()
@@ -186,14 +139,14 @@ namespace NHibernate.Impl
 
 			foreach (IASTNode param in parameters)
 			{
-				IASTNode paramName = param.GetChild(0);
-				List<string> aliases = _map[paramName.Text];
+				var paramName = param.GetChild(0);
+				var aliases = _map[paramName.Text];
 				var astAliases = new List<IASTNode>();
 
 				foreach (string alias in aliases)
 				{
-					IASTNode astAlias = param.DupNode();
-					IASTNode astAliasName = paramName.DupNode();
+					var astAlias = param.DupNode();
+					var astAliasName = paramName.DupNode();
 					astAliasName.Text = alias;
 					astAlias.AddChild(astAliasName);
 
@@ -208,15 +161,15 @@ namespace NHibernate.Impl
 
 		private static IASTNode DuplicateTree(IASTNode ast, IDictionary<IASTNode, IEnumerable<IASTNode>> nodeMapping)
 		{
-			IASTNode thisNode = ast.DupNode();
+			var thisNode = ast.DupNode();
 
-			foreach (IASTNode child in ast)
+			foreach (var child in ast)
 			{
 				IEnumerable<IASTNode> candidate;
 
 				if (nodeMapping.TryGetValue(child, out candidate))
 				{
-					foreach (IASTNode replacement in candidate)
+					foreach (var replacement in candidate)
 					{
 						thisNode.AddChild(replacement);
 					}
