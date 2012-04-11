@@ -144,7 +144,6 @@ namespace NHibernate.Impl
 			_tree = tree;
 			Key = key;
 			Type = queryExpression.Type;
-			ParameterDescriptors = queryExpression.ParameterDescriptors;
 		}
 
 		#region IQueryExpression Members
@@ -158,9 +157,7 @@ namespace NHibernate.Impl
 
 		public System.Type Type { get; private set; }
 
-		public IList<NamedParameterDescriptor> ParameterDescriptors { get; private set; }
-
-		#endregion
+	    #endregion
 	}
 
 	internal class ParameterExpander

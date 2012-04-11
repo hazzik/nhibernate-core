@@ -61,8 +61,6 @@ namespace NHibernate.Linq
 
 			ExpressionToHqlTranslationResults = QueryModelVisitor.GenerateHqlQuery(queryModel, visitorParameters, true);
 
-			ParameterDescriptors = requiredHqlParameters.AsReadOnly();
-			
 			return ExpressionToHqlTranslationResults.Statement.AstNode;
 		}
 	}

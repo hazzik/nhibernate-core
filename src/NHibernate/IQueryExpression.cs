@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using NHibernate.Engine;
-using NHibernate.Engine.Query;
 using NHibernate.Hql.Ast.ANTLR.Tree;
 
 namespace NHibernate
@@ -10,6 +8,5 @@ namespace NHibernate
         IASTNode Translate(ISessionFactoryImplementor sessionFactory);
         string Key { get; }
         System.Type Type { get; }
-    	IList<NamedParameterDescriptor> ParameterDescriptors { get; }
     }
 }
