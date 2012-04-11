@@ -606,26 +606,6 @@ namespace NHibernate.Impl
 			Dispose(true);
 		}
 
-		public override IList List(string query, QueryParameters parameters)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				IList results = new ArrayList();
-				List(query, parameters, results);
-				return results;
-			}
-		}
-
-		public override IList<T> List<T>(string query, QueryParameters parameters)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				List<T> results = new List<T>();
-				List(query, parameters, results);
-				return results;
-			}
-		}
-
 		public override void List(string query, QueryParameters queryParameters, IList results)
 		{
 			using (new SessionIdLoggingContext(SessionId))
@@ -1923,26 +1903,6 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IList List(CriteriaImpl criteria)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				ArrayList results = new ArrayList();
-				List(criteria, results);
-				return results;
-			}
-		}
-
-		public override IList<T> List<T>(CriteriaImpl criteria)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				List<T> results = new List<T>();
-				List(criteria, results);
-				return results;
-			}
-		}
-
 		public override void List(CriteriaImpl criteria, IList results)
 		{
 			using (new SessionIdLoggingContext(SessionId))
@@ -2071,39 +2031,6 @@ namespace NHibernate.Impl
 			}
 		}
 
-		public override IList List(NativeSQLQuerySpecification spec, QueryParameters queryParameters)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				ArrayList results = new ArrayList();
-				List(spec, queryParameters, results);
-				return results;
-			}
-		}
-
-		public override IList<T> List<T>(NativeSQLQuerySpecification spec, QueryParameters queryParameters)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				List<T> results = new List<T>();
-				List(spec, queryParameters, results);
-				return results;
-			}
-		}
-
-		public override void List(NativeSQLQuerySpecification spec, QueryParameters queryParameters, IList results)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				SQLCustomQuery query = new SQLCustomQuery(
-					spec.SqlQueryReturns,
-					spec.QueryString,
-					spec.QuerySpaces,
-					Factory);
-				ListCustomQuery(query, queryParameters, results);
-			}
-		}
-
 		public override void ListCustomQuery(ICustomQuery customQuery, QueryParameters queryParameters, IList results)
 		{
 			using (new SessionIdLoggingContext(SessionId))
@@ -2125,16 +2052,6 @@ namespace NHibernate.Impl
 					dontFlushFromFind--;
 					AfterOperation(success);
 				}
-			}
-		}
-
-		public override IList<T> ListCustomQuery<T>(ICustomQuery customQuery, QueryParameters queryParameters)
-		{
-			using (new SessionIdLoggingContext(SessionId))
-			{
-				List<T> results = new List<T>();
-				ListCustomQuery(customQuery, queryParameters, results);
-				return results;
 			}
 		}
 
