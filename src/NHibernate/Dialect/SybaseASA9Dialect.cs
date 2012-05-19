@@ -38,7 +38,7 @@ namespace NHibernate.Dialect
 		{
 			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.SybaseAsaClientDriver";
 			DefaultProperties[Environment.PrepareSql] = "false";
-
+			
 			RegisterColumnType(DbType.AnsiStringFixedLength, 255, "CHAR($l)");
 			RegisterColumnType(DbType.AnsiString, "VARCHAR(255)");
 			RegisterColumnType(DbType.AnsiString, 255, "VARCHAR($l)");
@@ -77,7 +77,7 @@ namespace NHibernate.Dialect
 			RegisterFunction("lower", new StandardSafeSQLFunction("lower", NHibernateUtil.String, 1));
 			RegisterFunction("upper", new StandardSafeSQLFunction("upper", NHibernateUtil.String, 1));
 			RegisterFunction("now", new StandardSQLFunction("now"));
-
+			
 			RegisterKeyword("top");
 		}
 
@@ -120,7 +120,7 @@ namespace NHibernate.Dialect
 		{
 			return new SybaseAnywhereDataBaseMetaData(connection);
 		}
-
+		
 		public override string AddColumnString
 		{
 			get { return "add"; }
@@ -173,7 +173,7 @@ namespace NHibernate.Dialect
 
 		private static int GetAfterSelectInsertPoint(SqlString sql)
 		{
-			string[] arrSelectStrings = { "select distinct", "select all", "select" };
+			string[] arrSelectStrings = {"select distinct", "select all", "select"};
 			for (int i = 0; i != arrSelectStrings.Length; ++i)
 			{
 				string strSelect = arrSelectStrings[i];
