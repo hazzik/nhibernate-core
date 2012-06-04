@@ -5,6 +5,7 @@ using NHibernate.Linq.Visitors;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace NHibernate.Linq.ReWriters
 {
@@ -13,10 +14,10 @@ namespace NHibernate.Linq.ReWriters
 		private readonly QueryModel _model;
 
 		private static readonly System.Type[] FlattenableResultOperators = new[]
-																				{
-																					typeof(CacheableResultOperator),
-																					typeof(DefaultIfEmptyResultOperator)
-																				};
+			{
+				typeof (CacheableResultOperator),
+				typeof (DefaultIfEmptyResultOperator)
+			};
 
 		private QueryReferenceExpressionFlattener(QueryModel model)
 		{
