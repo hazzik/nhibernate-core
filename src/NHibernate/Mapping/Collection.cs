@@ -383,10 +383,10 @@ namespace NHibernate.Mapping
 
 		public virtual void Validate(IMapping mapping)
 		{
-			if (Key.IsCascadeDeleteEnabled && (!IsInverse || !IsOneToMany))
-			{
-				throw new MappingException(string.Format("only inverse one-to-many associations may use on-delete=\"cascade\": {0}", Role));
-			}
+//			if (Key.IsCascadeDeleteEnabled && (/*!IsInverse || */!IsOneToMany))
+//			{
+//				throw new MappingException(string.Format("only inverse one-to-many associations may use on-delete=\"cascade\": {0}", Role));
+//			}
 			if (!Key.IsValid(mapping))
 			{
 				throw new MappingException(string.Format("collection foreign key mapping has wrong number of columns: {0} type: {1}", Role, Key.Type.Name));

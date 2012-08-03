@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
+                   assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.NH2515.CompositeElement">
+
+  <class name="Parent" lazy="false">
+    <id name="Id" generator="guid" />
+    <bag name="Children">
+      <key column="ParentId" on-delete="cascade"/>
+      <composite-element class="Child">
+        <property name="Name" />
+      </composite-element>
+    </bag>
+  </class>
+</hibernate-mapping>

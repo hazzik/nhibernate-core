@@ -92,12 +92,12 @@ namespace NHibernate.Tuple.Entity
 			rootTypeAssemblyQualifiedName = rootType == null ? null : rootType.AssemblyQualifiedName;
 
 			identifierProperty = PropertyFactory.BuildIdentifierProperty(persistentClass,
-			                                                             sessionFactory.GetIdentifierGenerator(rootName));
+																		 sessionFactory.GetIdentifierGenerator(rootName));
 
 			versioned = persistentClass.IsVersioned;
 
 			bool lazyAvailable = persistentClass.HasPocoRepresentation
-			                     && FieldInterceptionHelper.IsInstrumented(persistentClass.MappedClass);
+								 && FieldInterceptionHelper.IsInstrumented(persistentClass.MappedClass);
 			bool hasLazy = false;
 
 			propertySpan = persistentClass.PropertyClosureSpan;
@@ -200,9 +200,9 @@ namespace NHibernate.Tuple.Entity
 				propertyVersionability[i] = properties[i].IsVersionable;
 				nonlazyPropertyUpdateability[i] = properties[i].IsUpdateable && !islazyProperty;
 				propertyCheckability[i] = propertyUpdateability[i]
-				                          ||
-				                          (propertyTypes[i].IsAssociationType
-				                           && ((IAssociationType) propertyTypes[i]).IsAlwaysDirtyChecked);
+										  ||
+										  (propertyTypes[i].IsAssociationType
+										   && ((IAssociationType) propertyTypes[i]).IsAlwaysDirtyChecked);
 
 				cascadeStyles[i] = properties[i].CascadeStyle;
 
@@ -282,10 +282,10 @@ namespace NHibernate.Tuple.Entity
 			{
 				isAbstract = persistentClass.IsAbstract.Value;
 				if (!isAbstract && persistentClass.HasPocoRepresentation
-				    && ReflectHelper.IsAbstractClass(persistentClass.MappedClass))
+					&& ReflectHelper.IsAbstractClass(persistentClass.MappedClass))
 				{
 					log.Warn("entity [" + type.FullName
-					         + "] is abstract-class/interface explicitly mapped as non-abstract; be sure to supply entity-names");
+							 + "] is abstract-class/interface explicitly mapped as non-abstract; be sure to supply entity-names");
 				}
 			}
 			selectBeforeUpdate = persistentClass.SelectBeforeUpdate;
@@ -510,10 +510,8 @@ namespace NHibernate.Tuple.Entity
 		public int? GetPropertyIndexOrNull(string propertyName)
 		{
 			int? result;
-			if (propertyIndexes.TryGetValue(propertyName, out result))
-				return result;
-			else
-				return null;
+			propertyIndexes.TryGetValue(propertyName, out result);
+			return result;
 		}
 
 		public bool HasCollections

@@ -29,7 +29,7 @@ namespace NHibernate.Persister.Collection
 
 		public override bool CascadeDeleteEnabled
 		{
-			get { return false; }
+			get { return true; }
 		}
 
 		public override bool IsOneToMany
