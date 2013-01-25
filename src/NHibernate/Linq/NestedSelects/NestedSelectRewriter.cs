@@ -25,6 +25,8 @@ namespace NHibernate.Linq.NestedSelects
 			if (!nsqmv.HasSubquery)
 				return;
 
+			var selector = queryModel.SelectClause.Selector;
+
 			var subQueryExpression = GetSubQueryExpression(queryModel, nsqmv.Expression);
 			if (subQueryExpression != null)
 			{
@@ -54,7 +56,7 @@ namespace NHibernate.Linq.NestedSelects
 
 			var expressions = new List<ExpressionHolder>();
 
-			var rewriter = new SelectClauseRewriter(key, group, expressions, GetIdentifier(sessionFactory, new QuerySourceReferenceExpression(queryModel.MainFromClause)));
+			var rewriter = new SelectClauseRewriter(key, group, expressions, GetIdentifier(sessionFactory, new QuerySourceReferenceExpression(queryModel.MainFromClause)), selector.Type);
 
 			var resultSelector = rewriter.VisitExpression(queryModel.SelectClause.Selector);
 
