@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate.DomainModel.Northwind.Entities;
 using NUnit.Framework;
 using SharpTestsEx;
 
@@ -217,7 +218,6 @@ namespace NHibernate.Test.Linq
 		}
 
 		[Test]
-		[Ignore("Broken, please fix. See NH-2707")]
 		public void CanProjectCollections()
 		{
 			var query = db.Orders.Select(o => o.OrderLines);
@@ -235,7 +235,7 @@ namespace NHibernate.Test.Linq
 		}
 
 		[Test]
-		[Ignore("Not fixed yet, see NH-3333")]
+		//[Ignore("Not fixed yet, see NH-3333")]
 		public void ProjectAnonymousTypeWithCollection()
 		{
 			// NH-3333
@@ -246,6 +246,57 @@ namespace NHibernate.Test.Linq
 			var result = query.ToList();
 			Assert.That(result.Count, Is.Not.EqualTo(0));
 			Assert.That(result[0].o.OrderLines, Is.EquivalentTo(result[0].OrderLines));
+		}
+
+		[Test]
+		//[Ignore("Not fixed yet, see NH-3333")]
+		public void ProjectAnonymousTypeWithCollection1()
+		{
+			// NH-3333
+			// done by WCF DS: context.Orders.Expand(o => o.OrderLines) from the client 
+			var query = from o in db.Orders
+						select new { o.OrderLines, o };
+
+			var result = query.ToList();
+			Assert.That(result.Count, Is.Not.EqualTo(0));
+			Assert.That(result[0].o.OrderLines, Is.EquivalentTo(result[0].OrderLines));
+		}
+
+		[Test]
+		//[Ignore("Not fixed yet, see NH-3333")]
+		public void ProjectAnonymousTypeWithCollection2()
+		{
+			// NH-3333
+			// done by WCF DS: context.Orders.Expand(o => o.OrderLines) from the client 
+			var query = from o in db.Orders
+						select new { o.OrderLines, A = 1, B = 2 };
+
+			var result = query.ToList();
+			Assert.That(result.Count, Is.Not.EqualTo(0));
+		}
+
+		[Test]
+		//[Ignore("Not fixed yet, see NH-3333")]
+		public void ProjectAnonymousTypeWithCollection3()
+		{
+			// NH-3333
+			// done by WCF DS: context.Orders.Expand(o => o.OrderLines) from the client 
+			var query = from o in db.Orders
+						select new { OrderLines = o.OrderLines.ToList() };
+
+			var result = query.ToList();
+			Assert.That(result.Count, Is.Not.EqualTo(0));
+		}
+
+		[Test]
+		public void ProjectKnownTypeWithCollection()
+		{
+			var query = from o in db.Orders
+						select new ExpandedWrapper<Order, ISet<OrderLine>> { A = o, B = o.OrderLines };
+
+			var result = query.ToList();
+			Assert.That(result.Count, Is.Not.EqualTo(0));
+			Assert.That(result[0].A.OrderLines, Is.EqualTo(result[0].B));
 		}
 
 		[Test]
@@ -368,6 +419,12 @@ namespace NHibernate.Test.Linq
 		private string FormatName(string name, DateTime? lastLoginDate)
 		{
 			return string.Format("User {0} logged in at {1}", name, lastLoginDate);
+		}
+
+		class ExpandedWrapper<T1, T2>
+		{
+			public T1 A { get; set; }
+			public T2 B { get; set; }
 		}
 	}
 }

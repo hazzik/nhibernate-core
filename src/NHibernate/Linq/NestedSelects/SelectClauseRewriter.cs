@@ -70,6 +70,7 @@ namespace NHibernate.Linq.NestedSelects
 													new[] {typeof (IEnumerable<>), typeof (Func<,>)},
 													new[] {typeof (Tuple), selector.Type});
 
+			//TODO: only works for collections with explicit materialization .ToList() / .ToArray() / etc
 			var toList = EnumerableHelper.GetMethod("ToList",
 													new[] {typeof (IEnumerable<>)},
 													new[] {selector.Type});
