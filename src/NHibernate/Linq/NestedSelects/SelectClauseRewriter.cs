@@ -6,19 +6,23 @@ using Remotion.Linq.Parsing;
 
 namespace NHibernate.Linq.NestedSelects
 {
+	using System.Reflection;
+
 	class SelectClauseRewriter : ExpressionTreeVisitor
 	{
 		static readonly Expression<Func<Tuple, bool>> WherePredicate = t => !ReferenceEquals(null, t.Items[0]);
 
 		readonly ICollection<ExpressionHolder> expressions;
 		readonly Expression parameter;
+		readonly System.Type resultType;
 		readonly ParameterExpression values;
 		readonly int tuple;
 		int position;
 
-		public SelectClauseRewriter(Expression parameter, ParameterExpression values, ICollection<ExpressionHolder> expressions, Expression expression) 
+		public SelectClauseRewriter(Expression parameter, ParameterExpression values, ICollection<ExpressionHolder> expressions, Expression expression, System.Type resultType) 
 			: this(parameter, values, expressions, expression, 0)
 		{
+			this.resultType = resultType;
 		}
 
 		public SelectClauseRewriter(Expression parameter, ParameterExpression values, ICollection<ExpressionHolder> expressions, Expression expression, int tuple)
@@ -75,11 +79,28 @@ namespace NHibernate.Linq.NestedSelects
 													new[] {typeof (IEnumerable<>)},
 													new[] {selector.Type});
 
-			return Expression.Call(Expression.Call(toList,
-												   Expression.Call(select,
-																   Expression.Call(where, values, WherePredicate),
-																   Expression.Lambda(resultSelector, value))),
-								   "AsReadOnly", System.Type.EmptyTypes);
+			if (resultType != null)
+			{
+				return Expression.New(GetCollectionConstructor(resultType, selector.Type),
+				                                      Expression.Call(select,
+				                                                      Expression.Call(where, values, WherePredicate),
+				                                                      Expression.Lambda(resultSelector, value)));
+			}
+			else
+			{
+				return Expression.Call(Expression.Call(toList,
+				                                       Expression.Call(select,
+				                                                       Expression.Call(where, values, WherePredicate),
+				                                                       Expression.Lambda(resultSelector, value))),
+				                       "AsReadOnly", System.Type.EmptyTypes);
+			}
+		}
+
+		private ConstructorInfo GetCollectionConstructor(System.Type collectionType, System.Type elementType)
+		{
+			// TODO: detect collection types
+			return
+				typeof (HashSet<>).MakeGenericType(elementType).GetConstructor(new [] { typeof (IEnumerable<>).MakeGenericType(elementType) });
 		}
 	}
 }
