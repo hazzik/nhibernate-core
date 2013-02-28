@@ -36,7 +36,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3074
 		}
 
 		[Test]
-		[Ignore("Fails on at least Oracle and PostgreSQL. See NH-3074 and NH-2408.")]
 		public void HqlCanSetLockMode()
 		{
 			using (var s = OpenSession())
@@ -51,7 +50,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3074
 			}
 		}
 
-		[Test, Ignore("Not fixed yet")]
+		[Test]
 		public void CritriaCanSetLockMode()
 		{
 			using (var s = OpenSession())
@@ -60,6 +59,21 @@ namespace NHibernate.Test.NHSpecificTest.NH3074
 				var cats = s.CreateCriteria<Animal>("c")
 							.Add(Restrictions.IdEq(Id))
 							.SetLockMode("c", LockMode.Upgrade)
+							.List<Cat>();
+
+				Assert.That(cats, Is.Not.Empty);
+			}
+		}
+
+		[Test]
+		public void CritriaCanSetLockModeRoot()
+		{
+			using (var s = OpenSession())
+			using (s.BeginTransaction())
+			{
+				var cats = s.CreateCriteria<Animal>()
+							.Add(Restrictions.IdEq(Id))
+							.SetLockMode(LockMode.Upgrade)
 							.List<Cat>();
 
 				Assert.That(cats, Is.Not.Empty);

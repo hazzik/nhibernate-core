@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Text.RegularExpressions;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Schema;
@@ -627,18 +628,7 @@ namespace NHibernate.Dialect
 
 		public override SqlString ApplyLocksToSql(SqlString sql, IDictionary<string, LockMode> aliasedLockModes, IDictionary<string, string[]> keyColumnNames)
 		{
-			bool doWork = false;
-
-			foreach (KeyValuePair<string, LockMode> de in aliasedLockModes)
-			{
-				if (NeedsLockHint(de.Value))
-				{
-					doWork = true;
-					break;
-				}
-			}
-
-			if (!doWork)
+			if (!aliasedLockModes.Any(de => NeedsLockHint(de.Value)))
 			{
 				return sql;
 			}

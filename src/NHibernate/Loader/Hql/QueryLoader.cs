@@ -57,8 +57,7 @@ namespace NHibernate.Loader.Hql
 			get { return HasSubselectLoadableCollections(); }
 		}
 
-		protected override SqlString ApplyLocks(SqlString sql, IDictionary<string, LockMode> lockModes,
-												Dialect.Dialect dialect)
+		protected override SqlString ApplyLocks(SqlString sql, IDictionary<string, LockMode> lockModes, Dialect.Dialect dialect)
 		{
 			if (lockModes == null || lockModes.Count == 0)
 			{
@@ -76,9 +75,7 @@ namespace NHibernate.Loader.Hql
 				string userAlias = entry.Key;
 				string drivingSqlAlias = _sqlAliasByEntityAlias[userAlias];
 				if (drivingSqlAlias == null)
-				{
 					throw new InvalidOperationException("could not locate alias to apply lock mode : " + userAlias);
-				}
 
 				// at this point we have (drivingSqlAlias) the SQL alias of the driving table
 				// corresponding to the given user alias.  However, the driving table is not
@@ -88,12 +85,13 @@ namespace NHibernate.Loader.Hql
 				// it just happens that driving and root are the same).
 				var select = (QueryNode) _queryTranslator.SqlAST;
 				var drivingPersister = (ILockable) select.FromClause.GetFromElement(userAlias).Queryable;
-				string sqlAlias = drivingPersister.GetRootTableAlias(drivingSqlAlias);
-				aliasedLockModes.Add(sqlAlias, entry.Value);
-
-				if (keyColumnNames != null)
+				foreach (var querySpace in drivingPersister.QuerySpaces)
 				{
-					keyColumnNames.Add(sqlAlias, drivingPersister.RootTableIdentifierColumnNames);
+					string alias = drivingPersister.GetRootTableAlias(querySpace);
+					aliasedLockModes[alias] = entry.Value;
+
+					if (keyColumnNames != null)
+						keyColumnNames.Add(alias, drivingPersister.RootTableIdentifierColumnNames);
 				}
 			}
 
