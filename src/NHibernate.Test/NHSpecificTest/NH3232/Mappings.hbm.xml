@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
+                   assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.NH3232">
+  <class name="Page" table="roadkill_pages">
+    <id name="Id" generator="identity" />
+    <property name="Title" />
+    <property name="Tags" />
+    <property name="CreatedBy" />
+    <property name="CreatedOn" />
+    <property name="IsLocked" />
+    <property name="ModifiedBy" />
+    <property name="ModifiedOn" />
+  </class>
+
+  <class name="PageContent" table="roadkill_pagecontent">
+    <id name="Id" generator="guid.comb" />
+    <property name="EditedBy" />
+    <property name="EditedOn" />
+    <property name="VersionNumber" />
+    <property name="Text" />
+    <many-to-one class="Page" name="Page" column="pageid" cascade="none" index="pageid"/>
+  </class>
+</hibernate-mapping>
