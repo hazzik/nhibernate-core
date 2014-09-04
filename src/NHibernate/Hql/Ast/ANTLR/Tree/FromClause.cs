@@ -24,7 +24,7 @@ namespace NHibernate.Hql.Ast.ANTLR.Tree
 		/// Counts the from elements as they are added.
 		/// </summary>
 #pragma warning disable 649
-		private int _fromElementCounter;
+		private int _fromElementCounter = 0;
 #pragma warning restore 649
 
 		private readonly NullableDictionary<string, FromElement> _fromElementByClassAlias = new NullableDictionary<string, FromElement>();
