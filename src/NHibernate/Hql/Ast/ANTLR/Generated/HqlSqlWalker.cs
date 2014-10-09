@@ -3344,8 +3344,8 @@ public partial class HqlSqlWalker : Antlr.Runtime.Tree.TreeParser
 			retval.Tree = (IASTNode)adaptor.RulePostProcessing(root_0);
 
 
-				    SetAlias((se!=null?((IASTNode)se.Tree):default(IASTNode)),(i!=null?((IASTNode)i.Tree):default(IASTNode)));
-				    retval.Tree =  (se!=null?((IASTNode)se.Tree):default(IASTNode));
+					SetAlias((se!=null?((IASTNode)se.Tree):default(IASTNode)),(i!=null?((IASTNode)i.Tree):default(IASTNode)));
+					retval.Tree =  (se!=null?((IASTNode)se.Tree):default(IASTNode));
 				
 		}
 		catch (RecognitionException re)
@@ -6264,7 +6264,7 @@ public partial class HqlSqlWalker : Antlr.Runtime.Tree.TreeParser
 			retval.Tree = (IASTNode)adaptor.RulePostProcessing(root_0);
 
 
-				    PrepareLogicOperator( retval.Tree );
+					PrepareLogicOperator( retval.Tree );
 				
 		}
 		catch (RecognitionException re)
@@ -7376,7 +7376,7 @@ public partial class HqlSqlWalker : Antlr.Runtime.Tree.TreeParser
 			retval.Tree = (IASTNode)adaptor.RulePostProcessing(root_0);
 
 
-				    PrepareLogicOperator( retval.Tree );
+					PrepareLogicOperator( retval.Tree );
 				
 		}
 		catch (RecognitionException re)

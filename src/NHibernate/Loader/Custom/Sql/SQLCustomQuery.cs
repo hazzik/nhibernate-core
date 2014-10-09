@@ -23,7 +23,7 @@ namespace NHibernate.Loader.Custom.Sql
 		private readonly List<IParameterSpecification> parametersSpecifications;
 
 		public SQLCustomQuery(INativeSQLQueryReturn[] queryReturns, string sqlQuery, ICollection<string> additionalQuerySpaces,
-		                      ISessionFactoryImplementor factory)
+							  ISessionFactoryImplementor factory)
 		{
 			log.Debug("starting processing of sql query [" + sqlQuery + "]");
 			SQLQueryReturnProcessor processor = new SQLQueryReturnProcessor(queryReturns, factory);

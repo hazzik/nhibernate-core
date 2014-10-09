@@ -7562,11 +7562,11 @@ public partial class HqlParser : Antlr.Runtime.Parser
 
 			   if (c != null)
 			   {
-			      IASTNode mc = (IASTNode) adaptor.Create(METHOD_CALL, "||");
-			      IASTNode concat = (IASTNode) adaptor.Create(IDENT, "concat");
-			      mc.AddChild(concat);
-			      mc.AddChild((IASTNode) retval.Tree);
-			      retval.Tree = mc;
+				  IASTNode mc = (IASTNode) adaptor.Create(METHOD_CALL, "||");
+				  IASTNode concat = (IASTNode) adaptor.Create(IDENT, "concat");
+				  mc.AddChild(concat);
+				  mc.AddChild((IASTNode) retval.Tree);
+				  retval.Tree = mc;
 			   }
 
 		}

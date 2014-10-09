@@ -113,10 +113,10 @@ namespace NHibernate.Hql.Ast.ANTLR
 			get { return _querySpaces; }
 		}
 
-	    public IDictionary<string, object> NamedParameters
-	    {
-            get { return _namedParameters; }
-	    }
+		public IDictionary<string, object> NamedParameters
+		{
+			get { return _namedParameters; }
+		}
 
 		internal SessionFactoryHelperExtensions SessionFactoryHelper
 		{
@@ -617,8 +617,8 @@ namespace NHibernate.Hql.Ast.ANTLR
 				IASTNode fromElement = (IASTNode)adaptor.Create(FILTER_ENTITY, collectionElementEntityName);
 				IASTNode alias = (IASTNode)adaptor.Create(ALIAS, "this");
 
-                ((HqlSqlWalkerTreeNodeStream)input).InsertChild(fromClauseInput, fromElement);
-                ((HqlSqlWalkerTreeNodeStream)input).InsertChild(fromClauseInput, alias);
+				((HqlSqlWalkerTreeNodeStream)input).InsertChild(fromClauseInput, fromElement);
+				((HqlSqlWalkerTreeNodeStream)input).InsertChild(fromClauseInput, alias);
 
 //				fromClauseInput.AddChild(fromElement);
 //				fromClauseInput.AddChild(alias);
@@ -704,12 +704,12 @@ namespace NHibernate.Hql.Ast.ANTLR
 
 		IASTNode CreateFromElement(string path, IASTNode pathNode, IASTNode alias, IASTNode propertyFetch)
 		{
-            FromElement fromElement = _currentFromClause.AddFromElement(path, alias);
-            fromElement.SetAllPropertyFetch(propertyFetch != null);
-            return fromElement;
+			FromElement fromElement = _currentFromClause.AddFromElement(path, alias);
+			fromElement.SetAllPropertyFetch(propertyFetch != null);
+			return fromElement;
 		}
 
-	    IASTNode CreateFromFilterElement(IASTNode filterEntity, IASTNode alias)
+		IASTNode CreateFromFilterElement(IASTNode filterEntity, IASTNode alias)
 		{
 			FromElement fromElement = _currentFromClause.AddFromElement(filterEntity.Text, alias);
 			FromClause fromClause = fromElement.FromClause;
@@ -729,7 +729,7 @@ namespace NHibernate.Hql.Ast.ANTLR
 			{
 				join.AddJoin((IAssociationType)persister.ElementType,
 						fromElement.TableAlias,
-					 	JoinType.InnerJoin,
+						JoinType.InnerJoin,
 						persister.GetElementColumnNames(fkTableAlias));
 			}
 
