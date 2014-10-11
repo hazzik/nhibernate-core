@@ -1613,6 +1613,8 @@
     <Compile Include="NHSpecificTest\NH473\Child.cs" />
     <Compile Include="NHSpecificTest\NH473\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH473\Parent.cs" />
+    <Compile Include="NHSpecificTest\NH1839\Entity.cs" />
+    <Compile Include="NHSpecificTest\NH1839\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH645\HQLFunctionFixture.cs" />
     <Compile Include="Hql\HQLFunctions.cs" />
     <Compile Include="Hql\Human.cs" />
@@ -3389,6 +3391,7 @@
     <EmbeddedResource Include="TypesTest\MultiTypeEntity_Heuristic.hbm.xml" />
     <EmbeddedResource Include="TypesTest\MultiTypeEntity_Defined.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH1835\Mappings.hbm.xml" />
+    <EmbeddedResource Include="NHSpecificTest\NH1839\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH1834\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH1821\Mappings.hbm.xml" />
     <EmbeddedResource Include="TypeParameters\EntityCustomId.hbm.xml" />
