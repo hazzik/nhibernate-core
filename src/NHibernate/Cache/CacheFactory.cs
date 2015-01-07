@@ -82,7 +82,7 @@ namespace NHibernate.Cache
 						"cache usage attribute should be read-write, read-only or nonstrict-read-write");
 			}
 
-			ccs.Cache = cache;
+			ccs.Cache = new TransactionScopedCache(cache);
 
 			return ccs;
 		}

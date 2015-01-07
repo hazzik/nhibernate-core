@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test" namespace="NHibernate.Test.NHSpecificTest.NH3508">
+  <class name="SpecificVehicle" >
+    <cache usage="read-write"/>
+    <id name="Id">
+      <generator class="assigned"/>
+    </id>
+    <property name="Comments"/>
+  </class>
+ 
+</hibernate-mapping>
