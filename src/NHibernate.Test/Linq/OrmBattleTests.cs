@@ -171,11 +171,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Filtering")]
-		[ExpectedException(typeof(InvalidCastException))]
-		// Failed.
-		// Exception: InvalidCastException
-		// Message:
-		//   Unable to cast object of type 'NHibernate.Hql.Ast.HqlCast' to type 'NHibernate.Hql.Ast.HqlBooleanExpression'.
+		// Passed.
 		public void WhereConditionalBooleanTest()
 		{
 			var result = from o in db.Orders
@@ -1227,11 +1223,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Element operations")]
-		[ExpectedException(typeof(GenericADOException))]
-		// Failed.
-		// Inner Exception: InvalidCastException
-		// Message:
-		//   Unable to cast object of type 'OrmBattle.NHibernateModel.Northwind.Order' to type 'System.Collections.Generic.IList`1[OrmBattle.NHibernateModel.Northwind.Order]'.
+		// Passed.
 		public void NestedElementAtTest()
 		{
 			var result =
@@ -1641,12 +1633,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Complex")]
-		[ExpectedException(typeof(GenericADOException))]
-		// Failed.
-		// Inner Exception: ArgumentException
-		// Message:
-		//   The value "NHibernate.DomainModel.Northwind.Entities.Order" is not of type "Iesi.Collections.Generic.ISet`1[NHibernate.DomainModel.Northwind.Entities.Order]" and cannot be used in this generic collection.
-		//   Parameter name: value
+		// Passed
 		public void ComplexTest5()
 		{
 			var result = db.Customers
@@ -1830,7 +1817,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		// Passed.
+		// Passed
 		public void MathAbsTest()
 		{
 			var order = db.Orders.Where(o => Math.Abs(o.OrderId) == 10 || o.OrderId > 0).First();
@@ -1839,8 +1826,8 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		//Passed.
-		public void MathTrignometricTest()
+		// Passed
+		public void MathTrigonometricTest()
 		{
 			var order = db.Orders.Where(o => Math.Asin(Math.Cos(o.OrderId)) == 0 || o.OrderId > 0).First();
 			Assert.IsNotNull(order);
@@ -1848,11 +1835,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
-		// Failed.
-		// Exception: NotSupportedException
-		// Message:
-		//   System.Decimal Floor(System.Decimal)
+		// Passed
 		public void MathFloorTest()
 		{
 			var result = db.Orders.Where(o => Math.Floor(o.Freight.GetValueOrDefault()) == 140);
@@ -1862,11 +1845,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
-		// Failed.
-		// Exception: NotSupportedException
-		// Message:
-		//   System.Decimal Ceiling(System.Decimal)
+		// Passed
 		public void MathCeilingTest()
 		{
 			var result = db.Orders.Where(o => Math.Ceiling(o.Freight.GetValueOrDefault()) == 141);
@@ -1876,11 +1855,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
-		// Failed.
-		// Exception: NotSupportedException
-		// Message:
-		//   System.Decimal Truncate(System.Decimal)
+		// Passed
 		public void MathTruncateTest()
 		{
 			var result = db.Orders.Where(o => Math.Truncate(o.Freight.GetValueOrDefault()) == 141);
@@ -1933,10 +1908,7 @@ namespace NHibernate.Test.Linq
 		[Test]
 		[Category("Standard functions")]
 		[ExpectedException(typeof(NotSupportedException))]
-		// Failed.
-		// Exception: NotSupportedException
-		// Message:
-		//   Int32 ToInt32(System.Decimal)
+		// Passed.
 		public void ConvertToInt32()
 		{
 			var expected = Orders.Where(o => Convert.ToInt32(o.Freight*10) == 592);
@@ -1947,7 +1919,6 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
