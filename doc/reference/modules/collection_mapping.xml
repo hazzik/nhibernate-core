@@ -6,15 +6,15 @@
 
         <para>
             NHibernate requires that persistent collection-valued fields be declared
-            as an interface type, for example:
+            as a generic interface type, for example:
         </para>
         
         <programlisting><![CDATA[public class Product
 {
     private string serialNumber;
-    private ISet parts = new HashedSet();
+    private ISet<Part> parts = new HashSet<Part>();
     
-    public ISet Parts
+    public ISet<Part> Parts
     {
         get { return parts; }
         set { parts = value; }
@@ -28,37 +28,34 @@
 }]]></programlisting>
         
         <para>
-            The actual interface might be <literal>Iesi.Collections.ISet</literal>,
-            <literal>System.Collections.ICollection</literal>,
-            <literal>System.Collections.IList</literal>,
-            <literal>System.Collections.IDictionary</literal>,
+            The actual interface might be 
             <literal>System.Collections.Generic.ICollection&lt;T&gt;</literal>,
             <literal>System.Collections.Generic.IList&lt;T&gt;</literal>,
             <literal>System.Collections.Generic.IDictionary&lt;K, V&gt;</literal>,
-            <literal>Iesi.Collections.Generic.ISet&lt;T&gt;</literal>
+            <literal>System.Collections.Generic.ISet&lt;T&gt;</literal>
             or ... anything you like! (Where "anything you like" means you will
             have to write an implementation of <literal>NHibernate.UserType.IUserCollectionType</literal>.)
         </para>
         
         <para>
             Notice how we initialized the instance variable with an instance of
-            <literal>HashedSet</literal>. This is the best way to initialize collection
+            <literal>HashSet&lt;Part&gt;</literal>. This is the best way to initialize collection
             valued properties of newly instantiated (non-persistent) instances. When
             you make the instance persistent - by calling <literal>Save()</literal>,
-            for example - NHibernate will actually replace the <literal>HashedSet</literal>
-            with an instance of NHibernate's own implementation of <literal>ISet</literal>.
+            for example - NHibernate will actually replace the <literal>HashSet&lt;Part&gt;</literal>
+            with an instance of NHibernate's own implementation of <literal>ISet&lt;Part&gt;</literal>.
             Watch out for errors like this:
         </para>
 
         <programlisting><![CDATA[Cat cat = new DomesticCat();
 Cat kitten = new DomesticCat();
 ....
-ISet kittens = new HashedSet();
+ISet<Cat> kittens = new HashSet<Cat>();
 kittens.Add(kitten);
 cat.Kittens = kittens;
 session.Save(cat);
-kittens = cat.Kittens; //Okay, kittens collection is an ISet
-HashedSet hs = (HashedSet) cat.Kittens; //Error!]]></programlisting>
+kittens = cat.Kittens; //Okay, kittens collection is an ISet<Cat>
+HashSet<Cat> hs = (HashSet<Cat>) cat.Kittens; //Error!]]></programlisting>
 
         <para>
             Collection instances have the usual behavior of value types. They are automatically
@@ -97,9 +94,9 @@ HashedSet hs = (HashedSet) cat.Kittens; //Error!]]></programlisting>
         </para>
 
         <para>
-            All collection types except <literal>ISet</literal> and bag have an <emphasis>index
-            </emphasis> column - a column that maps to an array or <literal>IList</literal> index or
-            <literal>IDictionary</literal> key. The index of an <literal>IDictionary</literal> may be of any
+            All collection types except set and bag have an <emphasis>index
+            </emphasis> column - a column that maps to an array or <literal>IList&lt;T&gt;</literal> index or
+            <literal>IDictionary&lt;TKey, TValue&gt;</literal> key. The index of an <literal>IDictionary&lt;TKey, TValue&gt;</literal> may be of any
             basic type, an entity type or even a composite type (it may not be a collection). The
             index of an array or list is always of type <literal>Int32</literal>. Indexes are
             mapped using <literal>&lt;index&gt;</literal>, <literal>&lt;index-many-to-many&gt;</literal>,
@@ -214,7 +211,7 @@ HashedSet hs = (HashedSet) cat.Kittens; //Error!]]></programlisting>
                 <callout arearefs="mappingcollection8">
                     <para>
                         <literal>order-by</literal> (optional) specify a table column (or columns)
-                        that define the iteration order of the <literal>IDictionary</literal>, <literal>ISet</literal>
+                        that define the iteration order of the <literal>IDictionary&lt;TKey, TValue&gt;</literal>, <literal>ISet&lt;T&gt;</literal>
                         or bag, together with an optional <literal>asc</literal> or <literal>desc</literal>
                     </para>
                 </callout>
@@ -253,39 +250,38 @@ HashedSet hs = (HashedSet) cat.Kittens; //Error!]]></programlisting>
                 </callout>
                 <callout arearefs="mappingcollection14">
                     <para>
-                        <literal>generic</literal> (optional): Choose between generic and non-generic collection
-                        interface. If this option is not specified, NHibernate will use reflection to choose
-                        the interface.
+                        <literal>generic</literal> (optional, obsolete): Choose between generic and non-generic collection
+                        interfaces, currently NHibernate only supports generic collections.
                     </para>
                 </callout>
             </calloutlist>
         </programlistingco>
 
         <para>
-            The mapping of an <literal>IList</literal> or array requires a seperate table column holding the array
+            The mapping of an <literal>IList&lt;T&gt;</literal> or array requires a saparate table column holding the array
             or list index (the <literal>i</literal> in <literal>foo[i]</literal>). If your relational model doesn't
-            have an index column, e.g. if you're working with legacy data, use an unordered <literal>ISet</literal>
-            instead. This seems to put people off who assume that <literal>IList</literal> should just be a more
+            have an index column, e.g. if you're working with legacy data, use an unordered <literal>ISet&lt;T&gt;</literal>
+            instead. This seems to put people off who assume that <literal>IList&lt;T&gt;</literal> should just be a more
             convenient way of accessing an unordered collection. NHibernate collections strictly obey the actual
-            semantics attached to the <literal>ISet</literal>, <literal>IList</literal> and <literal>IDictionary</literal>
-            interfaces. <literal>IList</literal> elements don't just spontaneously rearrange themselves!
+            semantics attached to the <literal>ISet&lt;T&gt;</literal>, <literal>IList&lt;T&gt;</literal> and <literal>IDictionary&lt;TKey, TValue&gt;</literal>
+            interfaces. <literal>IList&lt;T&gt;</literal> elements don't just spontaneously rearrange themselves!
         </para>
 
         <para>
-            On the other hand, people who planned to use the <literal>IList</literal> to emulate
+            On the other hand, people who planned to use the <literal>IList&lt;T&gt;</literal> to emulate
             <emphasis>bag</emphasis> semantics have a legitimate grievance here.
             A bag is an unordered, unindexed collection which may contain the same element multiple times.
-            The .NET collections framework lacks an <literal>IBag</literal> interface, hence you have to emulate
-            it with an <literal>IList</literal>. NHibernate lets you map properties of type <literal>IList</literal>
-            or <literal>ICollection</literal> with the <literal>&lt;bag&gt;</literal> element. Note that bag
-            semantics are not really part of the <literal>ICollection</literal> contract and they actually
-            conflict with the semantics of the <literal>IList</literal> contract (however, you can sort
+            The .NET collections framework lacks an <literal>IBag&lt;T&gt;</literal> interface, hence you have to emulate
+            it with an <literal>IList&lt;T&gt;</literal>. NHibernate lets you map properties of type <literal>IList&lt;T&gt;</literal>
+            or <literal>ICollection&lt;T&gt;</literal> with the <literal>&lt;bag&gt;</literal> element. Note that bag
+            semantics are not really part of the <literal>ICollection&lt;T&gt;</literal> contract and they actually
+            conflict with the semantics of the <literal>IList&lt;T&gt;</literal> contract (however, you can sort
             the bag arbitrarily, discussed later in this chapter).
         </para>
 
         <para>
             Note: Large NHibernate bags mapped with <literal>inverse="false"</literal> are inefficient and
-            should be  avoided; NHibernate can't create, delete or update rows individually, because there is
+            should be avoided; NHibernate can't create, delete or update rows individually, because there is
             no key that may be used to identify an individual row.
         </para>
 
@@ -685,7 +681,7 @@ int accessLevel = (int) permissions["accounts"];  // Error!]]></programlisting>
             </listitem>
             <listitem>
                 <para>
-                    In an application with a seperate business tier, the business logic must
+                    In an application with a saparate business tier, the business logic must
                     "prepare" all collections that will be needed by the web tier before
                     returning. This means that the business tier should load all the data and
                     return all the data already initialized to the presentation/web tier that
@@ -707,17 +703,17 @@ int accessLevel = (int) permissions["accounts"];  // Error!]]></programlisting>
         </itemizedlist>
 
         <para>
-            You can use the <literal>Filter()</literal> method of the NHibernate ISession API to
+            You can use the <literal>CreateFilter()</literal> method of the NHibernate ISession API to
             get the size of a collection without initializing it:
         </para>
 
-        <programlisting><![CDATA[ICollection countColl = s.Filter( collection, "select count(*)" );
+        <programlisting><![CDATA[ICollection countColl = s.CreateFilter( collection, "select count(*)" ).List();
 IEnumerator countEn = countColl.GetEnumerator();
 countEn.MoveNext();
 int count = (int) countEn.Current;]]></programlisting>
 
         <para>
-            <literal>Filter()</literal> or <literal>CreateFilter()</literal> are also used to
+            <literal>CreateFilter()</literal> is also used to
             efficiently retrieve subsets of a collection without needing to initialize the whole
             collection.
         </para>
@@ -729,7 +725,7 @@ int count = (int) countEn.Current;]]></programlisting>
 
         <para>
             NHibernate supports collections implemented by <literal>System.Collections.SortedList</literal> and
-            <literal>Iesi.Collections.SortedSet</literal>. You must specify a comparer in the mapping file:
+            <literal>System.Collections.Generic.SortedSet&lt;T&gt;</literal>. You must specify a comparer in the mapping file:
         </para>
 
         <programlisting><![CDATA[<set name="Aliases" table="person_aliases" sort="natural">
@@ -994,14 +990,14 @@ session.Update(category);                 // The relationship will be saved]]></
         </para>
 
         <programlisting><![CDATA[using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Eg
     
     public class Parent
     {
         private long id;
-        private ISet children;
+        private ISet<Child> children;
     
         public long Id
         {
@@ -1009,7 +1005,7 @@ namespace Eg
             set { id = value; }
         }
         
-        private ISet Children
+        private ISet<Child> Children
         {
             get { return children; }
             set { children = value; }

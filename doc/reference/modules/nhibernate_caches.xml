@@ -234,9 +234,9 @@
 			<title>Table-based Dependency</title>
 
 			<para>
-				A table-based dependency will monitor the data in a database table for changes. Table-based
-				dependencies are generally used for a SQL Server 2000 database but will work with SQL Server 2005 as
-				well. Before you can use SQL Server cache invalidation with table based dependencies, you need to
+				A table-based dependency will monitor the data in a database table for changes. Table-based dependencies
+				are generally used for a SQL Server 2000 database but will work with SQL Server 2005 or superior as	well.
+				Before you can use SQL Server cache invalidation with table based dependencies, you need to
 				enable notifications for the database. This task is performed with the <command>aspnet_regsql</command>
 				command. With table-based notifications, the application will poll the database for changes at a
 				predefined interval. A cache region will not be invalidated immediately when data in the table changes.

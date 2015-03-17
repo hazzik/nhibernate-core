@@ -326,7 +326,7 @@ new SchemaExport(cfg).Create(false, true);]]></programlisting>
         <para>
           The NHibernate code generator may be used to generate skeletal C# implementation classes
           from a NHibernate mapping file. This tool is included in the NHibernate Contrib package
-          (a seperate download in http://sourceforge.net/projects/nhcontrib/).
+          (a saparate download in http://sourceforge.net/projects/nhcontrib/).
         </para>
 
         <para>

@@ -11,7 +11,7 @@
         </para>
 
         <programlisting><![CDATA[using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Eg
 {
@@ -19,7 +19,7 @@ namespace Eg
     {
         private long _id;
         private string _name;
-        private IList _items;
+        private IList<BlogItem> _items;
     
         public virtual long Id
         {
@@ -27,7 +27,7 @@ namespace Eg
             set { _id = value; }
         }
         
-        public virtual IList Items
+        public virtual IList<BlogItem> Items
         {
             get { return _items; }
             set { _items = value; }
@@ -185,7 +185,7 @@ namespace Eg
         </para>
 
         <programlisting><![CDATA[using System;
-using System.Collections;
+using System.Collections.Generic;
 
 using NHibernate.Tool.hbm2ddl;
 
@@ -215,7 +215,7 @@ namespace Eg
         {
             Blog blog = new Blog();
             blog.Name = name;
-            blog.Items = new ArrayList();
+            blog.Items = new List<BlogItem>();
             
             using (ISession session = _sessions.OpenSession())
             using (ITransaction tx = session.BeginTransaction())
@@ -256,7 +256,7 @@ namespace Eg
             using (ISession session = _sessions.OpenSession())
             using (ITransaction tx = session.BeginTransaction())
             {
-                Blog blog = (Blog) session.Load(typeof(Blog), blogId);
+                Blog blog = session.Load<Blog>(blogId);
                 item.Blog = blog;
                 blog.Items.Add(item);
                 tx.Commit();
@@ -282,15 +282,15 @@ namespace Eg
             using (ISession session = _sessions.OpenSession())
             using (ITransaction tx = session.BeginTransaction())
             {
-                BlogItem item = (BlogItem) session.Load(typeof(BlogItem), itemId);
+                BlogItem item = session.Load<BlogItem>(itemId);
                 item.Text = text;
                 tx.Commit();
             }
         }
         
-        public IList listAllBlogNamesAndItemCounts(int max)
+        public IList<BlogItem> ListAllBlogNamesAndItemCounts(int max)
         {
-            IList result = null;
+            IList<BlogItem> result = null;
 
             using (ISession session = _sessions.OpenSession())
             using (ITransaction tx = session.BeginTransaction())
@@ -303,7 +303,7 @@ namespace Eg
                     "order by max(blogItem.DateTime)"
                 );
                 q.SetMaxResults(max);
-                result = q.List();
+                result = q.List<BlogItem>();
                 tx.Commit();
             }
 
@@ -330,9 +330,9 @@ namespace Eg
             return blog;
         }
         
-        public IList ListBlogsAndRecentItems()
+        public IList<Blog> ListBlogsAndRecentItems()
         {
-            IList result = null;
+            IList<Blog> result = null;
 
             using (ISession session = _sessions.OpenSession())
             using (ITransaction tx = session.BeginTransaction())
@@ -346,7 +346,7 @@ namespace Eg
                 DateTime date = DateTime.Now.AddMonths(-1);
                 q.SetDateTime("minDate", date);
                 
-                result = q.List();
+                result = q.List<Blog>();
                 tx.Commit();
             }
 

@@ -176,10 +176,10 @@
                     and <literal>GetHashCode()</literal>. Inside the ISession scope, object identity is guaranteed. If
                     you implement these methods, never ever use the database identifier! A transient object doesn't have
                     an identifier value and NHibernate would assign a value when the object is saved. If the object
-                    is in an ISet while being saved, the hash code changes, breaking the contract. To implement
+                    is in an ISet&lt;T&gt; while being saved, the hash code changes, breaking the contract. To implement
                     <literal>Equals()</literal> and <literal>GetHashCode()</literal>, use a unique business key, that is,
                     compare a unique combination of class properties. Remember that this key has to be stable and unique
-                    only while the object is in an ISet, not for the whole lifetime (not as stable as a database primary
+                    only while the object is in an ISet&lt;T&gt;, not for the whole lifetime (not as stable as a database primary
                     key). Never use collections in the <literal>Equals()</literal> comparison (lazy loading) and be careful
                     with other associated classes that might be proxied.
                 </para>

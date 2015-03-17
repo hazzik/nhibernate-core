@@ -252,7 +252,7 @@ int accessLevel = (int) permissions["accounts"];  // Error!]]></programlisting>
                 <literal>ICriteria</literal> query, for example:
             </para>
             
-            <programlisting><![CDATA[User user = (User) session.CreateCriteria(typeof(User))
+            <programlisting><![CDATA[User user = (User) session.CreateCriteria<User>()
                 .SetFetchMode("Permissions", FetchMode.Join)
                 .Add( Expression.Eq("Id", userId) )
                 .UniqueResult();]]></programlisting>
@@ -310,7 +310,7 @@ int accessLevel = (int) permissions["accounts"];  // Error!]]></programlisting>
                 instance of <literal>DomesticCat</literal>:
             </para>
 
-            <programlisting><![CDATA[Cat cat = (Cat) session.Load(typeof(Cat), id);  // instantiate a proxy (does not hit the db)
+            <programlisting><![CDATA[Cat cat = session.Load<Cat>(id);  // instantiate a proxy (does not hit the db)
 if ( cat.IsDomesticCat ) {                  // hit the db to initialize the proxy
     DomesticCat dc = (DomesticCat) cat;       // Error!
     ....
@@ -320,9 +320,9 @@ if ( cat.IsDomesticCat ) {                  // hit the db to initialize the prox
                 Secondly, it is possible to break proxy <literal>==</literal>.
             </para>
 
-            <programlisting><![CDATA[Cat cat = (Cat) session.Load(typeof(Cat), id);            // instantiate a Cat proxy
+            <programlisting><![CDATA[Cat cat = session.Load<Cat>(id);            // instantiate a Cat proxy
 DomesticCat dc = 
-        (DomesticCat) session.Load(typeof(DomesticCat), id);  // acquire new DomesticCat proxy!
+        session.Load<DomesticCat>(id);  // acquire new DomesticCat proxy!
 System.out.println(cat==dc);                            // false]]></programlisting>
 
             <para>
@@ -365,7 +365,7 @@ Console.WriteLine( dc.Weight );  // 11.0]]></programlisting>
                 does not usually return proxies.)
             </para>
 
-            <programlisting><![CDATA[ICat cat = (ICat) session.Load(typeof(CatImpl), catid);
+            <programlisting><![CDATA[ICat cat = session.Load<CatImpl>(catid);
 IEnumerator iter = session.Enumerable("from CatImpl as cat where cat.Name='fritz'").GetEnumerator();
 iter.MoveNext();
 ICat fritz = (ICat) iter.Current;]]></programlisting>
@@ -903,8 +903,8 @@ foreach( Cat cat in cats )
             role.
         </para>
         
-        <programlisting><![CDATA[sessionFactory.Evict(typeof(Cat), catId); //evict a particular Cat
-sessionFactory.Evict(typeof(Cat));  //evict all Cats
+        <programlisting><![CDATA[sessionFactory.Evict<Cat>(catId); //evict a particular Cat
+sessionFactory.Evict<Cat>();  //evict all Cats
 sessionFactory.EvictCollection("Eg.Cat.Kittens", catId); //evict a particular collection of kittens
 sessionFactory.EvictCollection("Eg.Cat.Kittens"); //evict all kitten collections]]></programlisting>
 
@@ -943,18 +943,18 @@ sessionFactory.EvictCollection("Eg.Cat.Kittens"); //evict all kitten collections
             <literal>IQuery.SetCacheRegion()</literal>.
         </para>
         
-        <programlisting><![CDATA[IList blogs = sess.CreateQuery("from Blog blog where blog.Blogger = :blogger")
+        <programlisting><![CDATA[IList<Blog> blogs = sess.CreateQuery("from Blog blog where blog.Blogger = :blogger")
     .SetEntity("blogger", blogger)
     .SetMaxResults(15)
     .SetCacheable(true)
     .SetCacheRegion("frontpages")
-    .List();]]></programlisting>
+    .List<Blog>();]]></programlisting>
 
         <para>
             If the query should force a refresh of its query cache region, you may call
             <literal>IQuery.SetForceCacheRefresh()</literal> to <literal>true</literal>.
             This is particularly useful in cases where underlying data may have been updated
-            via a seperate process (i.e., not modified through NHibernate) and allows the
+            via a saparate process (i.e., not modified through NHibernate) and allows the
             application to selectively refresh the query cache regions based on its
             knowledge of those events. This is a more efficient alternative to eviction of 
             a query cache region via <literal>ISessionFactory.EvictQueries()</literal>.
@@ -1062,8 +1062,8 @@ sessionFactory.EvictCollection("Eg.Cat.Kittens"); //evict all kitten collections
             <para>
                 There is, arguably, one more advantage that indexed collections have over sets for
                 many to many associations or collections of values. Because of the structure of an
-                <literal>ISet</literal>, NHibernate doesn't ever <literal>UPDATE</literal> a row when
-                an element is "changed". Changes to an <literal>ISet</literal> always work via
+                <literal>ISet&lt;T&gt;</literal>, NHibernate doesn't ever <literal>UPDATE</literal> a row when
+                an element is "changed". Changes to an <literal>ISet&lt;T&gt;</literal> always work via
                 <literal>INSERT</literal> and <literal>DELETE</literal> (of individual rows). Once
                 again, this consideration does not apply to one to many associations.
             </para>
@@ -1094,10 +1094,10 @@ sessionFactory.EvictCollection("Eg.Cat.Kittens"); //evict all kitten collections
                 (the standard bidirectional one-to-many relationship idiom, for example) we can add elements
                 to a bag or list without needing to initialize (fetch) the bag elements! This is because
                 <literal>IList.Add()</literal> must always succeed for a bag or <literal>IList</literal>
-                (unlike an <literal>ISet</literal>). This can make the following common code much faster.
+                (unlike an <literal>ISet&lt;T&gt;</literal>). This can make the following common code much faster.
             </para>
 
-            <programlisting><![CDATA[Parent p = (Parent) sess.Load(typeof(Parent), id);
+            <programlisting><![CDATA[Parent p = sess.Load<Parent>(id);
     Child c = new Child();
     c.Parent = p;
     p.Children.Add(c);  //no need to fetch the collection!
@@ -1277,10 +1277,10 @@ IMultiQuery multiQuery = s.CreateMultiQuery()
         </para>
         
         <programlisting><![CDATA[IMultiCriteria multiCrit = s.CreateMultiCriteria()
-    .Add(s.CreateCriteria(typeof(Item))
+    .Add(s.CreateCriteria<Item>()
             .Add(Expression.Gt("Id", 50))
             .SetFirstResult(10))
-    .Add(s.CreateCriteria(typeof(Item))
+    .Add(s.CreateCriteria<Item>()
             .Add(Expression.Gt("Id", 50))
             .SetProject(Projections.RowCount()));
 IList results = multiCrit.List();

@@ -190,23 +190,23 @@
             <programlisting role="c#">Session.DefaultReadOnly;</programlisting>
 
             <para> 
-                If Session.DefaultReadOnly property returns true, entities loaded by 
+                If <literal>Session.DefaultReadOnly</literal> property returns true, entities loaded by 
                 the following are automatically made read-only:
             </para>
             <itemizedlist>
                 <listitem>
                     <para>
-                        Session.Load() and Session.Load&lt;T&gt;
+                        <literal>Session.Load()</literal> and <literal>Session.Load&lt;T&gt;</literal>
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        Session.Get() and Session.Get&lt;T&gt;
+                        <literal>Session.Get()</literal> and <literal>Session.Get&lt;T&gt;</literal>
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        Session.Merge()
+                        <literal>Session.Merge()</literal>
                     </para>   
                 </listitem>
                 <listitem>
@@ -232,7 +232,7 @@
                 <listitem>
                     <para>
                         persistent entities that are refreshed via
-                        Session.Refresh(); a refreshed persistent 
+                        <literal>Session.Refresh()</literal>; a refreshed persistent 
                         entity will only be read-only if it was 
                         read-only before refreshing
                     </para>
@@ -240,8 +240,8 @@
                 <listitem>
                     <para>
                         persistent entities added by the application via 
-                        Session.Persist(), Session.Save(), and Session.Update()
-                        Session.SaveOrUpdate()
+                        <literal>Session.Persist()</literal>, <literal>Session.Save()</literal>, and <literal>Session.Update()</literal>
+                        <literal>Session.SaveOrUpdate()</literal>
                     </para>   
                 </listitem>
             </itemizedlist>

@@ -21,7 +21,7 @@
         </para>
 
         <programlisting><![CDATA[using System;
-using Iesi.Collections;
+using System.Collections.Generic;
 
 namespace Eg
 {
@@ -40,7 +40,7 @@ namespace Eg
         public virtual DateTime Birthdate { get; set; } 
         public virtual float Weight { get; set; } 
         public virtual Color Color { get; set; } 
-        public virtual ISet Kittens { get; set; } 
+        public virtual ISet<Cat> Kittens { get; set; } 
         public virtual char Sex { get; set; } 
 
         // AddKitten not needed by NHibernate
@@ -170,7 +170,7 @@ namespace Eg
 
         <para>
             You have to override the <literal>Equals()</literal> and <literal>GetHashCode()</literal>
-            methods if you intend to mix objects of persistent classes (e.g. in an <literal>ISet</literal>).
+            methods if you intend to mix objects of persistent classes (e.g. in an <literal>ISet&lt;T&gt;</literal>).
         </para>
 
         <para>
@@ -189,8 +189,8 @@ namespace Eg
         <para>
             The most obvious way is to implement <literal>Equals()</literal>/<literal>GetHashCode()</literal>
             by comparing the identifier value of both objects. If the value is the same, both must
-            be the same database row, they are therefore equal (if both are added to an <literal>ISet</literal>,
-            we will only have one element in the <literal>ISet</literal>). Unfortunately, we can't use that
+            be the same database row, they are therefore equal (if both are added to an <literal>ISet&lt;T&gt;</literal>,
+            we will only have one element in the <literal>ISet&lt;T&gt;</literal>). Unfortunately, we can't use that
             approach. NHibernate will only assign identifier values to objects that are persistent,
             a newly created instance will not have any identifier value! We recommend implementing
             <literal>Equals()</literal> and <literal>GetHashCode()</literal> using

@@ -153,7 +153,7 @@
 </set>]]></programlisting>
 
         <para>
-            Note: if you define an <literal>ISet</literal> of composite elements, it is 
+            Note: if you define an <literal>ISet&lt;T&gt;</literal> of composite elements, it is 
             very important to implement <literal>Equals()</literal> and 
             <literal>GetHashCode()</literal> correctly.
         </para>

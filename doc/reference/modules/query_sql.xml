@@ -312,7 +312,7 @@ IList loggedCats = sess.CreateSQLQuery(sql)
       <para>It is possible to apply an <literal>IResultTransformer</literal> to native sql queries. Allowing it to e.g. return non-managed entities.</para>
 
       <programlisting><![CDATA[sess.CreateSQLQuery("SELECT NAME, BIRTHDATE FROM CATS")
-        .SetResultTransformer(Transformers.AliasToBean(typeof(CatDTO)))]]></programlisting>
+        .SetResultTransformer(Transformers.AliasToBean<CatDTO>())]]></programlisting>
         
               <para>This query specified:</para>
 
@@ -353,7 +353,7 @@ IList loggedCats = sess.CreateSQLQuery(sql)
       <programlisting><![CDATA[Query query = sess.CreateSQLQuery("SELECT * FROM CATS WHERE NAME like ?").AddEntity(typeof(Cat));
 IList pusList = query.SetString(0, "Pus%").List();
      
-query = sess.createSQLQuery("SELECT * FROM CATS WHERE NAME like :name").AddEntity(typeof(Cat));
+query = sess.CreateSQLQuery("SELECT * FROM CATS WHERE NAME like :name").AddEntity(typeof(Cat));
 IList pusList = query.SetString("name", "Pus%").List();          ]]></programlisting>
     </sect2>
     

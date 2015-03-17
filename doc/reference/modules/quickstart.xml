@@ -5,7 +5,7 @@
         <title>Getting started with NHibernate</title>
 
         <para>
-            This tutorial explains a setup of NHibernate 2.1.0 within a Microsoft
+            This tutorial explains a setup of NHibernate 4.1 within a Microsoft
             environment. The tools used in this tutorial are:
         </para>
         
@@ -15,22 +15,23 @@
                 ASP.NET.
             </listitem>
             <listitem>
-                Microsoft SQL Server 2005 - the database server. This tutorial uses
-                the desktop edition (SQL-EXPRESS), a free download from Microsoft. Support
+                Microsoft SQL Server (at least, 2005, but can be 2008, 2008 R2, 2012 or 2014) - the database server. This tutorial uses
+                the desktop edition (SQL Express), a free download from Microsoft. Support
                 for other databases is only a matter of changing the NHibernate SQL
                 dialect and driver configuration.
             </listitem>
             <listitem>
-                Microsoft Visual Studio .NET (at leats 2005) - the development environment.
+                Microsoft Visual Studio .NET (at least, 2005, but can be 2008, 2010, 2012 or 2013, including the Express and Community editions) - the development environment.
             </listitem>
         </orderedlist>
 
         <para>
             First, we have to create a new Web project. We use the name <literal>QuickStart</literal>,
-            the project web virtual directory will <literal>http://localhost/QuickStart</literal>.
-            In the project, add a reference to <literal>NHibernate.dll</literal>. Visual Studio
+            the project web virtual directory will <literal>http://localhost/QuickStart</literal>. 
+            Download NHibernate, either from SourceForge (http://sourceforge.net/projects/nhibernate/) or NuGet (<literal>Install-Package NHibernate</literal>).
+            In the project, add a reference to <literal>NHibernate.dll</literal> (NuGet already does this). Visual Studio
             will automatically copy the library and its dependencies to the project output directory.
-            If you are using a database other than SQL Server, add a reference to the driver assembly
+            If you are using a database other than SQL Server, add a reference to its driver assembly
             to your project.
         </para>
 
@@ -57,8 +58,6 @@
             <property name="dialect">NHibernate.Dialect.MsSql2005Dialect</property>
             <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
             <property name="connection.connection_string">Server=localhost\SQLEXPRESS;initial catalog=quickstart;Integrated Security=True</property>
-            <property name="proxyfactory.factory_class">NHibernate.ByteCode.LinFu.ProxyFactoryFactory, NHibernate.ByteCode.LinFu</property>
-
             <mapping assembly="QuickStart" />
         </session-factory>
     </hibernate-configuration>
@@ -74,7 +73,7 @@
             sections that follow and handlers to use to process their content. We declare
             the handler for the configuration section here. The <literal>
             &lt;hibernate-configuration&gt;</literal> section contains the configuration
-            itself, telling NHibernate that we will use a Microsoft SQL Server 2000
+            itself, telling NHibernate that we will use a Microsoft SQL Server 2005
             database and connect to it through the specified connection string.
             The dialect is a required setting, databases differ in their interpretation
             of the SQL "standard". NHibernate will take care of the differences and comes
@@ -187,7 +186,7 @@
             foreign key relationships to other entities) to database tables.
         </para>
         <para>
-			Please note that the Cat.hbm.xml should be set to an embedded resource.
+			Please note that the <literal>Cat.hbm.xml</literal> should be set to an embedded resource.
         </para>
 
         <programlisting><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
@@ -410,7 +409,7 @@ NHibernateHelper.CloseSession();]]></programlisting>
 
 IQuery query = session.CreateQuery("select c from Cat as c where c.Sex = :sex");
 query.SetCharacter("sex", 'F');
-foreach (Cat cat in query.Enumerable())
+foreach (Cat cat in query.List<Cat>())
 {
     Console.Out.WriteLine("Female Cat: " + cat.Name);
 }
@@ -419,10 +418,11 @@ tx.Commit();]]></programlisting>
 
         <para>
             NHibernate also offers an object-oriented <emphasis>query by criteria</emphasis> API
-            that can be used to formulate type-safe queries. NHibernate of course uses
-            <literal>IDbCommand</literal>s and parameter binding for all SQL communication
-            with the database. You may also use NHibernate's direct SQL query feature or
-            get a plain ADO.NET connection from an <literal>ISession</literal> in rare cases.
+            that can be used to formulate type-safe queries as well as a strongly-typed LINQ API, 
+            which translates internally to HQL. NHibernate of course uses <literal>IDbCommand</literal>
+            s and parameter binding for all SQL communication with the database. You may also use 
+            NHibernate's direct SQL query feature or get a plain ADO.NET connection from an 
+            <literal>ISession</literal> in rare cases.
         </para>
 
     </sect1>

@@ -22,7 +22,7 @@ long generatedId = (long) sess.Save(fritz);]]></programlisting>
 pk.Color = Color.Tabby;
 pk.Sex = 'F';
 pk.Name = "PK";
-pk.Kittens = new HashSet();
+pk.Kittens = new HashSet<Cat>();
 pk.AddKitten(fritz);
 sess.Save( pk, 1234L );]]></programlisting>
 
@@ -54,15 +54,15 @@ sess.Save( pk, 1234L );]]></programlisting>
             circumstances (DIY instance pooling etc.)
         </para>
 
-        <programlisting><![CDATA[Cat fritz = (Cat) sess.Load(typeof(Cat), generatedId);]]></programlisting>
+        <programlisting><![CDATA[Cat fritz = sess.Load<Cat>(generatedId);]]></programlisting>
 
 <programlisting><![CDATA[long pkId = 1234;
-DomesticCat pk = (DomesticCat) sess.Load( typeof(Cat), pkId );]]></programlisting>
+DomesticCat pk = (DomesticCat) sess.Load<Cat>(pkId);]]></programlisting>
 
 <programlisting><![CDATA[Cat cat = new DomesticCat();
 // load pk's state into cat
 sess.Load( cat, pkId );
-ISet kittens = cat.Kittens;]]></programlisting>
+ISet<Cat> kittens = cat.Kittens;]]></programlisting>
 
         <para>
             Note that <literal>Load()</literal> will throw an unrecoverable exception if there is no matching 
@@ -77,7 +77,7 @@ ISet kittens = cat.Kittens;]]></programlisting>
             method, which hits the database immediately and returns null if there is no matching row.
         </para>
         
-        <programlisting><![CDATA[Cat cat = (Cat) sess.Get(typeof(Cat), id);
+        <programlisting><![CDATA[Cat cat = sess.Get<Cat>(id);
 if (cat==null) {
     cat = new Cat();
     sess.Save(cat, id);
@@ -89,7 +89,7 @@ return cat;]]></programlisting>
             section for a discussion of NHibernate <literal>LockMode</literal>s.
         </para>
 
-        <programlisting><![CDATA[Cat cat = (Cat) sess.Get(typeof(Cat), id, LockMode.Upgrade);]]></programlisting>
+        <programlisting><![CDATA[Cat cat = sess.Get<Cat>(id, LockMode.Upgrade);]]></programlisting>
         
         <para>
             Note that any associated instances or contained collections are <emphasis>not</emphasis> selected 
@@ -124,35 +124,35 @@ sess.Refresh(cat); //re-read the state (after the trigger executes)]]></programl
             oriented query language.
         </para>
 
-        <programlisting><![CDATA[IList cats = sess.Find(
+        <programlisting><![CDATA[IList<Cat> cats = sess.Find(
     "from Cat as cat where cat.Birthdate = ?",
     date,
     NHibernateUtil.Date
 );
 
-IList mates = sess.Find(
+IList<Cat> mates = sess.Find(
     "select mate from Cat as cat join cat.Mate as mate " +
     "where cat.name = ?",
     name,
     NHibernateUtil.String
 );
 
-IList cats = sess.Find( "from Cat as cat where cat.Mate.Birthdate is null" );
+IList<Cat> cats = sess.Find( "from Cat as cat where cat.Mate.Birthdate is null" );
 
-IList moreCats = sess.Find(
+IList<Cat> moreCats = sess.Find(
     "from Cat as cat where " + 
     "cat.Name = 'Fritz' or cat.id = ? or cat.id = ?",
     new object[] { id1, id2 },
     new IType[] { NHibernateUtil.Int64, NHibernateUtil.Int64 }
 );
 
-IList mates = sess.Find(
+IList<Cat> mates = sess.Find(
     "from Cat as cat where cat.Mate = ?",
     izi,
     NHibernateUtil.Entity(typeof(Cat))
 );
 
-IList problems = sess.Find(
+IList<Cat> problems = sess.Find(
     "from GoldFish as fish " +
     "where fish.Birthday > fish.Deceased or fish.Birthday is null"
 );]]></programlisting>
@@ -257,7 +257,7 @@ foreach ( object[] row in results )
     "select cat.Type, cat.Birthdate, cat.Name from DomesticCat cat"
 );]]></programlisting>
 
-        <programlisting><![CDATA[IList list = sess.Find(
+        <programlisting><![CDATA[IList<Cat> list = sess.Find(
     "select cat, cat.Mate.Name from DomesticCat cat"
 );]]></programlisting>
 
@@ -275,7 +275,7 @@ foreach ( object[] row in results )
             <programlisting><![CDATA[IQuery q = sess.CreateQuery("from DomesticCat cat");
 q.SetFirstResult(20);
 q.SetMaxResults(10);
-IList cats = q.List();]]></programlisting>
+IList<Cat> cats = q.List<Cat>();]]></programlisting>
         
             <para>
                 You may even define a named query in the mapping document. (Remember to use a
@@ -292,7 +292,7 @@ IList cats = q.List();]]></programlisting>
             <programlisting><![CDATA[IQuery q = sess.GetNamedQuery("Eg.DomesticCat.by.name.and.minimum.weight");
 q.SetString(0, name);
 q.SetInt32(1, minWeight);
-IList cats = q.List();]]></programlisting>
+IList<Cat> cats = q.List<Cat>();]]></programlisting>
 
             <para>
                 The query interface supports the use of named parameters. Named parameters
@@ -324,20 +324,20 @@ IList cats = q.List();]]></programlisting>
             <programlisting><![CDATA[//named parameter (preferred)
 IQuery q = sess.CreateQuery("from DomesticCat cat where cat.Name = :name");
 q.SetString("name", "Fritz");
-IEnumerable cats = q.Enumerable();]]></programlisting>
+IEnumerable<Cat> cats = q.Enumerable<Cat>();]]></programlisting>
         
             <programlisting><![CDATA[//positional parameter
 IQuery q = sess.CreateQuery("from DomesticCat cat where cat.Name = ?");
 q.SetString(0, "Izi");
-IEnumerable cats = q.Enumerable();]]></programlisting>
+IEnumerable<Cat> cats = q.Enumerable<Cat>();]]></programlisting>
 
             <programlisting><![CDATA[//named parameter list
-IList names = new ArrayList();
+IList<string> names = new List<string>();
 names.Add("Izi");
 names.Add("Fritz");
 IQuery q = sess.CreateQuery("from DomesticCat cat where cat.Name in (:namesList)");
 q.SetParameterList("namesList", names);
-IList cats = q.List();]]></programlisting>
+IList<Cat> cats = q.List<Cat>();]]></programlisting>
 
         </sect2>
 
@@ -349,9 +349,9 @@ IList cats = q.List();]]></programlisting>
                 meaning the current collection element.
             </para>
 
-            <programlisting><![CDATA[ICollection blackKittens = session.Filter(
+            <programlisting><![CDATA[ICollection<Cat> blackKittens = session.CreateFilter(
     pk.Kittens, "where this.Color = ?", Color.Black, NHibernateUtil.Enum(typeof(Color))
-);]]></programlisting>
+).List<Cat>();]]></programlisting>
         
             <para>
                 The returned collection is considered a bag.
@@ -362,9 +362,9 @@ IList cats = q.List();]]></programlisting>
                 one if required). Filters are not limited to returning the collection elements themselves.
             </para>
 
-            <programlisting><![CDATA[ICollection blackKittenMates = session.Filter(
+            <programlisting><![CDATA[ICollection<Cat> blackKittenMates = session.CreateFilter(
     pk.Kittens, "select this.Mate where this.Color = Eg.Color.Black"
-);]]></programlisting>
+).List<Cat>();]]></programlisting>
 
         </sect2>
 
@@ -376,10 +376,10 @@ IList cats = q.List();]]></programlisting>
                 NHibernate provides an intuitive <literal>ICriteria</literal> query API.
             </para>
 
-            <programlisting><![CDATA[ICriteria crit = session.CreateCriteria(typeof(Cat));
+            <programlisting><![CDATA[ICriteria crit = session.CreateCriteria<Cat>();
 crit.Add( Expression.Eq("color", Eg.Color.Black) );
 crit.SetMaxResults(10);
-IList cats = crit.List();]]></programlisting>
+IList<Cat> cats = crit.List<Cat>();]]></programlisting>
     
             <para>
                 If you are uncomfortable with SQL-like syntax, this is perhaps the easiest way to get started
@@ -395,19 +395,19 @@ IList cats = crit.List();]]></programlisting>
                 SQL aliases in braces.
             </para>
 
-            <programlisting><![CDATA[IList cats = session.CreateSQLQuery(
+            <programlisting><![CDATA[IList<Cat> cats = session.CreateSQLQuery(
     "SELECT {cat.*} FROM CAT {cat} WHERE ROWNUM<10",
     "cat",
     typeof(Cat)
-).List();]]></programlisting>
+).List<Cat>();]]></programlisting>
                 
-            <programlisting><![CDATA[IList cats = session.CreateSQLQuery(
+            <programlisting><![CDATA[IList<Cat> cats = session.CreateSQLQuery(
     "SELECT {cat}.ID AS {cat.Id}, {cat}.SEX AS {cat.Sex}, " +
            "{cat}.MATE AS {cat.Mate}, {cat}.SUBCLASS AS {cat.class}, ... " +
     "FROM CAT {cat} WHERE ROWNUM<10",
     "cat",
     typeof(Cat)
-).List()]]></programlisting>
+).List<Cat>()]]></programlisting>
 
             <para>
                 SQL queries may contain named and positional parameters, just like NHibernate queries.
@@ -433,7 +433,7 @@ IList cats = crit.List();]]></programlisting>
                 and then manipulate it directly, while the <literal>ISession</literal> is open:
             </para>
 
-            <programlisting><![CDATA[DomesticCat cat = (DomesticCat) sess.Load( typeof(Cat), 69L );
+            <programlisting><![CDATA[DomesticCat cat = (DomesticCat) sess.Load<Cat>( 69L );
 cat.Name = "PK";
 sess.Flush();  // changes to cat are automatically detected and persisted]]></programlisting>
 
@@ -456,11 +456,11 @@ sess.Flush();  // changes to cat are automatically detected and persisted]]></pr
                 usually use versioned  data to ensure transaction isolation.) This approach
                 requires a slightly different  programming model to the one described in the
                 last section. NHibernate supports this model by providing the
-                method <literal>Session.Update()</literal>.
+                method <literal>ISession.Update()</literal>.
             </para>
 
             <programlisting><![CDATA[// in the first session
-Cat cat = (Cat) firstSession.Load(typeof(Cat), catId);
+Cat cat = firstSession.Load<Cat>(catId);
 Cat potentialMate = new Cat();
 firstSession.Save(potentialMate);
 
@@ -543,7 +543,7 @@ secondSession.Update(mate); // update mate]]></programlisting>
             </para>
 
             <programlisting><![CDATA[// in the first session
-Cat cat = (Cat) firstSession.Load(typeof(Cat), catID);
+Cat cat = firstSession.Load<Cat>(catID);
 
 // in a higher tier of the application
 Cat mate = new Cat();
@@ -677,8 +677,10 @@ sess.Lock(pk, LockMode.Upgrade);]]></programlisting>
 
         <para>
             You may also delete many objects at once by passing a NHibernate query string to
-            <literal>Delete()</literal>.
+            <literal>Delete()</literal>:.
         </para>
+        
+        <programlisting><![CDATA[sess.Delete("from Cat");]]></programlisting>
 
         <para>
             You may now delete objects in any order you like, without risk of foreign key
@@ -769,7 +771,7 @@ sess.Lock(pk, LockMode.Upgrade);]]></programlisting>
         </para>
 
         <para>
-            It is possible to change the default behavior so that flush occurs less frequently.
+            It is possible to change the default behavior so that flush occurs less frequently, either by code or by configuration.
             The <literal>FlushMode</literal> class defines three different modes:
             only flush at commit time (and only when the NHibernate <literal>ITransaction</literal>
           API is used), flush automatically using the explained routine (will only work inside an explicit NHibernate <literal>ITransaction</literal>), 
@@ -782,7 +784,7 @@ sess.Lock(pk, LockMode.Upgrade);]]></programlisting>
         <programlisting><![CDATA[sess = sf.OpenSession();
 ITransaction tx = sess.BeginTransaction();
 sess.FlushMode = FlushMode.Commit; //allow queries to return stale state
-Cat izi = (Cat) sess.Load(typeof(Cat), id);
+Cat izi = sess.Load<Cat>(id);
 izi.Name = "iznizi";
 // execute some queries....
 sess.Find("from Cat as cat left outer join cat.Kittens kitten");
@@ -916,9 +918,10 @@ sess.Close();]]></programlisting>
             For exceptions thrown by the data provider while interacting with the database,
             NHibernate will wrap the error in an instance of <literal>ADOException</literal>.
             The underlying exception is accessible by calling <literal>ADOException.InnerException</literal>.
-            NHibernate converts the DbException into an appropriate ADOException subclass using the ISQLExceptionConverter attached to the SessionFactory. 
-            By default, the ISQLExceptionConverter is defined by the configured dialect; however, it is also possible to plug in a custom implementation 
-            (see the api-docs for the ISQLExceptionConverter class for details).
+            NHibernate converts the <literal>DbException</literal> into an appropriate <literal>ADOException</literal>
+            subclass using the <literal>ISQLExceptionConverter</literal> attached to the <literal>SessionFactory</literal>.
+            By default, the <literal>ISQLExceptionConverter</literal> is defined by the configured dialect; however, it is 
+            also possible to plug in a custom implementation (see the api-docs for the ISQLExceptionConverter class for details).
         </para>
 
         <para>
