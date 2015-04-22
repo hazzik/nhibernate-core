@@ -93,7 +93,9 @@ namespace NHibernate.Linq.Visitors
 				// comes up, it would be nice to combine the HQL parameter type determination code
 				// and the Expression information.
 
-				_parameters.Add(expression, new NamedParameter("p" + (_parameters.Count + 1), expression.Value, type));
+                var index = _parameters.Count + 1;
+                var key = string.Format("p{0}", expression.Value != null ? string.Format("{0}_{1}", index, expression.Value.GetHashCode()) : index.ToString());
+                _parameters.Add(expression, new NamedParameter(key, expression.Value, type));
 			}
 
 			return base.VisitConstantExpression(expression);
