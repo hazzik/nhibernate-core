@@ -871,6 +871,9 @@
     <Compile Include="NHSpecificTest\NH3634\PersonMapper.cs" />
     <Compile Include="NHSpecificTest\NH3727\Entity.cs" />
     <Compile Include="NHSpecificTest\NH3727\FixtureByCode.cs" />
+    <Compile Include="NHSpecificTest\NH3780\Entity.cs" />
+    <Compile Include="NHSpecificTest\NH3780\Fixture.cs" />
+    <Compile Include="NHSpecificTest\NH3780\In.cs" />
     <Compile Include="NHSpecificTest\NH646\Domain.cs" />
     <Compile Include="NHSpecificTest\NH646\Fixture.cs" />
     <Compile Include="NHSpecificTest\NH3234\Fixture.cs" />
@@ -3147,6 +3150,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="VersionTest\Db\MsSQL\ProductWithVersionAndLazyProperty.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3754\Mappings.hbm.xml" />
+    <EmbeddedResource Include="NHSpecificTest\NH3780\Mappings.hbm.xml" />
     <EmbeddedResource Include="LazyComponentTest\Person.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3372\Mappings.hbm.xml" />
     <EmbeddedResource Include="NHSpecificTest\NH3567\Mappings.hbm.xml" />
