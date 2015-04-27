@@ -37,9 +37,12 @@ namespace NHibernate.Test.NHSpecificTest.NH3780
                     transaction.Commit();
                 }
 
+                var oneMoreOddIds = new List<int>();
+                oneMoreOddIds.AddRange(oddIds);
+
                 var oddQuery = session.Query<NH3780.Entity>().Where(entity => entity.Id.In(oddIds));
                 var evenQuery = session.Query<NH3780.Entity>().Where(entity => entity.Id.In(evenIds));
-                var oneMoreOddQuery = session.Query<NH3780.Entity>().Where(entity => entity.Id.In(oddIds));
+                var oneMoreOddQuery = session.Query<NH3780.Entity>().Where(entity => entity.Id.In(oneMoreOddIds));
 
                 var sessionImplementor = session.GetSessionImplementation();
                 var sessionFactoryImplementor = sessionImplementor.Factory;

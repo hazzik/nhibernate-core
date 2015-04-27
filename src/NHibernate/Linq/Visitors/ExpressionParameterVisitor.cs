@@ -7,6 +7,7 @@ using NHibernate.Engine;
 using NHibernate.Param;
 using NHibernate.Type;
 using Remotion.Linq.Parsing;
+using System.Collections;
 
 namespace NHibernate.Linq.Visitors
 {
@@ -93,7 +94,20 @@ namespace NHibernate.Linq.Visitors
 				// comes up, it would be nice to combine the HQL parameter type determination code
 				// and the Expression information.
 
-				_parameters.Add(expression, new NamedParameter("p" + (_parameters.Count + 1), expression.Value, type));
+                var index = _parameters.Count + 1;
+
+                var value = expression.Value;
+                if (expression.Value is IEnumerable)
+                {
+                    var values = new List<object>();
+                    foreach (var x in (IEnumerable)expression.Value)
+                    {
+                        values.Add(x);
+			}
+                    value = string.Join("|", values);
+                }
+                var key = string.Format("p{0}", expression.Value != null ? string.Format("{0}_{1}", index, value.GetHashCode()) : index.ToString());
+                _parameters.Add(expression, new NamedParameter(key, expression.Value, type));
 			}
 
 			return base.VisitConstantExpression(expression);
