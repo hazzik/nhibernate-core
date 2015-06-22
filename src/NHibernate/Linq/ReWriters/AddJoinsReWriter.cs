@@ -55,6 +55,11 @@ namespace NHibernate.Linq.ReWriters
 			_whereJoinDetector.Transform(whereClause);
 		}
 
+		public override void VisitNhHavingClause(NhHavingClause havingClause, QueryModel queryModel, int index)
+		{
+			_whereJoinDetector.Transform(havingClause);
+		}
+
 		public bool IsEntity(System.Type type)
 		{
 			return _sessionFactory.GetImplementors(type.FullName).Any();

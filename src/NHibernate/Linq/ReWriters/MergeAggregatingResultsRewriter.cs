@@ -85,7 +85,7 @@ namespace NHibernate.Linq.ReWriters
 		{
 			if (expression.NodeType == ExpressionType.MemberInit || 
 				expression.NodeType == ExpressionType.New ||
-				expression.NodeType == ExpressionType.Extension)
+				expression is QuerySourceReferenceExpression)
 			{
 				//Probably it should be done by CountResultOperatorProcessor
 				return new NhStarExpression(expression);

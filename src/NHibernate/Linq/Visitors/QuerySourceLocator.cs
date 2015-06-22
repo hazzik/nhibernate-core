@@ -1,4 +1,5 @@
-﻿using Remotion.Linq;
+﻿using NHibernate.Linq.Clauses;
+using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Collections;
 
@@ -35,6 +36,20 @@ namespace NHibernate.Linq.Visitors
 			}
 
 			base.VisitAdditionalFromClause(fromClause, queryModel, index);
+		}
+
+	    public override void VisitNhJoinClause(NhJoinClause joinClause, QueryModel queryModel, int index)
+	    {
+			if (_type.IsAssignableFrom(joinClause.ItemType))
+			{
+				if (_querySource == null)
+				{
+					_querySource = joinClause;
+					return;
+				}
+			}
+
+			base.VisitNhJoinClause(joinClause, queryModel, index);
 		}
 
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using NHibernate.Linq.Clauses;
 using NHibernate.Linq.ReWriters;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
@@ -77,6 +78,22 @@ namespace NHibernate.Linq.Visitors
 		}
 
 		public void Transform(WhereClause whereClause)
+		{
+			whereClause.TransformExpressions(Visit);
+
+			var values = _values.Pop();
+
+			foreach (var memberExpression in values.MemberExpressions)
+			{
+				// If outer join can never produce true, we can safely inner join.
+				if (!values.GetValues(memberExpression).Contains(true))
+				{
+					_joiner.MakeInnerIfJoined(memberExpression);
+				}
+			}
+		}
+
+		public void Transform(NhHavingClause whereClause)
 		{
 			whereClause.TransformExpressions(Visit);
 
