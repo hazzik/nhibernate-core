@@ -6,16 +6,25 @@ using Remotion.Linq.Parsing;
 
 namespace NHibernate.Linq.Expressions
 {
-	public class NhNewExpression : ExtensionExpression
+	public class NhNewExpression : Expression
 	{
 		private readonly ReadOnlyCollection<string> _members;
 		private readonly ReadOnlyCollection<Expression> _arguments;
 
 		public NhNewExpression(IList<string> members, IList<Expression> arguments)
-			: base(typeof(object), (ExpressionType)NhExpressionType.New)
 		{
 			_members = new ReadOnlyCollection<string>(members);
 			_arguments = new ReadOnlyCollection<Expression>(arguments);
+		}
+
+		public override ExpressionType NodeType
+		{
+			get { return (ExpressionType) NhExpressionType.New; }
+		}
+
+		public override System.Type Type
+		{
+			get { return base.Type; }
 		}
 
 		public ReadOnlyCollection<Expression> Arguments
@@ -28,7 +37,7 @@ namespace NHibernate.Linq.Expressions
 			get { return _members; }
 		}
 
-		protected override Expression VisitChildren(ExpressionTreeVisitor visitor)
+		protected override Expression VisitChildren(ExpressionVisitor visitor)
 		{
 			var arguments = visitor.VisitAndConvert(Arguments, "VisitNhNew");
 
@@ -38,10 +47,10 @@ namespace NHibernate.Linq.Expressions
 		}
 	}
 
-	public class NhStarExpression : ExtensionExpression
+	public class NhStarExpression : Expression
 	{
 		public NhStarExpression(Expression expression)
-			: base(expression.Type, (ExpressionType)NhExpressionType.Star)
+			: base((ExpressionType)NhExpressionType.Star, expression.Type)
 		{
 			Expression = expression;
 		}
@@ -52,9 +61,9 @@ namespace NHibernate.Linq.Expressions
 			private set;
 		}
 
-		protected override Expression VisitChildren(ExpressionTreeVisitor visitor)
+		protected override Expression VisitChildren(ExpressionVisitor visitor)
 		{
-			var newExpression = visitor.VisitExpression(Expression);
+			var newExpression = visitor.Visit(Expression);
 
 			return newExpression != Expression
 					   ? new NhStarExpression(newExpression)

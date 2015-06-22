@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using NHibernate.Linq.ResultOperators;
-using Remotion.Linq.Clauses.ExpressionTreeVisitors;
+using Remotion.Linq.Clauses.ExpressionVisitors;
 
 namespace NHibernate.Linq.Visitors.ResultOperatorProcessors
 {
@@ -22,9 +22,9 @@ namespace NHibernate.Linq.Visitors.ResultOperatorProcessors
 			// Stuff in the group by that doesn't map to HQL.  Run it client-side
 			var listParameter = Expression.Parameter(typeof(IEnumerable<object>), "list");
 
-			var keySelectorExpr = ReverseResolvingExpressionTreeVisitor.ReverseResolve(selector, keySelector);
+			var keySelectorExpr = ReverseResolvingExpressionVisitor.ReverseResolve(selector, keySelector);
 
-			var elementSelectorExpr = ReverseResolvingExpressionTreeVisitor.ReverseResolve(selector, elementSelector);
+			var elementSelectorExpr = ReverseResolvingExpressionVisitor.ReverseResolve(selector, elementSelector);
 
 			var groupByMethod = EnumerableHelper.GetMethod("GroupBy",
 														   new[] { typeof(IEnumerable<>), typeof(Func<,>), typeof(Func<,>) },

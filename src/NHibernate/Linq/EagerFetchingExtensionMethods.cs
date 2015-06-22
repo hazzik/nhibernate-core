@@ -61,7 +61,22 @@ namespace NHibernate.Linq
         }
     }
 
-    public interface INhFetchRequest<TQueried, TFetch> : IOrderedQueryable<TQueried>
+	internal class ArgumentUtility
+	{
+		public static T CheckNotNull<T>(string name, T o)
+		{
+			if (ReferenceEquals(null, o)) throw new ArgumentNullException(name);
+			return o;
+		}
+
+		public static string CheckNotNullOrEmpty(string name, string str)
+		{
+			if (string.IsNullOrEmpty(str)) throw new ArgumentException(name);
+			return str;
+		}
+	}
+
+	public interface INhFetchRequest<TQueried, TFetch> : IOrderedQueryable<TQueried>
     {
     }
 

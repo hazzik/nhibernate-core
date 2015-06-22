@@ -5,9 +5,6 @@ namespace NHibernate.Linq.ReWriters
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Linq.Expressions;
-
-	using NHibernate.Linq.Visitors;
-
 	using Remotion.Linq;
 	using Remotion.Linq.Clauses;
 	using Remotion.Linq.Clauses.Expressions;
@@ -59,7 +56,7 @@ namespace NHibernate.Linq.ReWriters
 		/// <summary>
 		/// Rewrites expressions so that they sit in the outermost portion of the query.
 		/// </summary>
-		private class ResultOperatorExpressionRewriter : ExpressionTreeVisitor
+		private class ResultOperatorExpressionRewriter : RelinqExpressionVisitor
 		{
 			private static readonly System.Type[] rewrittenTypes = new[]
 				{
@@ -91,10 +88,10 @@ namespace NHibernate.Linq.ReWriters
 
 			public Expression Rewrite(Expression expression)
 			{
-				return VisitExpression(expression);
+				return Visit(expression);
 			}
 
-			protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+			protected override Expression VisitSubQuery(SubQueryExpression expression)
 			{
 				resultOperators.AddRange(
 					expression.QueryModel.ResultOperators
@@ -108,7 +105,7 @@ namespace NHibernate.Linq.ReWriters
 					return expression.QueryModel.MainFromClause.FromExpression;
 				}
 
-				return base.VisitSubQueryExpression(expression);
+				return base.VisitSubQuery(expression);
 			}
 		}
 	}

@@ -1,18 +1,18 @@
 using System.Linq.Expressions;
 using Remotion.Linq.Clauses.Expressions;
-using Remotion.Linq.Parsing;
-using Remotion.Linq.Parsing.ExpressionTreeVisitors;
+using Remotion.Linq.Parsing.ExpressionVisitors;
+using Remotion.Linq.Parsing.ExpressionVisitors.TreeEvaluation;
 
 namespace NHibernate.Linq.Visitors
 {
-	internal class NhPartialEvaluatingExpressionTreeVisitor : ExpressionTreeVisitor, IPartialEvaluationExceptionExpressionVisitor
+	internal class NhPartialEvaluatingExpressionVisitor : ExpressionVisitor, IPartialEvaluationExceptionExpressionVisitor
 	{
-		protected override Expression VisitConstantExpression(ConstantExpression expression)
+		protected override Expression VisitConstant(ConstantExpression expression)
 		{
 			var value = expression.Value as Expression;
 			if (value == null)
 			{
-				return base.VisitConstantExpression(expression);
+				return base.VisitConstant(expression);
 			}
 
 			return EvaluateIndependentSubtrees(value);
@@ -20,13 +20,17 @@ namespace NHibernate.Linq.Visitors
 
 		public static Expression EvaluateIndependentSubtrees(Expression expression)
 		{
-			var evaluatedExpression = PartialEvaluatingExpressionTreeVisitor.EvaluateIndependentSubtrees(expression);
-			return new NhPartialEvaluatingExpressionTreeVisitor().VisitExpression(evaluatedExpression);
+			var evaluatedExpression = PartialEvaluatingExpressionVisitor.EvaluateIndependentSubtrees(expression, new NullEvaluatableExpressionFilter());
+			return new NhPartialEvaluatingExpressionVisitor().Visit(evaluatedExpression);
 		}
 
-		public Expression VisitPartialEvaluationExceptionExpression(PartialEvaluationExceptionExpression expression)
+		public Expression VisitPartialEvaluationException(PartialEvaluationExceptionExpression expression)
 		{
-			return VisitExpression(expression.Reduce());
+			return Visit(expression.Reduce());
+		}
+
+		private sealed class NullEvaluatableExpressionFilter : EvaluatableExpressionFilterBase
+		{
 		}
 	}
 }

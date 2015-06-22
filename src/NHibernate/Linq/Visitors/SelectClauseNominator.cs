@@ -10,7 +10,7 @@ namespace NHibernate.Linq.Visitors
 	/// Analyze the select clause to determine what parts can be translated
 	/// fully to HQL, and some other properties of the clause.
 	/// </summary>
-	class SelectClauseHqlNominator : ExpressionTreeVisitor
+	class SelectClauseHqlNominator : RelinqExpressionVisitor
 	{
 		private readonly ILinqToHqlGeneratorsRegistry _functionRegistry;
 
@@ -35,7 +35,7 @@ namespace NHibernate.Linq.Visitors
 			_functionRegistry = parameters.SessionFactory.Settings.LinqToHqlGeneratorsRegistry;
 		}
 
-		internal void Visit(Expression expression)
+		internal void VisitExpression(Expression expression)
 		{
 			HqlCandidates = new HashSet<Expression>();
 			ContainsUntranslatedMethodCalls = false;
@@ -43,10 +43,10 @@ namespace NHibernate.Linq.Visitors
 			_stateStack = new Stack<bool>();
 			_stateStack.Push(false);
 
-			VisitExpression(expression);
+			Visit(expression);
 		}
 
-		public override Expression VisitExpression(Expression expression)
+		public override Expression Visit(Expression expression)
 		{
 			try
 			{
@@ -79,7 +79,7 @@ namespace NHibernate.Linq.Visitors
 					return expression;
 				}
 
-				base.VisitExpression(expression);
+				base.Visit(expression);
 
 				if (_canBeCandidate)
 				{

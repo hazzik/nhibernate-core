@@ -38,10 +38,10 @@ namespace NHibernate.Linq.Visitors
 			targetObject = member.Expression;
 			while (metaData == null && targetObject != null &&
 			       (targetObject.NodeType == ExpressionType.MemberAccess || targetObject.NodeType == ExpressionType.Parameter ||
-			        targetObject.NodeType == QuerySourceReferenceExpression.ExpressionType))
+			        targetObject.NodeType == ExpressionType.Extension))
 			{
 				System.Type memberType;
-				if (targetObject.NodeType == QuerySourceReferenceExpression.ExpressionType)
+				if (targetObject.NodeType == ExpressionType.Extension)
 				{
 					var querySourceExpression = (QuerySourceReferenceExpression) targetObject;
 					memberType = querySourceExpression.Type;

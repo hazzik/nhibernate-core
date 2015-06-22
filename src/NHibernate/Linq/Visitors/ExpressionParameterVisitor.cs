@@ -13,7 +13,7 @@ namespace NHibernate.Linq.Visitors
 	/// <summary>
 	/// Locates constants in the expression tree and generates parameters for each one
 	/// </summary>
-	public class ExpressionParameterVisitor : ExpressionTreeVisitor
+	public class ExpressionParameterVisitor : ExpressionVisitor
 	{
 		private readonly Dictionary<ConstantExpression, NamedParameter> _parameters = new Dictionary<ConstantExpression, NamedParameter>();
 		private readonly ISessionFactoryImplementor _sessionFactory;
@@ -35,16 +35,16 @@ namespace NHibernate.Linq.Visitors
 		{
 			var visitor = new ExpressionParameterVisitor(sessionFactory);
 			
-			visitor.VisitExpression(expression);
+			visitor.Visit(expression);
 
 			return visitor._parameters;
 		}
 
-		protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+		protected override Expression VisitMethodCall(MethodCallExpression expression)
 		{
 			if (expression.Method.Name == "MappedAs" && expression.Method.DeclaringType == typeof(LinqExtensionMethods))
 			{
-				var parameter = (ConstantExpression) VisitExpression(expression.Arguments[0]);
+				var parameter = (ConstantExpression) Visit(expression.Arguments[0]);
 				var type = (ConstantExpression) expression.Arguments[1];
 
 				_parameters[parameter].Type = (IType) type.Value;
@@ -59,7 +59,7 @@ namespace NHibernate.Linq.Visitors
 			if (_pagingMethods.Contains(method) && !_sessionFactory.Dialect.SupportsVariableLimit)
 			{
 				//TODO: find a way to make this code cleaner
-				var query = VisitExpression(expression.Arguments[0]);
+				var query = Visit(expression.Arguments[0]);
 				var arg = expression.Arguments[1];
 
 				if (query == expression.Arguments[0])
@@ -73,10 +73,10 @@ namespace NHibernate.Linq.Visitors
 				return expression;
 			}
 
-			return base.VisitMethodCallExpression(expression);
+			return base.VisitMethodCall(expression);
 		}
 
-		protected override Expression VisitConstantExpression(ConstantExpression expression)
+		protected override Expression VisitConstant(ConstantExpression expression)
 		{
 			if (!_parameters.ContainsKey(expression) && !typeof(IQueryable).IsAssignableFrom(expression.Type) && !IsNullObject(expression))
 			{
@@ -96,7 +96,7 @@ namespace NHibernate.Linq.Visitors
 				_parameters.Add(expression, new NamedParameter("p" + (_parameters.Count + 1), expression.Value, type));
 			}
 
-			return base.VisitConstantExpression(expression);
+			return base.VisitConstant(expression);
 		}
 
 		private static bool IsNullObject(ConstantExpression expression)

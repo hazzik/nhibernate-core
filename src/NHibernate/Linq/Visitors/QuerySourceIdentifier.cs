@@ -62,7 +62,7 @@ namespace NHibernate.Linq.Visitors
 		public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
 		{
 			//Find nested query sources
-			new QueryExpressionSourceIdentifer(this).VisitExpression(selectClause.Selector);
+			new QueryExpressionSourceIdentifer(this).Visit(selectClause.Selector);
 		}
 
 		public QuerySourceNamer Namer { get { return _namer; } }

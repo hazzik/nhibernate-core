@@ -4,25 +4,25 @@ using Remotion.Linq.Parsing;
 
 namespace NHibernate.Linq.Expressions
 {
-	public abstract class NhAggregatedExpression : ExtensionExpression
+	public abstract class NhAggregatedExpression : Expression
 	{
 		public Expression Expression { get; set; }
 
 		protected NhAggregatedExpression(Expression expression, NhExpressionType type)
-			: base(expression.Type, (ExpressionType)type)
+			: base((ExpressionType)type, expression.Type)
 		{
 			Expression = expression;
 		}
 
 		protected NhAggregatedExpression(Expression expression, System.Type expressionType, NhExpressionType type)
-			: base(expressionType, (ExpressionType)type)
+			: base((ExpressionType)type, expressionType)
 		{
 			Expression = expression;
 		}
 
-		protected override Expression VisitChildren(ExpressionTreeVisitor visitor)
+		protected override Expression VisitChildren(ExpressionVisitor visitor)
 		{
-			var newExpression = visitor.VisitExpression(Expression);
+			var newExpression = visitor.Visit(Expression);
 
 			return newExpression != Expression
 					   ? CreateNew(newExpression)

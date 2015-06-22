@@ -30,7 +30,7 @@ namespace NHibernate.Linq
 
 		public NhLinqExpression(Expression expression, ISessionFactoryImplementor sessionFactory)
 		{
-			_expression = NhPartialEvaluatingExpressionTreeVisitor.EvaluateIndependentSubtrees(expression);
+			_expression = NhPartialEvaluatingExpressionVisitor.EvaluateIndependentSubtrees(expression);
 
 			// We want logging to be as close as possible to the original expression sent from the
 			// application. But if we log before partial evaluation, the log won't include e.g.

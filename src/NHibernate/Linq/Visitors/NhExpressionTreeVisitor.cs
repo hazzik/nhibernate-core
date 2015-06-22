@@ -5,9 +5,9 @@ using Remotion.Linq.Parsing;
 
 namespace NHibernate.Linq.Visitors
 {
-	public class NhExpressionTreeVisitor : ExpressionTreeVisitor
+	public class NhExpressionVisitor : RelinqExpressionVisitor
 	{
-		public override Expression VisitExpression(Expression expression)
+		public override Expression Visit(Expression expression)
 		{
 			if (expression == null)
 			{
@@ -30,18 +30,18 @@ namespace NHibernate.Linq.Visitors
 			}
 
 			// Keep this variable for easy examination during debug.
-			var expr = base.VisitExpression(expression);
+			var expr = base.Visit(expression);
 			return expr;
 		}
 
 		protected virtual Expression VisitNhStar(NhStarExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhNew(NhNewExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhAggregate(NhAggregatedExpression expression)
@@ -65,34 +65,35 @@ namespace NHibernate.Linq.Visitors
 			}
 		}
 
+
 		protected virtual Expression VisitNhDistinct(NhDistinctExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhCount(NhCountExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhSum(NhSumExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhMax(NhMaxExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhMin(NhMinExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 
 		protected virtual Expression VisitNhAverage(NhAverageExpression expression)
 		{
-			return expression.Accept(this);
+			return VisitExtension(expression);
 		}
 	}
 }

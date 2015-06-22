@@ -16,7 +16,7 @@ using Remotion.Linq.EagerFetching;
 
 namespace NHibernate.Linq.Visitors
 {
-	public class QueryModelVisitor : QueryModelVisitorBase
+	public class QueryModelVisitor : QueryModelVisitorBase, INhQueryModelVisitor
 	{
 		public static ExpressionToHqlTranslationResults GenerateHqlQuery(QueryModel queryModel, VisitorParameters parameters, bool root)
 		{
@@ -156,12 +156,7 @@ namespace NHibernate.Linq.Visitors
 		{
 			var querySourceName = VisitorParameters.QuerySourceNamer.GetName(fromClause);
 
-			var joinClause = fromClause as NhJoinClause;
-			if (joinClause != null)
-			{
-				VisitNhJoinClause(querySourceName, joinClause);
-			}
-			else if (fromClause.FromExpression is MemberExpression)
+			if (fromClause.FromExpression is MemberExpression)
 			{
 				// It's a join
 				_hqlTree.AddFromClause(
@@ -178,8 +173,6 @@ namespace NHibernate.Linq.Visitors
 						_hqlTree.TreeBuilder.Alias(querySourceName)));
 
 			}
-
-			base.VisitAdditionalFromClause(fromClause, queryModel, index);
 		}
 
 		private void VisitNhJoinClause(string querySourceName, NhJoinClause joinClause)
@@ -232,7 +225,7 @@ namespace NHibernate.Linq.Visitors
 
 			var visitor = new SelectClauseVisitor(typeof(object[]), VisitorParameters);
 
-			visitor.Visit(selectClause.Selector);
+			visitor.VisitExpression(selectClause.Selector);
 
 			if (visitor.ProjectionExpression != null)
 			{
@@ -247,18 +240,11 @@ namespace NHibernate.Linq.Visitors
 		public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
 		{
 			var visitor = new SimplifyConditionalVisitor();
-			whereClause.Predicate = visitor.VisitExpression(whereClause.Predicate);
+			whereClause.Predicate = visitor.Visit(whereClause.Predicate);
 
 			// Visit the predicate to build the query
 			var expression = HqlGeneratorExpressionTreeVisitor.Visit(whereClause.Predicate, VisitorParameters).AsBooleanExpression();
-			if (whereClause is NhHavingClause)
-			{
-				_hqlTree.AddHavingClause(expression);
-			}
-			else
-			{
-				_hqlTree.AddWhereClause(expression);
-			}
+			_hqlTree.AddWhereClause(expression);
 		}
 
 		public override void VisitOrderByClause(OrderByClause orderByClause, QueryModel queryModel, int index)
@@ -288,6 +274,33 @@ namespace NHibernate.Linq.Visitors
 		public override void VisitGroupJoinClause(GroupJoinClause groupJoinClause, QueryModel queryModel, int index)
 		{
 			throw new NotImplementedException();
+		}
+
+		public void VisitNhHavingClause(NhHavingClause havingClause, QueryModel queryModel, int index)
+		{
+			var visitor = new SimplifyConditionalVisitor();
+			havingClause.Predicate = visitor.Visit(havingClause.Predicate);
+
+			// Visit the predicate to build the query
+			var expression = HqlGeneratorExpressionTreeVisitor.Visit(havingClause.Predicate, VisitorParameters).AsBooleanExpression();
+			_hqlTree.AddHavingClause(expression);
+		}
+
+		public void VisitNhWithClause(NhWithClause withClause, QueryModel queryModel, int index)
+		{
+			var visitor = new SimplifyConditionalVisitor();
+			withClause.Predicate = visitor.Visit(withClause.Predicate);
+
+			// Visit the predicate to build the query
+			var expression = HqlGeneratorExpressionTreeVisitor.Visit(withClause.Predicate, VisitorParameters).AsBooleanExpression();
+			_hqlTree.AddWhereClause(expression);
+		}
+
+		public void VisitNhJoinClause(NhJoinClause joinClause, QueryModel queryModel, int index)
+		{
+			var querySourceName = VisitorParameters.QuerySourceNamer.GetName(joinClause);
+
+			VisitNhJoinClause(querySourceName, joinClause);
 		}
 	}
 }

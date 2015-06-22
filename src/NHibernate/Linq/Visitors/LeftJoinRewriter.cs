@@ -3,7 +3,7 @@ using System.Linq;
 using NHibernate.Linq.Clauses;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-using Remotion.Linq.Clauses.ExpressionTreeVisitors;
+using Remotion.Linq.Clauses.ExpressionVisitors;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ResultOperators;
 
@@ -40,7 +40,7 @@ namespace NHibernate.Linq.Visitors
 			var innerSelectorMapping = new QuerySourceMapping();
 			innerSelectorMapping.AddMapping(fromClause, subQueryModel.SelectClause.Selector);
 
-			queryModel.TransformExpressions(ex => ReferenceReplacingExpressionTreeVisitor.ReplaceClauseReferences(ex, innerSelectorMapping, false));
+			queryModel.TransformExpressions(ex => ReferenceReplacingExpressionVisitor.ReplaceClauseReferences(ex, innerSelectorMapping, false));
 
 			queryModel.BodyClauses.RemoveAt(index);
 			queryModel.BodyClauses.Insert(index, @join);
@@ -49,7 +49,7 @@ namespace NHibernate.Linq.Visitors
 			var innerBodyClauseMapping = new QuerySourceMapping();
 			innerBodyClauseMapping.AddMapping(mainFromClause, new QuerySourceReferenceExpression(@join));
 
-			queryModel.TransformExpressions(ex => ReferenceReplacingExpressionTreeVisitor.ReplaceClauseReferences(ex, innerBodyClauseMapping, false));
+			queryModel.TransformExpressions(ex => ReferenceReplacingExpressionVisitor.ReplaceClauseReferences(ex, innerBodyClauseMapping, false));
 		}
 
 		private static void InsertBodyClauses(IEnumerable<IBodyClause> bodyClauses, QueryModel destinationQueryModel, int destinationIndex)

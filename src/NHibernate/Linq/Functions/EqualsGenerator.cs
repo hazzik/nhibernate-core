@@ -63,7 +63,7 @@ namespace NHibernate.Linq.Functions
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
 		{
-			// HqlGeneratorExpressionTreeVisitor.VisitConstantExpression will always return an HqlEquality 
+			// HqlGeneratorExpressionTreeVisitor.VisitConstant will always return an HqlEquality 
 			// instead of HqlParameter for argument that is of type bool.
 			// Use the HqlParameter that exists as first children to the HqlEquality as second argument into treeBuilder.Equality
 			return treeBuilder.Equality(

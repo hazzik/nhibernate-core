@@ -6,7 +6,7 @@ using Remotion.Linq.Parsing;
 
 namespace NHibernate.Linq.Visitors
 {
-	internal class ResultOperatorAndOrderByJoinDetector : ExpressionTreeVisitor
+	internal class ResultOperatorAndOrderByJoinDetector : RelinqExpressionVisitor
 	{
 		private readonly IIsEntityDecider _isEntityDecider;
 		private readonly IJoiner _joiner;
@@ -18,13 +18,13 @@ namespace NHibernate.Linq.Visitors
 			_joiner = joiner;
 		}
 
-		protected override Expression VisitMemberExpression(MemberExpression expression)
+		protected override Expression VisitMember(MemberExpression expression)
 		{
 			var isIdentifier = _isEntityDecider.IsIdentifier(expression.Expression.Type, expression.Member.Name);
 			if (!isIdentifier)
 				_memberExpressionDepth++;
 
-			var result = base.VisitMemberExpression(expression);
+			var result = base.VisitMember(expression);
 			
 			if (!isIdentifier)
 				_memberExpressionDepth--;
@@ -40,20 +40,20 @@ namespace NHibernate.Linq.Visitors
 			return result;
 		}
 
-		protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+		protected override Expression VisitSubQuery(SubQueryExpression expression)
 		{
-			expression.QueryModel.TransformExpressions(VisitExpression);
+			expression.QueryModel.TransformExpressions(Visit);
 			return expression;
 		}
 
 		public void Transform(ResultOperatorBase resultOperator)
 		{
-			resultOperator.TransformExpressions(VisitExpression);
+			resultOperator.TransformExpressions(Visit);
 		}
 
 		public void Transform(Ordering ordering)
 		{
-			ordering.TransformExpressions(VisitExpression);
+			ordering.TransformExpressions(Visit);
 		}
 	}
 }
