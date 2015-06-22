@@ -1,3 +1,4 @@
+using NHibernate.Linq.Clauses;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -48,6 +49,11 @@ namespace NHibernate.Linq.Visitors
 		}
 
 		public override void VisitJoinClause(JoinClause joinClause, QueryModel queryModel, int index)
+		{
+			_namer.Add(joinClause);
+		}
+
+		public override void VisitNhJoinClause(NhJoinClause joinClause, QueryModel queryModel, int index)
 		{
 			_namer.Add(joinClause);
 		}
