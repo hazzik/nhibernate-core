@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using NHibernate.Engine;
+using NHibernate.Linq.Clauses;
 using NHibernate.Linq.Visitors;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -12,7 +14,7 @@ namespace NHibernate.Linq.ReWriters
 		bool IsIdentifier(System.Type type, string propertyName);
 	}
 
-	public class AddJoinsReWriter : QueryModelVisitorBase, IIsEntityDecider
+	public class AddJoinsReWriter : NhQueryModelVisitorBase, IIsEntityDecider
 	{
 		private readonly ISessionFactoryImplementor _sessionFactory;
 		private readonly SelectJoinDetector _selectJoinDetector;

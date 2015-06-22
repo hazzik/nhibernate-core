@@ -8,7 +8,7 @@ using Remotion.Linq.EagerFetching;
 
 namespace NHibernate.Linq.Visitors
 {
-	public class SubQueryFromClauseFlattener : QueryModelVisitorBase
+	public class SubQueryFromClauseFlattener : NhQueryModelVisitorBase
 	{
 		private static readonly System.Type[] FlattenableResultOperators =
 		{

@@ -4,7 +4,7 @@ using Remotion.Linq.Collections;
 
 namespace NHibernate.Linq.Visitors
 {
-    public class QuerySourceLocator : QueryModelVisitorBase
+    public class QuerySourceLocator : NhQueryModelVisitorBase
     {
         private readonly System.Type _type;
         private IQuerySource _querySource;

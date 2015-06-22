@@ -40,7 +40,7 @@ namespace NHibernate.Test.Linq
 			}
 		}
 
-		public class CustomVisitor : QueryModelVisitorBase
+		public class CustomVisitor : NhQueryModelVisitorBase
 		{
 			public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
 			{

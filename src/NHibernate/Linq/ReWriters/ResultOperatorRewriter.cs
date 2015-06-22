@@ -1,3 +1,4 @@
+using NHibernate.Linq.Visitors;
 using Remotion.Linq.Parsing;
 
 namespace NHibernate.Linq.ReWriters
@@ -16,7 +17,7 @@ namespace NHibernate.Linq.ReWriters
 	/// Removes various result operators from a query so that they can be processed at the same
 	/// tree level as the query itself.
 	/// </summary>
-	public class ResultOperatorRewriter : QueryModelVisitorBase
+	public class ResultOperatorRewriter : NhQueryModelVisitorBase
 	{
 		private readonly List<ResultOperatorBase> resultOperators = new List<ResultOperatorBase>();
 		private IStreamedDataInfo evaluationType;
