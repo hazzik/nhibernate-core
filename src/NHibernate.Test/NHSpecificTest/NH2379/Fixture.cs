@@ -101,8 +101,8 @@ namespace NHibernate.Test.NHSpecificTest.NH2379
 			using (session.BeginTransaction())
 			{
 				var result = (from o in session.Query<Order>()
-							  from ol in o.OrderLines
-							  select new {OrderId = o.Id, OrderLineId = (Guid?) ol.Id}).ToList();
+				              from ol in o.OrderLines
+				              select new {OrderId = o.Id, OrderLineId = (Guid?) ol.Id}).ToList();
 
 				Assert.AreEqual(6, result.Count);
 			}

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using NHibernate.Hql.Ast;
 using NHibernate.Linq.Clauses;
@@ -10,6 +12,8 @@ using NHibernate.Linq.ReWriters;
 using NHibernate.Linq.Visitors.ResultOperatorProcessors;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Clauses.ExpressionVisitors;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Clauses.StreamedData;
 using Remotion.Linq.EagerFetching;
@@ -27,7 +31,7 @@ namespace NHibernate.Linq.Visitors
 
 			// Merge aggregating result operators (distinct, count, sum etc) into the select clause
 			MergeAggregatingResultsRewriter.ReWrite(queryModel);
-			
+
 			// Swap out non-aggregating group-bys
 			NonAggregatingGroupByRewriter.ReWrite(queryModel);
 
@@ -41,9 +45,6 @@ namespace NHibernate.Linq.Visitors
 			NonAggregatingGroupJoinRewriter.ReWrite(queryModel);
 
 			SubQueryFromClauseFlattener.ReWrite(queryModel);
-
-			// Rewrite left-joins
-			LeftJoinRewriter.ReWrite(queryModel);
 
 			// Rewrite paging
 			PagingRewriter.ReWrite(queryModel);
@@ -74,7 +75,7 @@ namespace NHibernate.Linq.Visitors
 			// Identify and name query sources
 			QuerySourceIdentifier.Visit(parameters.QuerySourceNamer, queryModel);
 
-			var visitor = new QueryModelVisitor(parameters, root, queryModel) { RewrittenOperatorResult = result };
+			var visitor = new QueryModelVisitor(parameters, root, queryModel) {RewrittenOperatorResult = result};
 			visitor.Visit();
 
 			return visitor._hqlTree.GetTranslation();
@@ -154,6 +155,8 @@ namespace NHibernate.Linq.Visitors
 
 		public override void VisitAdditionalFromClause(AdditionalFromClause fromClause, QueryModel queryModel, int index)
 		{
+			if (HandleLeftJoin(fromClause, queryModel, index)) return;
+
 			var querySourceName = VisitorParameters.QuerySourceNamer.GetName(fromClause);
 
 			if (fromClause.FromExpression is MemberExpression)
@@ -223,7 +226,7 @@ namespace NHibernate.Linq.Visitors
 		{
 			CurrentEvaluationType = selectClause.GetOutputDataInfo();
 
-			var visitor = new SelectClauseVisitor(typeof(object[]), VisitorParameters);
+			var visitor = new SelectClauseVisitor(typeof (object[]), VisitorParameters);
 
 			visitor.VisitExpression(selectClause.Selector);
 
@@ -252,9 +255,9 @@ namespace NHibernate.Linq.Visitors
 			foreach (var clause in orderByClause.Orderings)
 			{
 				_hqlTree.AddOrderByClause(HqlGeneratorExpressionTreeVisitor.Visit(clause.Expression, VisitorParameters).AsExpression(),
-								clause.OrderingDirection == OrderingDirection.Asc
-									? _hqlTree.TreeBuilder.Ascending()
-									: (HqlDirectionStatement)_hqlTree.TreeBuilder.Descending());
+				                          clause.OrderingDirection == OrderingDirection.Asc
+					                          ? _hqlTree.TreeBuilder.Ascending()
+					                          : (HqlDirectionStatement) _hqlTree.TreeBuilder.Descending());
 			}
 		}
 
@@ -302,5 +305,57 @@ namespace NHibernate.Linq.Visitors
 
 			VisitNhJoinClause(querySourceName, joinClause);
 		}
+
+		private bool HandleLeftJoin(AdditionalFromClause fromClause, QueryModel queryModel, int index)
+		{
+			//return false;
+			var querySourceName = VisitorParameters.QuerySourceNamer.GetName(fromClause);
+
+			var subQuery = fromClause.FromExpression as SubQueryExpression;
+			if (subQuery == null)
+				return false;
+
+			var subQueryModel = subQuery.QueryModel;
+			if (!IsLeftJoin(subQueryModel))
+				return false;
+
+			var mainFromClause = subQueryModel.MainFromClause;
+
+			var innerBodyClauseMapping = new QuerySourceMapping();
+			innerBodyClauseMapping.AddMapping(mainFromClause, new QuerySourceReferenceExpression(fromClause));
+
+			var expression = HqlGeneratorExpressionTreeVisitor.Visit(mainFromClause.FromExpression, VisitorParameters).AsExpression();
+
+			var alias = _hqlTree.TreeBuilder.Alias(querySourceName);
+
+			HqlTreeNode hqlJoin = _hqlTree.TreeBuilder.LeftJoin(expression, alias);
+
+			foreach (var withClause in subQueryModel.BodyClauses.OfType<WhereClause>())
+			{
+				var predicate = ReferenceReplacingExpressionVisitor.ReplaceClauseReferences(withClause.Predicate, innerBodyClauseMapping, false);
+				var booleanExpression = HqlGeneratorExpressionTreeVisitor.Visit(predicate, VisitorParameters).AsBooleanExpression();
+				hqlJoin.AddChild(_hqlTree.TreeBuilder.With(booleanExpression));
+			}
+
+			_hqlTree.AddFromClause(hqlJoin);
+
+			return true;
+		}
+
+		private static void InsertBodyClauses(IEnumerable<IBodyClause> bodyClauses, QueryModel destinationQueryModel, int destinationIndex)
+		{
+			foreach (var bodyClause in bodyClauses)
+			{
+				destinationQueryModel.BodyClauses.Insert(destinationIndex, bodyClause);
+				++destinationIndex;
+			}
+		}
+
+		private static bool IsLeftJoin(QueryModel subQueryModel)
+		{
+			return subQueryModel.ResultOperators.Count == 1 &&
+					subQueryModel.ResultOperators[0] is DefaultIfEmptyResultOperator;
+		}
+
 	}
 }
