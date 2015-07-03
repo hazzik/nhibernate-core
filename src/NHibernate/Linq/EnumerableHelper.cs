@@ -39,6 +39,32 @@ namespace NHibernate.Linq
 		/// Extract the <see cref="MethodInfo"/> from a given expression.
 		/// </summary>
 		/// <param name="method">The method.</param>
+		/// <returns>The <see cref="MethodInfo"/> of the method.</returns>
+		public static MethodInfo GetMethod(LambdaExpression method)
+		{
+			if (method == null)
+				throw new ArgumentNullException("method");
+
+			return ((MethodCallExpression)method.Body).Method;
+		}
+
+		/// <summary>
+		/// Extract the <see cref="MethodInfo"/> from a given expression.
+		/// </summary>
+		/// <typeparam name="TSource">The declaring-type of the method.</typeparam>
+		/// <typeparam name="TResult">The return type of the method</typeparam>
+		/// <param name="method">The method.</param>
+		/// <returns>The <see cref="MethodInfo"/> of the method.</returns>
+		public static MethodInfo GetMethodDefinition<TSource, TResult>(Expression<Func<TSource, TResult>> method)
+		{
+			MethodInfo methodInfo = GetMethod(method);
+			return methodInfo.IsGenericMethod ? methodInfo.GetGenericMethodDefinition() : methodInfo;
+		}
+
+		/// <summary>
+		/// Extract the <see cref="MethodInfo"/> from a given expression.
+		/// </summary>
+		/// <param name="method">The method.</param>
 		/// <returns>The <see cref="MethodInfo"/> of the no-generic method or the generic-definition for a generic-method.</returns>
 		/// <seealso cref="MethodInfo.GetGenericMethodDefinition"/>
 		public static MethodInfo GetMethodDefinition(Expression<System.Action> method)

@@ -150,10 +150,11 @@ namespace NHibernate.Linq.Functions
 		public SubStringGenerator()
 		{
 			SupportedMethods = new[]
-									{
-										ReflectionHelper.GetMethodDefinition<string>(s => s.Substring(0)),
-										ReflectionHelper.GetMethodDefinition<string>(s => s.Substring(0, 0))
-									};
+			{
+				ReflectionHelper.GetMethodDefinition<string>(s => s.Substring(0)),
+				ReflectionHelper.GetMethodDefinition<string>(s => s.Substring(0, 0)),
+				ReflectionHelper.GetMethod((Expression<Func<string, char>>) (s => s[0]))
+			};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
@@ -162,9 +163,17 @@ namespace NHibernate.Linq.Functions
 			var start = treeBuilder.Add(visitor.Visit(arguments[0]).AsExpression(), treeBuilder.Constant(1));
 
 			if (arguments.Count == 1)
+			{
+				if (method.Name == "get_Chars")
+				{
+					return treeBuilder.MethodCall("substring", stringExpr, start, treeBuilder.Constant(1));
+				}
+
 				return treeBuilder.MethodCall("substring", stringExpr, start);
+			}
 
 			var length = visitor.Visit(arguments[1]).AsExpression();
+
 			return treeBuilder.MethodCall("substring", stringExpr, start, length);
 		}
 	}

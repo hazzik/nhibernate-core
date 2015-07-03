@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using NHibernate.Linq;
 using NHibernate.DomainModel.Northwind.Entities;
-using NHibernate.Type;
 using NUnit.Framework;
 
 namespace NHibernate.Test.Linq
@@ -53,6 +52,27 @@ namespace NHibernate.Test.Linq
 				Assert.AreEqual(1, nhNewYork.ParameterValuesByName.Count);
 				Assert.AreEqual("London", nhLondon.ParameterValuesByName.First().Value.Item1);
 				Assert.AreEqual("New York", nhNewYork.ParameterValuesByName.First().Value.Item1);
+			}
+		}
+
+		[Test]
+		public void Expressions_Differing_Only_By_Constants_Return_The_Same_Key_Char()
+		{
+			using (var s = OpenSession())
+			{
+				var db = new Northwind(s);
+
+				var londonQ = from c in db.Customers where c.Address.City[0] == 'L' select c;
+				var newYorkQ = from c in db.Customers where c.Address.City[0] == 'N' select c;
+
+				var nhLondon = new NhLinqExpression(londonQ.Expression, sessions);
+				var nhNewYork = new NhLinqExpression(newYorkQ.Expression, sessions);
+
+				Assert.AreEqual(nhLondon.Key, nhNewYork.Key);
+				Assert.AreEqual(2, nhLondon.ParameterValuesByName.Count);
+				Assert.AreEqual(2, nhNewYork.ParameterValuesByName.Count);
+				Assert.AreEqual((int)'L', nhLondon.ParameterValuesByName.Last().Value.Item1);
+				Assert.AreEqual((int)'N', nhNewYork.ParameterValuesByName.Last().Value.Item1);
 			}
 		}
 
@@ -237,6 +257,22 @@ namespace NHibernate.Test.Linq
 		protected override IList Mappings
 		{
 			get { return new string[0]; }
+		}
+	}
+	[TestFixture]
+	public class ParameterisedQueriesChars : LinqTestCase
+	{
+		[Test]
+		public void Expressions_Differing_Only_By_Constants_Return_The_Same_Key_Char()
+		{
+			var lQuery = from c in db.Customers where c.Address.City[0] == 'L' select c;
+			var nQuery = from c in db.Customers where c.Address.City[0] == 'N' select c;
+
+			var l = lQuery.ToList();
+			var n = nQuery.ToList();
+
+			Assert.That(l, Has.Count.EqualTo(13));
+			Assert.That(n, Has.Count.EqualTo(2));
 		}
 	}
 }
