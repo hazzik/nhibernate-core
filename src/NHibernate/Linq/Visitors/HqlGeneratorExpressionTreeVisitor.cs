@@ -441,11 +441,11 @@ namespace NHibernate.Linq.Visitors
 							   ? BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.IfFalse).AsExpression())
 							   : null);
 
-			var @case = _hqlTreeBuilder.Case(new[] {_hqlTreeBuilder.When(test, ifTrue)}, ifFalse);
+			HqlExpression @case = _hqlTreeBuilder.Case(new[] {_hqlTreeBuilder.When(test, ifTrue)}, ifFalse);
 
-			return (expression.Type == typeof (bool) || expression.Type == (typeof (bool?)))
-					   ? (HqlTreeNode) _hqlTreeBuilder.Equality(@case, _hqlTreeBuilder.True())
-					   : _hqlTreeBuilder.Cast(@case, expression.Type);
+			return expression.Type == typeof (bool) || expression.Type == (typeof (bool?))
+				? _hqlTreeBuilder.Equality(@case, _hqlTreeBuilder.True())
+				: @case;
 		}
 
 		protected HqlTreeNode VisitSubQueryExpression(SubQueryExpression expression)
