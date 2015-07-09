@@ -1,0 +1,127 @@
+﻿using System;
+using System.Linq;
+using NHibernate.Cfg.MappingSchema;
+using NHibernate.Linq;
+using NHibernate.Mapping.ByCode;
+using NUnit.Framework;
+
+namespace NHibernate.Test.NHSpecificTest.NH3100
+{
+	public class Entity
+	{
+		public virtual Guid Id { get; set; }
+		public virtual bool? Flag { get; set; }
+	}
+
+	public class NullableBooleanFixture : TestCaseMappingByCode
+	{
+		protected override HbmMapping GetMappings()
+		{
+			var mapper = new ModelMapper();
+			mapper.Class<Entity>(rc =>
+			{
+				rc.Id(x => x.Id, m => m.Generator(Generators.GuidComb));
+				rc.Property(x => x.Flag);
+			});
+
+			return mapper.CompileMappingForAllExplicitlyAddedEntities();
+		}
+
+		protected override void OnSetUp()
+		{
+			using (var session = OpenSession())
+			using (var transaction = session.BeginTransaction())
+			{
+				session.Save(new Entity {Flag = true});
+				session.Save(new Entity {Flag = false});
+				session.Save(new Entity {Flag = null});
+				session.Flush();
+				transaction.Commit();
+			}
+		}
+
+		protected override void OnTearDown()
+		{
+			using (var session = OpenSession())
+			using (var transaction = session.BeginTransaction())
+			{
+				session.Delete("from System.Object");
+
+				session.Flush();
+				transaction.Commit();
+			}
+		}
+
+		[Test]
+		public void GetWithTrueFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag == true).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void GetWithFalseFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag == false).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void GetWithNullFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag == null).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void GetValueOrDefault()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag.GetValueOrDefault()).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void GetValueOrDefaultFalse()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag.GetValueOrDefault(false)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void GetValueOrDefaultTrue()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag.GetValueOrDefault(true)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+	}
+}
