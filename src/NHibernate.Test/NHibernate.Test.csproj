@@ -1354,6 +1354,7 @@
     <Compile Include="NHSpecificTest\NH3848\Customer.cs" />
     <Compile Include="NHSpecificTest\NH3848\Order.cs" />
     <Compile Include="NHSpecificTest\NH3848\QueryOverTestFixture.cs" />
+    <Compile Include="NHSpecificTest\NH3848\HqlTestFixture.cs" />
     <Compile Include="NHSpecificTest\NH3848\TestFixture.cs" />
     <Compile Include="NHSpecificTest\Properties\CompositePropertyRefTest.cs" />
     <Compile Include="NHSpecificTest\Properties\DynamicEntityTest.cs" />
