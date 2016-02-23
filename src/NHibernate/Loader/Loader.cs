@@ -300,7 +300,7 @@ namespace NHibernate.Loader
 												 queryParameters.NamedParameters);
 			}
 
-			InitializeEntitiesAndCollections(hydratedObjects, resultSet, session, queryParameters.IsReadOnly(session));
+			InitializeEntitiesAndCollections(hydratedObjects, resultSet, session, queryParameters.IsReadOnly(session), queryParameters.CanAddCollectionsToCache);
 			session.PersistenceContext.InitializeNonLazyCollections();
 			return result;
 		}
@@ -493,7 +493,7 @@ namespace NHibernate.Loader
 					session.Batcher.CloseCommand(st, rs);
 				}
 
-				InitializeEntitiesAndCollections(hydratedObjects, rs, session, queryParameters.IsReadOnly(session));
+				InitializeEntitiesAndCollections(hydratedObjects, rs, session, queryParameters.IsReadOnly(session), queryParameters.CanAddCollectionsToCache);
 
 				if (createSubselects)
 				{
@@ -575,7 +575,7 @@ namespace NHibernate.Loader
 			}
 		}
 
-		internal void InitializeEntitiesAndCollections(IList hydratedObjects, object resultSetId, ISessionImplementor session, bool readOnly)
+		internal void InitializeEntitiesAndCollections(IList hydratedObjects, object resultSetId, ISessionImplementor session, bool readOnly, bool canAddCollectionsToCache)
 		{
 			ICollectionPersister[] collectionPersisters = CollectionPersisters;
 			if (collectionPersisters != null)
@@ -589,7 +589,7 @@ namespace NHibernate.Loader
 						//during loading
 						//TODO: or we could do this polymorphically, and have two
 						//      different operations implemented differently for arrays
-						EndCollectionLoad(resultSetId, session, collectionPersisters[i]);
+						EndCollectionLoad(resultSetId, session, collectionPersisters[i], canAddCollectionsToCache);
 					}
 				}
 			}
@@ -633,17 +633,17 @@ namespace NHibernate.Loader
 						//the entities, since we might call hashCode() on the elements
 						//TODO: or we could do this polymorphically, and have two
 						//      different operations implemented differently for arrays
-						EndCollectionLoad(resultSetId, session, collectionPersisters[i]);
+						EndCollectionLoad(resultSetId, session, collectionPersisters[i], canAddCollectionsToCache);
 					}
 				}
 			}
 		}
 
-		private static void EndCollectionLoad(object resultSetId, ISessionImplementor session, ICollectionPersister collectionPersister)
+		private static void EndCollectionLoad(object resultSetId, ISessionImplementor session, ICollectionPersister collectionPersister, bool canAddCollectionsToCache)
 		{
 			//this is a query and we are loading multiple instances of the same collection role
 			session.PersistenceContext.LoadContexts.GetCollectionLoadContext((DbDataReader)resultSetId).EndLoadingCollections(
-				collectionPersister);
+				collectionPersister, canAddCollectionsToCache);
 		}
 
 		
