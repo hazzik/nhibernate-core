@@ -164,7 +164,7 @@ namespace NHibernate.Engine
 			{
 				Join join = joins[i];
 				string on = join.AssociationType.GetOnCondition(join.Alias, factory, enabledFilters);
-				SqlString condition = new SqlString();
+				SqlString condition;
 				if (last != null &&
 						IsManyToManyRoot(last) &&
 						((IQueryableCollection)last).ElementType == join.AssociationType)
@@ -172,30 +172,19 @@ namespace NHibernate.Engine
 					// the current join represents the join between a many-to-many association table
 					// and its "target" table.  Here we need to apply any additional filters
 					// defined specifically on the many-to-many
-					string manyToManyFilter = ((IQueryableCollection)last)
+					string manyToManyFilter = ((IQueryableCollection) last)
 						.GetManyToManyFilterFragment(join.Alias, enabledFilters);
-					condition = new SqlString("".Equals(manyToManyFilter)
-												? on
-												: "".Equals(on)
-														? manyToManyFilter
-														: on + " and " + manyToManyFilter);
+
+					condition = new SqlString(on, manyToManyFilter);
 				}
 				else
 				{
-					// NH Different behavior : NH1179 and NH1293
-					// Apply filters in Many-To-One association
-					var enabledForManyToOne = FilterHelper.GetEnabledForManyToOne(enabledFilters);
-					condition = new SqlString(string.IsNullOrEmpty(on) && enabledForManyToOne.Count > 0
-					            	? join.Joinable.FilterFragment(join.Alias, enabledForManyToOne)
-					            	: on);
+					condition = new SqlString(on);
 				}
 
-				if (withClauseFragment != null)
+				if (withClauseFragment != null && join.Alias.Equals(withClauseJoinAlias))
 				{
-					if (join.Alias.Equals(withClauseJoinAlias))
-					{
-						condition = condition.Append(" and ").Append(withClauseFragment);
-					}
+					condition = condition.Append(" and ").Append(withClauseFragment);
 				}
 
 				// NH: the variable "condition" have to be a SqlString because it may contains Parameter instances with BackTrack
@@ -205,8 +194,7 @@ namespace NHibernate.Engine
 					join.LHSColumns,
 					JoinHelper.GetRHSColumnNames(join.AssociationType, factory),
 					join.JoinType,
-					condition
-					);
+					condition);
 				if (includeExtraJoins)
 				{
 					//TODO: not quite sure about the full implications of this!

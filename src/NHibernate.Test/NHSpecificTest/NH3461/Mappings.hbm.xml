@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.NH3461">
+
+  <class name="Parent" lazy="false">
+    <id name="id" column="id" access="field" generator="guid.comb" />
+    <property name="Name" />
+    <filter name="NameFilter" condition="Name = :AcceptedName"/>
+  </class>
+
+  <class name="Child" lazy="false">
+    <id name="id" column="id" access="field" generator="guid.comb" />
+    <property name="Name" />
+    <many-to-one class="Parent" name="Parent" column="parentid" />
+  </class>
+
+  <filter-def name="NameFilter">
+    <filter-param name="AcceptedName" type="String"/>
+  </filter-def>
+
+</hibernate-mapping>

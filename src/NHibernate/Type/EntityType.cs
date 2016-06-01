@@ -360,7 +360,7 @@ namespace NHibernate.Type
 		{
 			string entityName = GetAssociatedEntityName();
 			bool isProxyUnwrapEnabled = unwrapProxy && session.Factory
-			                                                  .GetEntityPersister(entityName).IsInstrumented;
+															  .GetEntityPersister(entityName).IsInstrumented;
 
 			object proxyOrEntity = session.InternalLoad(entityName, id, eager, IsNullable && !isProxyUnwrapEnabled);
 
@@ -477,15 +477,9 @@ namespace NHibernate.Type
 
 		public string GetOnCondition(string alias, ISessionFactoryImplementor factory, IDictionary<string, IFilter> enabledFilters)
 		{
-			if (IsReferenceToPrimaryKey)
-			{
-				//TODO: this is a bit arbitrary, expose a switch to the user?
-				return string.Empty;
-			}
-			else
-			{
-				return GetAssociatedJoinable(factory).FilterFragment(alias, FilterHelper.GetEnabledForManyToOne(enabledFilters));
-			}
+			// NH Different behavior : NH-1179, NH-1293, NH-2029, NH-1930 and NH-3506
+			// Apply filters in Many-To-One association
+			return GetAssociatedJoinable(factory).FilterFragment(alias, FilterHelper.GetEnabledForManyToOne(enabledFilters));
 		}
 
 		public override IType GetSemiResolvedType(ISessionFactoryImplementor factory)
