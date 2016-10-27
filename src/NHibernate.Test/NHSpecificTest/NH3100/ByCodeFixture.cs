@@ -53,7 +53,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 		}
 
 		[Test]
-		public void GetWithTrueFlag()
+		public void QueryWhereFlagIsTrue()
 		{
 			using (var session = OpenSession())
 			using (session.BeginTransaction())
@@ -65,7 +65,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 		}
 
 		[Test]
-		public void GetWithFalseFlag()
+		public void QueryWhereFlagIsFalse()
 		{
 			using (var session = OpenSession())
 			using (session.BeginTransaction())
@@ -77,7 +77,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 		}
 
 		[Test]
-		public void GetWithNullFlag()
+		public void QueryWhereFlagIsNull()
 		{
 			using (var session = OpenSession())
 			using (session.BeginTransaction())
@@ -85,6 +85,42 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 				var result = session.Query<Entity>().Where(e => e.Flag == null).ToList();
 
 				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagIsNotTrue()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag != true).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagIsNotFalse()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag != false).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagIsNotNull()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag != null).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
 			}
 		}
 
