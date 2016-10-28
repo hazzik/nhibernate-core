@@ -260,8 +260,8 @@ namespace NHibernate.Linq.Visitors
 
 		HqlTreeNode TranslateInequalityComparison(BinaryExpression expression)
 		{
-			Func<HqlExpression> lhs = () => VisitExpression(expression.Left).AsExpression();
-			Func<HqlExpression> rhs = () => VisitExpression(expression.Right).AsExpression();
+			var lhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
+			var rhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
 
 			// Check for nulls on left or right.
 			if (VisitorUtil.IsNullConstant(expression.Right))
@@ -276,46 +276,50 @@ namespace NHibernate.Linq.Visitors
 
 			if (lhs == null)
 			{
-				return _hqlTreeBuilder.IsNotNull(rhs());
-			}
-			if (rhs == null)
-			{
-				return _hqlTreeBuilder.IsNotNull(lhs());
+				return _hqlTreeBuilder.IsNotNull(rhs);
 			}
 
-			var lhsNullable = IsNullable(lhs());
-			var rhsNullable = IsNullable(rhs());
+			if (rhs == null)
+			{
+				return _hqlTreeBuilder.IsNotNull(lhs);
+			}
+
+			var lhsNullable = IsNullable(lhs);
+			var rhsNullable = IsNullable(rhs);
+
+			var inequality = _hqlTreeBuilder.Inequality(lhs, rhs);
 
 			if (!lhsNullable && !rhsNullable)
 			{
-				return BuildInequality(lhs(), rhs());
+				return inequality;
 			}
+
+			var lhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
+			var rhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
 
 			HqlBooleanExpression booleanExpression;
 			if (lhsNullable && rhsNullable)
 			{
-				booleanExpression = BuildInequality(
-					_hqlTreeBuilder.IsNull(lhs()),
-					_hqlTreeBuilder.IsNull(rhs())
-				);
+				booleanExpression = _hqlTreeBuilder.Inequality(
+					BooleanToCaseConvertor.ConvertBooleanToCase(_hqlTreeBuilder.IsNull(lhs2)),
+					BooleanToCaseConvertor.ConvertBooleanToCase(_hqlTreeBuilder.IsNull(rhs2)));
 			}
 			else if (lhsNullable)
 			{
-				booleanExpression = _hqlTreeBuilder.IsNull(lhs());
+				booleanExpression = _hqlTreeBuilder.IsNull(lhs2);
 			}
 			else
 			{
-				booleanExpression = _hqlTreeBuilder.IsNull(rhs());
+				booleanExpression = _hqlTreeBuilder.IsNull(rhs2);
 			}
 
-			return _hqlTreeBuilder.BooleanOr(BuildInequality(lhs(), rhs()),
-											 booleanExpression);
+			return _hqlTreeBuilder.BooleanOr(inequality, booleanExpression);
 		}
 
 		HqlTreeNode TranslateEqualityComparison(BinaryExpression expression)
 		{
-			var lhs = VisitExpression(expression.Left).AsExpression();
-			var rhs = VisitExpression(expression.Right).AsExpression();
+			var lhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
+			var rhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
 
 			// Check for nulls on left or right.
 			if (VisitorUtil.IsNullConstant(expression.Right))
@@ -340,36 +344,27 @@ namespace NHibernate.Linq.Visitors
 
 			if (rhs == null)
 			{
-				return _hqlTreeBuilder.IsNull(BooleanToCaseConvertor.ConvertBooleanToCase(lhs));
+				return _hqlTreeBuilder.IsNull((lhs));
 			}
 
 			var lhsNullable = IsNullable(lhs);
 			var rhsNullable = IsNullable(rhs);
 
-			var equality = BuildEquality(lhs, rhs);
+			var equality = _hqlTreeBuilder.Equality(lhs, rhs);
 
-			if (lhsNullable && rhsNullable)
+			if (!lhsNullable || !rhsNullable)
 			{
-				return _hqlTreeBuilder.BooleanOr(
-					equality,
-					_hqlTreeBuilder.BooleanAnd(
-						_hqlTreeBuilder.IsNull(VisitExpression(expression.Left).AsExpression()),
-						_hqlTreeBuilder.IsNull(VisitExpression(expression.Right).AsExpression())));
+				return equality;
 			}
 
-			return equality;
-		}
+			var lhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
+			var rhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
 
-		HqlBooleanExpression BuildEquality(HqlExpression l, HqlExpression r)
-		{
-			return _hqlTreeBuilder.Equality(BooleanToCaseConvertor.ConvertBooleanToCase(l),
-											BooleanToCaseConvertor.ConvertBooleanToCase(r));
-		}
-
-		HqlBooleanExpression BuildInequality(HqlExpression lhs, HqlExpression rhs)
-		{
-			return _hqlTreeBuilder.Inequality(BooleanToCaseConvertor.ConvertBooleanToCase(lhs),
-											  BooleanToCaseConvertor.ConvertBooleanToCase(rhs));
+			return _hqlTreeBuilder.BooleanOr(
+				equality,
+				_hqlTreeBuilder.BooleanAnd(
+					_hqlTreeBuilder.IsNull(lhs2),
+					_hqlTreeBuilder.IsNull(rhs2)));
 		}
 
 		static bool IsNullable(HqlExpression original)
