@@ -340,7 +340,7 @@ namespace NHibernate.Linq.Visitors
 
 			if (rhs == null)
 			{
-				return _hqlTreeBuilder.IsNull(lhs);
+				return _hqlTreeBuilder.IsNull(BooleanToCaseConvertor.ConvertBooleanToCase(lhs));
 			}
 
 			var lhsNullable = IsNullable(lhs);
