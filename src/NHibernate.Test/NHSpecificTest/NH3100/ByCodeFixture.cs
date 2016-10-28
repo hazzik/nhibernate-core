@@ -125,6 +125,32 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 		}
 
 		[Test]
+		public void QueryWhereFlagIsEqual()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => e.Flag == e.Flag).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(3));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagIsNotEqual()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => e.Flag != e.Flag).ToList();
+
+				Assert.That(result, Is.Empty);
+			}
+		}
+
+		[Test]
 		public void GetValueOrDefault()
 		{
 			using (var session = OpenSession())
@@ -144,7 +170,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 			{
 				var result = session.Query<Entity>().Where(e => e.Flag.GetValueOrDefault(false)).ToList();
 
-				Assert.That(result, Has.Count.EqualTo(2));
+				Assert.That(result, Has.Count.EqualTo(1));
 			}
 		}
 

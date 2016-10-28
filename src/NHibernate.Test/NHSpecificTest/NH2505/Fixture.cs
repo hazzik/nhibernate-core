@@ -161,12 +161,14 @@ namespace NHibernate.Test.NHSpecificTest.NH2505
 				{
 					using (var sqls = new SqlLogSpy())
 					{
-						Assert.That(session.Query<MyClass>().Where(x => x.MayBeAlive != false).ToList(), Has.Count.EqualTo(1));
+						var list = session.Query<MyClass>().Where(x => x.MayBeAlive != false).ToList();
+						Assert.That(list, Has.Count.EqualTo(2));
 						Assert.That(caseClause.Matches(sqls.GetWholeLog()).Count, Is.EqualTo(1));
 					}
 					using (var sqls = new SqlLogSpy())
 					{
-						Assert.That(session.Query<MyClass>().Where(x => true != x.MayBeAlive).ToList(), Has.Count.EqualTo(1));
+						var list = session.Query<MyClass>().Where(x => true != x.MayBeAlive).ToList();
+						Assert.That(list, Has.Count.EqualTo(2));
 						Assert.That(caseClause.Matches(sqls.GetWholeLog()).Count, Is.EqualTo(1));
 					}
 				}

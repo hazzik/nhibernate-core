@@ -347,14 +347,14 @@ namespace NHibernate.Hql.Ast.ANTLR.Tree
 		{
 			if ((_children == null) || (_children.Count == 0))
 			{
-				return ToString();
+				return _token.Type + ToString();
 			}
 
 			StringBuilder builder = new StringBuilder();
 			if (!IsNil)
 			{
 				builder.Append("( ");
-				builder.Append(ToString());
+				builder.Append(_token.Type).Append(ToString());
 			}
 
 			foreach (ASTNode child in _children)

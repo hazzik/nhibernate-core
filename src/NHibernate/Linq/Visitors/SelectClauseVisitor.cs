@@ -100,16 +100,14 @@ namespace NHibernate.Linq.Visitors
 
 		public static HqlExpression ConvertBooleanToCase(HqlExpression node)
 		{
-			if (node is HqlBooleanExpression)
-			{
-				var builder = new HqlTreeBuilder();
+		    if (node is HqlBooleanExpression)
+		    {
+		        var builder = new HqlTreeBuilder();
 
-				return builder.Case(
-					new[] {builder.When(node, builder.True())},
-					builder.False());
-			}
+		        return builder.Case(new[] {builder.When(node, builder.True())}, builder.False());
+		    }
 
-			return node;
+		    return node;
 		}
 	}
 }
