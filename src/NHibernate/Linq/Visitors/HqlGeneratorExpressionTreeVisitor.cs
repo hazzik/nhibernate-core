@@ -260,8 +260,8 @@ namespace NHibernate.Linq.Visitors
 
 		HqlTreeNode TranslateInequalityComparison(BinaryExpression expression)
 		{
-			var lhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
-			var rhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
+			var lhs = VisitExpression(expression.Left).ToArithmeticExpression();
+			var rhs = VisitExpression(expression.Right).ToArithmeticExpression();
 
 			// Check for nulls on left or right.
 			if (VisitorUtil.IsNullConstant(expression.Right))
@@ -294,15 +294,15 @@ namespace NHibernate.Linq.Visitors
 				return inequality;
 			}
 
-			var lhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
-			var rhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
+			var lhs2 = VisitExpression(expression.Left).ToArithmeticExpression();
+			var rhs2 = VisitExpression(expression.Right).ToArithmeticExpression();
 
 			HqlBooleanExpression booleanExpression;
 			if (lhsNullable && rhsNullable)
 			{
 				booleanExpression = _hqlTreeBuilder.Inequality(
-					BooleanToCaseConvertor.ConvertBooleanToCase(_hqlTreeBuilder.IsNull(lhs2)),
-					BooleanToCaseConvertor.ConvertBooleanToCase(_hqlTreeBuilder.IsNull(rhs2)));
+					_hqlTreeBuilder.IsNull(lhs2).ToArithmeticExpression(),
+					_hqlTreeBuilder.IsNull(rhs2).ToArithmeticExpression());
 			}
 			else if (lhsNullable)
 			{
@@ -318,8 +318,8 @@ namespace NHibernate.Linq.Visitors
 
 		HqlTreeNode TranslateEqualityComparison(BinaryExpression expression)
 		{
-			var lhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
-			var rhs = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
+			var lhs = VisitExpression(expression.Left).ToArithmeticExpression();
+			var rhs = VisitExpression(expression.Right).ToArithmeticExpression();
 
 			// Check for nulls on left or right.
 			if (VisitorUtil.IsNullConstant(expression.Right))
@@ -357,8 +357,8 @@ namespace NHibernate.Linq.Visitors
 				return equality;
 			}
 
-			var lhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Left).AsExpression());
-			var rhs2 = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.Right).AsExpression());
+			var lhs2 = VisitExpression(expression.Left).ToArithmeticExpression();
+			var rhs2 = VisitExpression(expression.Right).ToArithmeticExpression();
 
 			return _hqlTreeBuilder.BooleanOr(
 				equality,
@@ -463,9 +463,9 @@ namespace NHibernate.Linq.Visitors
 		protected HqlTreeNode VisitConditionalExpression(ConditionalExpression expression)
 		{
 			var test = VisitExpression(expression.Test).ToBooleanExpression();
-			var ifTrue = BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.IfTrue).AsExpression());
+			var ifTrue = VisitExpression(expression.IfTrue).ToArithmeticExpression();
 			var ifFalse = (expression.IfFalse != null
-							   ? BooleanToCaseConvertor.ConvertBooleanToCase(VisitExpression(expression.IfFalse).AsExpression())
+							   ? VisitExpression(expression.IfFalse).ToArithmeticExpression()
 							   : null);
 
 			var @case = _hqlTreeBuilder.Case(new[] {_hqlTreeBuilder.When(test, ifTrue)}, ifFalse);

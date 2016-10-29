@@ -139,6 +139,19 @@ namespace NHibernate.Hql.Ast
 
 			return builder.Equality(node.AsExpression(), builder.True());
 		}
+
+		internal static HqlExpression ToArithmeticExpression(this HqlTreeNode node)
+		{
+			var hqlBooleanExpression = node as HqlBooleanExpression;
+			if (hqlBooleanExpression != null)
+			{
+				var builder = new HqlTreeBuilder();
+
+				return builder.Case(new[] {builder.When(hqlBooleanExpression, builder.True())}, builder.False());
+			}
+
+			return (HqlExpression) node;
+		}
 	}
 
 	public abstract class HqlStatement : HqlTreeNode
