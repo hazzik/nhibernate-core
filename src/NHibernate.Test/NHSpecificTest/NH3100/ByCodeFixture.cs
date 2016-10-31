@@ -125,7 +125,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 		}
 
 		[Test]
-		public void QueryWhereFlagIsEqual()
+		public void QueryWhereFlagEqualsToIteself()
 		{
 			using (var session = OpenSession())
 			using (session.BeginTransaction())
@@ -138,7 +138,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 		}
 
 		[Test]
-		public void QueryWhereFlagIsNotEqual()
+		public void QueryWhereFlagDoesNotEqualToItself()
 		{
 			using (var session = OpenSession())
 			using (session.BeginTransaction())
@@ -147,6 +147,266 @@ namespace NHibernate.Test.NHSpecificTest.NH3100
 				var result = session.Query<Entity>().Where(e => e.Flag != e.Flag).ToList();
 
 				Assert.That(result, Is.Empty);
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagEqualsToCondtion()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => e.Flag == (e.Id != null)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagDoesNotEqualToCondtion()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => e.Flag != (e.Id != null)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagEqualsToTrue()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag.Equals(true)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagEqualsToFalse()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag.Equals(false)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagEqualsToNull()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => e.Flag.Equals(null)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagDoesNotEqualToTrue()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => !e.Flag.Equals(true)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagDoesNotEqualToFalse()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => !e.Flag.Equals(false)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagDoesNotEqualToNull()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => !e.Flag.Equals(null)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagEqualsToIteself2()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => e.Flag.Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(3));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagDoesNotEqualToItself2()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => !e.Flag.Equals(e.Flag)).ToList();
+
+				Assert.That(result, Is.Empty);
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagEqualsToCondtion2()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => e.Flag.Equals(e.Id != null)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFlagDoesNotEqualToCondtion2()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => !e.Flag.Equals(e.Id != null)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereTrueEqualsToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => true.Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFalseEqualsToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => false.Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void X()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+			    var result = session.Query<Entity>().Where(e => e.Id == Guid.Empty).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereNullEqualsToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => default(bool?).Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereTrueDoesNotEqualToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => !true.Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereFalseDoesNotEqualToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => !false.Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereNullDoesNotEqualToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session.Query<Entity>().Where(e => !default(bool?).Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void QueryWhereConditionEqualsToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => (e.Id != null).Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void QueryWhereCondtionDoesNotEqualToFlag()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				// ReSharper disable once EqualExpressionComparison
+				var result = session.Query<Entity>().Where(e => !(e.Id != null).Equals(e.Flag)).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(2));
 			}
 		}
 

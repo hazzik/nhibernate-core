@@ -37,18 +37,19 @@ namespace NHibernate.Linq.Functions
 				ReflectionHelper.GetMethodDefinition<Guid>(x => x.Equals(x)),
 				ReflectionHelper.GetMethodDefinition<DateTime>(x => x.Equals(x)),
 				ReflectionHelper.GetMethodDefinition<DateTimeOffset>(x => x.Equals(x)),
-				ReflectionHelper.GetMethodDefinition<bool>(x => x.Equals(default(bool)))
+
+				ReflectionHelper.GetMethodDefinition<bool>(x => x.Equals(x)),
+				ReflectionHelper.GetMethodDefinition<bool?>(x => x.Equals(x)),
+				ReflectionHelper.GetMethodDefinition<bool>(x => x.Equals(null))
 			};
 		}
 
 		public override HqlTreeNode BuildHql(MethodInfo method, Expression targetObject, ReadOnlyCollection<Expression> arguments, HqlTreeBuilder treeBuilder, IHqlExpressionVisitor visitor)
 		{
-			Expression lhs = arguments.Count == 1 ? targetObject : arguments[0];
-			Expression rhs = arguments.Count == 1 ? arguments[0] : arguments[1];
+			var lhs = arguments.Count == 1 ? targetObject : arguments[0];
+			var rhs = arguments.Count == 1 ? arguments[0] : arguments[1];
 
-			return treeBuilder.Equality(
-				visitor.Visit(lhs).ToArithmeticExpression(),
-				visitor.Visit(rhs).ToArithmeticExpression());
+		    return HqlGeneratorExpressionTreeVisitor.TranslateEqualityComparison(lhs, rhs, treeBuilder, visitor);
 		}
 	}
 }

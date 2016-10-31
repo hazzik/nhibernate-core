@@ -212,7 +212,7 @@ namespace NHibernate.Linq.Visitors
 		{
 			if (expression.NodeType == ExpressionType.Equal)
 			{
-				return TranslateEqualityComparison(expression);
+				return TranslateEqualityComparison(expression.Left, expression.Right, _hqlTreeBuilder, this);
 			}
 			if (expression.NodeType == ExpressionType.NotEqual)
 			{
@@ -316,55 +316,73 @@ namespace NHibernate.Linq.Visitors
 			return _hqlTreeBuilder.BooleanOr(inequality, booleanExpression);
 		}
 
-		HqlTreeNode TranslateEqualityComparison(BinaryExpression expression)
+		internal static HqlTreeNode TranslateEqualityComparison(Expression expressionLeft, Expression expressionRight, HqlTreeBuilder hqlTreeBuilder, IHqlExpressionVisitor visitor)
 		{
-			var lhs = VisitExpression(expression.Left).ToArithmeticExpression();
-			var rhs = VisitExpression(expression.Right).ToArithmeticExpression();
+			var lhs = visitor.Visit(expressionLeft).ToArithmeticExpression();
+			var rhs = visitor.Visit(expressionRight).ToArithmeticExpression();
 
 			// Check for nulls on left or right.
-			if (VisitorUtil.IsNullConstant(expression.Right))
+			if (VisitorUtil.IsNullConstant(expressionRight))
 			{
 				rhs = null;
 			}
 
-			if (VisitorUtil.IsNullConstant(expression.Left))
+			if (VisitorUtil.IsNullConstant(expressionLeft))
 			{
 				lhs = null;
 			}
 
 			if (lhs == null && rhs == null)
 			{
-				return _hqlTreeBuilder.True();
+				return hqlTreeBuilder.True();
 			}
 
 			if (lhs == null)
 			{
-				return _hqlTreeBuilder.IsNull(rhs);
+				return hqlTreeBuilder.IsNull(rhs);
 			}
 
 			if (rhs == null)
 			{
-				return _hqlTreeBuilder.IsNull((lhs));
+				return hqlTreeBuilder.IsNull(lhs);
 			}
 
 			var lhsNullable = IsNullable(lhs);
 			var rhsNullable = IsNullable(rhs);
 
-			var equality = _hqlTreeBuilder.Equality(lhs, rhs);
+			var equality = hqlTreeBuilder.Equality(lhs, rhs);
 
-			if (!lhsNullable || !rhsNullable)
+			if (lhsNullable && rhsNullable)
 			{
-				return equality;
+				var lhs2 = visitor.Visit(expressionLeft).ToArithmeticExpression();
+				var rhs2 = visitor.Visit(expressionRight).ToArithmeticExpression();
+
+				return hqlTreeBuilder.BooleanOr(
+					hqlTreeBuilder.Equality(lhs, rhs),
+					hqlTreeBuilder.BooleanAnd(
+						hqlTreeBuilder.IsNull(lhs2),
+						hqlTreeBuilder.IsNull(rhs2)));
 			}
 
-			var lhs2 = VisitExpression(expression.Left).ToArithmeticExpression();
-			var rhs2 = VisitExpression(expression.Right).ToArithmeticExpression();
+			if (lhsNullable)
+			{
+				var lhs2 = visitor.Visit(expressionLeft).ToArithmeticExpression();
 
-			return _hqlTreeBuilder.BooleanOr(
-				equality,
-				_hqlTreeBuilder.BooleanAnd(
-					_hqlTreeBuilder.IsNull(lhs2),
-					_hqlTreeBuilder.IsNull(rhs2)));
+				return hqlTreeBuilder.BooleanAnd(
+					equality,
+					hqlTreeBuilder.IsNotNull(lhs2));
+			}
+
+			if (rhsNullable)
+			{
+				var rhs2 = visitor.Visit(expressionRight).ToArithmeticExpression();
+
+				return hqlTreeBuilder.BooleanAnd(
+					equality,
+					hqlTreeBuilder.IsNotNull(rhs2));
+			}
+
+			return equality;
 		}
 
 		static bool IsNullable(HqlExpression original)
