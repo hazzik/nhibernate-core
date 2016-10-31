@@ -393,7 +393,9 @@ namespace NHibernate.Linq.Visitors
 			switch (expression.NodeType)
 			{
 				case ExpressionType.Not:
-					return _hqlTreeBuilder.BooleanNot(VisitExpression(expression.Operand).ToBooleanExpression());
+					if (expression.Type == typeof(bool))
+						return _hqlTreeBuilder.BooleanNot(VisitExpression(expression.Operand).ToBooleanExpression());
+					return _hqlTreeBuilder.BitwiseNot(VisitExpression(expression.Operand).AsExpression());
 				case ExpressionType.Convert:
 				case ExpressionType.ConvertChecked:
 				case ExpressionType.TypeAs:

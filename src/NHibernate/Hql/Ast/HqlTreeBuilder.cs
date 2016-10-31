@@ -276,9 +276,15 @@ namespace NHibernate.Hql.Ast
 			return new HqlCast(_factory, expression, type);
 		}
 
+		[Obsolete]
 		public HqlBitwiseNot BitwiseNot()
 		{
 			return new HqlBitwiseNot(_factory);
+		}
+
+		public HqlBitwiseNot BitwiseNot(HqlExpression operand)
+		{
+			return new HqlBitwiseNot(_factory, operand);
 		}
 
 		public HqlBooleanNot BooleanNot(HqlBooleanExpression operand)
@@ -376,7 +382,12 @@ namespace NHibernate.Hql.Ast
 			return new HqlMethodCall(_factory, methodName, parameters);
 		}
 
-		public HqlBooleanMethodCall BooleanMethodCall(string methodName, IEnumerable<HqlExpression> parameters)
+		public HqlBooleanMethodCall BooleanMethodCall(string methodName, params HqlExpression[] parameters)
+		{
+			return new HqlBooleanMethodCall(_factory, methodName, parameters);
+		}
+
+        public HqlBooleanMethodCall BooleanMethodCall(string methodName, IEnumerable<HqlExpression> parameters)
 		{
 			return new HqlBooleanMethodCall(_factory, methodName, parameters);
 		}

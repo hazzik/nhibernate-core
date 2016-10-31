@@ -457,6 +457,15 @@ namespace NHibernate.Test.Linq
 			Assert.That(fatherIsKnown, Has.Exactly(1).With.Property("FatherIsKnown").True);
 		}
 
+		[Test]
+		public void CanSelectBitwiseNot()
+		{
+			//NH-3915
+			var queryable = db.Animals.Select(a => ~a.Id);
+
+			Assert.That(queryable.ToList(), Is.EqualTo(db.Animals.ToList().Select(a => ~a.Id).ToList()));
+		}
+
 		public class Wrapper<T>
 		{
 			public T item;

@@ -696,7 +696,12 @@ namespace NHibernate.Hql.Ast
 
 	public class HqlBitwiseNot : HqlExpression
 	{
-		public HqlBitwiseNot(IASTFactory factory) : base(HqlSqlWalker.BNOT, "not", factory)
+		public HqlBitwiseNot(IASTFactory factory) 
+			: base(HqlSqlWalker.BNOT, "not", factory)
+		{
+		}
+		public HqlBitwiseNot(IASTFactory factory, HqlExpression operand) 
+			: base(HqlSqlWalker.BNOT, "not", factory, operand)
 		{
 		}
 	}
