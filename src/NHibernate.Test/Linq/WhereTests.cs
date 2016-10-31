@@ -205,6 +205,28 @@ namespace NHibernate.Test.Linq
 		}
 
 		[Test]
+		public void UsersRegisteredAtOrBeforeY2KAndBitwiseNamedNHibernate()
+		{
+			//NH-3225
+			var query = (from user in db.Users
+						 where user.RegisteredAt <= new DateTime(2000, 1, 1) & user.Name == "nhibernate"
+						 select user).ToList();
+
+			Assert.That(query.Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void UsersRegisteredAtOrBeforeY2KOrBitwiseNamedNHibernate()
+		{
+			//NH-3225
+			var query = (from user in db.Users
+						 where user.RegisteredAt <= new DateTime(2000, 1, 1) | user.Name == "nhibernate"
+						 select user).ToList();
+
+			Assert.That(query.Count, Is.EqualTo(2));
+		}
+
+		[Test]
 		public void TestDataContext()
 		{
 			var query = from u in db.Users

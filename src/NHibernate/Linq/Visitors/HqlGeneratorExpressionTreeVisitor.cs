@@ -224,10 +224,25 @@ namespace NHibernate.Linq.Visitors
 			switch (expression.NodeType)
 			{
 				case ExpressionType.And:
+					if (expression.Type == typeof(bool))
+					{
+						return
+							_hqlTreeBuilder.Cast(
+								_hqlTreeBuilder.MethodCall("band", lhs.ToArithmeticExpression(), rhs.ToArithmeticExpression()),
+								typeof(bool));
+
+					}
 					return _hqlTreeBuilder.BitwiseAnd(lhs, rhs);
 				case ExpressionType.AndAlso:
 					return _hqlTreeBuilder.BooleanAnd(lhs.ToBooleanExpression(), rhs.ToBooleanExpression());
 				case ExpressionType.Or:
+					if (expression.Type == typeof(bool))
+					{
+						return
+							_hqlTreeBuilder.Cast(
+								_hqlTreeBuilder.MethodCall("bor", lhs.ToArithmeticExpression(), rhs.ToArithmeticExpression()),
+								typeof(bool));
+					}
 					return _hqlTreeBuilder.BitwiseOr(lhs, rhs);
 				case ExpressionType.OrElse:
 					return _hqlTreeBuilder.BooleanOr(lhs.ToBooleanExpression(), rhs.ToBooleanExpression());
