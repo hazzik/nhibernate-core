@@ -113,6 +113,12 @@ namespace NHibernate.Dialect
 			RegisterFunction("month", new SQLFunctionTemplate(NHibernateUtil.Int32, "extract(month from ?1)"));
 			RegisterFunction("year", new SQLFunctionTemplate(NHibernateUtil.Int32, "extract(year from ?1)"));
 
+			// Bitwise operations
+			RegisterFunction("band", new BitwiseNativeOperation("&"));
+			RegisterFunction("bor", new BitwiseNativeOperation("|"));
+			RegisterFunction("bxor", new BitwiseNativeOperation("^"));
+			RegisterFunction("bnot", new BitwiseNativeOperation("~", true));
+
 			RegisterFunction("str", new SQLFunctionTemplate(NHibernateUtil.String, "cast(?1 as char)"));
 
 			// register hibernate types for default use in scalar sqlquery type auto detection
@@ -1156,23 +1162,23 @@ namespace NHibernate.Dialect
 
 				int nextTokenIndex = index += 1;
 
-				if (token.StartsWithCaseInsensitive("select"))
+				if (token.EqualsCaseInsensitive("select"))
 					continue;
 
-				if (token.StartsWithCaseInsensitive("distinct"))
+				if (token.EqualsCaseInsensitive("distinct"))
 					continue;
 
-				if (token.StartsWithCaseInsensitive(","))
+				if (token.EqualsCaseInsensitive(","))
 					continue;
 
-				if (token.StartsWithCaseInsensitive("from"))
+				if (token.EqualsCaseInsensitive("from"))
 					break;
 
 				// handle composite expressions like "2 * 4 as foo"
 				while ((nextTokenIndex < tokens.Count)
-					&& (tokens[nextTokenIndex].StartsWithCaseInsensitive("as") == false
-					&& tokens[nextTokenIndex].StartsWithCaseInsensitive("from") == false
-					&& tokens[nextTokenIndex].StartsWithCaseInsensitive(",") == false))
+					&& (tokens[nextTokenIndex].EqualsCaseInsensitive("as") == false
+					&& tokens[nextTokenIndex].EqualsCaseInsensitive("from") == false
+					&& tokens[nextTokenIndex].EqualsCaseInsensitive(",") == false))
 				{
 					SqlString nextToken = tokens[nextTokenIndex];
 					token = token.Append(nextToken);

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using NHibernate.Hql.Ast;
 using NHibernate.Linq.Clauses;
@@ -51,8 +53,11 @@ namespace NHibernate.Linq.Visitors
 			// Flatten pointless subqueries
 			QueryReferenceExpressionFlattener.ReWrite(queryModel);
 
+			// Flatten array index access to query references
+			ArrayIndexExpressionFlattener.ReWrite(queryModel);
+
 			// Add joins for references
-			AddJoinsReWriter.ReWrite(queryModel, parameters.SessionFactory);
+			AddJoinsReWriter.ReWrite(queryModel, parameters);
 
 			// Move OrderBy clauses to end
 			MoveOrderByToEndRewriter.ReWrite(queryModel);
@@ -74,7 +79,10 @@ namespace NHibernate.Linq.Visitors
 			// Identify and name query sources
 			QuerySourceIdentifier.Visit(parameters.QuerySourceNamer, queryModel);
 
-			var visitor = new QueryModelVisitor(parameters, root, queryModel) { RewrittenOperatorResult = result };
+			var visitor = new QueryModelVisitor(parameters, root, queryModel)
+			{
+				RewrittenOperatorResult = result,
+			};
 			visitor.Visit();
 
 			return visitor._hqlTree.GetTranslation();
@@ -199,7 +207,7 @@ namespace NHibernate.Linq.Visitors
 
 			foreach (var withClause in joinClause.Restrictions)
 			{
-				var booleanExpression = HqlGeneratorExpressionTreeVisitor.Visit(withClause.Predicate, VisitorParameters).AsBooleanExpression();
+				var booleanExpression = HqlGeneratorExpressionTreeVisitor.Visit(withClause.Predicate, VisitorParameters).ToBooleanExpression();
 				hqlJoin.AddChild(_hqlTree.TreeBuilder.With(booleanExpression));
 			}
 
@@ -250,7 +258,7 @@ namespace NHibernate.Linq.Visitors
 			whereClause.Predicate = visitor.VisitExpression(whereClause.Predicate);
 
 			// Visit the predicate to build the query
-			var expression = HqlGeneratorExpressionTreeVisitor.Visit(whereClause.Predicate, VisitorParameters).AsBooleanExpression();
+			var expression = HqlGeneratorExpressionTreeVisitor.Visit(whereClause.Predicate, VisitorParameters).ToBooleanExpression();
 			if (whereClause is NhHavingClause)
 			{
 				_hqlTree.AddHavingClause(expression);
