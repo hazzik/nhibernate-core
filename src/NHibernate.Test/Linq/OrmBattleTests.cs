@@ -183,7 +183,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Filtering")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -309,7 +309,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Projections")]
-		[ExpectedException(typeof(ArgumentException))]
+		//[ExpectedException(typeof(ArgumentException))]
 		// Failed.
 		// Inner Exception: ArgumentException
 		// Message:
@@ -389,7 +389,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Projections")]
-		[ExpectedException(typeof(HibernateException))]
+		//[ExpectedException(typeof(HibernateException))]
 		// Failed.
 		// Exception: HibernateException 
 		// Message:
@@ -418,7 +418,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Projections")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -489,7 +489,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Take/Skip")]
-		[ExpectedException(typeof(GenericADOException))]
+		//[ExpectedException(typeof(GenericADOException))]
 		// Failed.
 		// Inner Exception: SqlException
 		// Message:
@@ -617,7 +617,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Ordering")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -653,7 +653,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Ordering")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -677,7 +677,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Ordering")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -699,7 +699,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Ordering")]
-		[ExpectedException(typeof(QuerySyntaxException))]
+		//[ExpectedException(typeof(QuerySyntaxException))]
 		// Failed.
 		// Exception: QuerySyntaxException
 		// Message:
@@ -740,7 +740,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Grouping")]
-		[ExpectedException(typeof(HibernateException))]
+		//[ExpectedException(typeof(HibernateException))]
 		// Failed with assertion.
 		// Exception: HibernateException
 		// Message:
@@ -784,7 +784,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Grouping")]
-		[ExpectedException(typeof(HibernateException))]
+		//[ExpectedException(typeof(HibernateException))]
 		// Failed.
 		// Exception: HibernateException 
 		// Message:
@@ -837,7 +837,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Grouping")]
-		[ExpectedException(typeof(NullReferenceException))]
+		//[ExpectedException(typeof(NullReferenceException))]
 		// Failed.
 		// Exception: NullReferenceException
 		// Message:
@@ -855,7 +855,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Grouping")]
-		[ExpectedException(typeof(HibernateException))]
+		//[ExpectedException(typeof(HibernateException))]
 		// Failed.
 		// Exception: HibernateException 
 		// Message:
@@ -895,7 +895,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Set operations")]
-		[ExpectedException(typeof(ParserException))]
+		//[ExpectedException(typeof(ParserException))]
 		// Failed.
 		// Exception: ParserException
 		// Message:
@@ -909,7 +909,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Set operations")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -933,7 +933,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Set operations")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -948,7 +948,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Set operations")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -986,7 +986,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Set operations")]
-		[ExpectedException(typeof(AssertionException))]
+		//[ExpectedException(typeof(AssertionException))]
 		// Failed with assertion.
 		// Exception: AssertionException
 		// Message:
@@ -1042,7 +1042,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Type casts")]
-		[ExpectedException(typeof(QueryException))]
+		//[ExpectedException(typeof(QueryException))]
 		// Failed.
 		// Exception: QueryException
 		// Message:
@@ -1153,7 +1153,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Element operations")]
-		[ExpectedException(typeof(QuerySyntaxException))]
+		//[ExpectedException(typeof(QuerySyntaxException))]
 		// Failed.
 		// Exception: QuerySyntaxException
 		// Message:
@@ -1209,7 +1209,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Element operations")]
-		[ExpectedException(typeof(ParserException))]
+		//[ExpectedException(typeof(ParserException))]
 		// Failed.
 		// Exception: ParserException
 		// Message:
@@ -1317,7 +1317,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("All/Any/Contains")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1389,7 +1389,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Aggregates")]
-		[ExpectedException(typeof(QuerySyntaxException))]
+		//[ExpectedException(typeof(QuerySyntaxException))]
 		// Failed.
 		// Exception: QuerySyntaxException
 		// Message:
@@ -1522,7 +1522,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("References")]
-		[ExpectedException(typeof(QueryException))]
+		//[ExpectedException(typeof(QueryException))]
 		// Failed.
 		// Exception: QueryException 
 		// Message:
@@ -1541,7 +1541,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Complex")]
-		[ExpectedException(typeof(ArgumentException))]
+		//[ExpectedException(typeof(ArgumentException))]
 		// Failed.
 		// Exception: GenericADOException
 		// Message:
@@ -1567,7 +1567,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Complex")]
-		[ExpectedException(typeof(HibernateException))]
+		//[ExpectedException(typeof(HibernateException))]
 		// Failed.
 		// Exception: HibernateException 
 		// Message:
@@ -1586,7 +1586,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Complex")]
-		[ExpectedException(typeof(ArgumentException))]
+		//[ExpectedException(typeof(ArgumentException))]
 		// Failed.
 		// Inner Exception: InvalidCastException
 		// Message:
@@ -1612,7 +1612,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Complex")]
-		[ExpectedException(typeof(ArgumentException))]
+		//[ExpectedException(typeof(ArgumentException))]
 		// Failed.
 		// Exception: QuerySyntaxException
 		// Message:
@@ -1649,7 +1649,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Complex")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1721,7 +1721,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1743,7 +1743,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1756,7 +1756,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1769,7 +1769,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1791,7 +1791,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(QueryException))]
+		//[ExpectedException(typeof(QueryException))]
 		// Failed.
 		// Exception: QueryException
 		// Message:
@@ -1804,7 +1804,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(QueryException))]
+		//[ExpectedException(typeof(QueryException))]
 		// Failed.
 		// Exception: QueryException
 		// Message:
@@ -1865,7 +1865,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1879,7 +1879,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1893,7 +1893,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException
 		// Message:
@@ -1907,7 +1907,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Passed.
 		public void ConvertToInt32()
 		{
@@ -1940,7 +1940,7 @@ namespace NHibernate.Test.Linq
 
 		[Test]
 		[Category("Standard functions")]
-		[ExpectedException(typeof(NotSupportedException))]
+		//[ExpectedException(typeof(NotSupportedException))]
 		// Failed.
 		// Exception: NotSupportedException 
 		// Message:
