@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Text;
 using System.Text.RegularExpressions;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Schema;
 using NHibernate.Driver;
 using NHibernate.Engine;
-using NHibernate.Mapping;
 using NHibernate.SqlCommand;
 using NHibernate.SqlCommand.Parser;
 using NHibernate.Type;
@@ -375,6 +375,19 @@ namespace NHibernate.Dialect
 			return true;
 		}
 
+		public override string Qualify(string catalog, string schema, string name)
+		{
+			if (!string.IsNullOrEmpty(catalog))
+			{
+				return string.Join(".", catalog, schema, name);
+			}
+			if (!string.IsNullOrEmpty(schema))
+			{
+				return string.Join(".", schema, name);
+			}
+			return name;
+		}
+
 		/// <summary />
 		/// <param name="name"></param>
 		/// <returns></returns>
@@ -442,25 +455,28 @@ namespace NHibernate.Dialect
 			}
 		}
 
-		public override string GetIfExistsDropConstraint(Table table, string name)
+		public override string GetIfExistsDropConstraint(string catalog, string schema, string tableName, string name)
 		{
-			string selectExistingObject = GetSelectExistingObject(name, table);
+			string selectExistingObject = GetSelectExistingObject(catalog, schema, tableName, name);
 			return string.Format(@"if exists ({0})", selectExistingObject);
 		}
 
-		protected virtual string GetSelectExistingObject(string name, Table table)
+		public override string GetIfNotExistsCreateConstraint(string catalog, string schema, string table, string name)
 		{
-			string objName = table.GetQuotedSchemaName(this) + Quote(name);
-			return string.Format("select 1 from sysobjects where id = OBJECT_ID(N'{0}') AND parent_obj = OBJECT_ID('{1}')",
-								 objName, table.GetQuotedName(this));
-		}
-
-		public override string GetIfNotExistsCreateConstraint(Table table, string name)
-		{
-			string selectExistingObject = GetSelectExistingObject(name, table);
+			string selectExistingObject = GetSelectExistingObject(catalog, schema, table, name);
 			return string.Format(@"if not exists ({0})", selectExistingObject);
 		}
-		
+
+		protected virtual string GetSelectExistingObject(string catalog, string schema, string table, string name)
+		{
+			return
+				string.Format(
+					"select 1 from {0} where id = OBJECT_ID(N'{1}') and parent_obj = OBJECT_ID(N'{2}')",
+					Qualify(catalog, "dbo", "sysobjects"),
+					Qualify(catalog, schema, Quote(name)),
+					Qualify(catalog, schema, table));
+		}
+
 		[Serializable]
 		protected class CountBigQueryFunction : ClassicAggregateFunction
 		{

@@ -39,7 +39,7 @@ namespace NHibernate.Dialect
 
 		/// <summary> Characters used for closing quoted sql identifiers </summary>
 		public const string PossibleClosedQuoteChars = "`'\"]";
-		
+
 		private readonly TypeNames _typeNames = new TypeNames();
 		private readonly TypeNames _hibernateTypeNames = new TypeNames();
 		private readonly IDictionary<string, string> _properties = new Dictionary<string, string>();
@@ -81,7 +81,7 @@ namespace NHibernate.Dialect
 			Log.Info("Using dialect: " + this);
 
 			_sqlFunctions = CollectionHelper.CreateCaseInsensitiveHashtable(StandardAggregateFunctions);
-			
+
 			// standard sql92 functions (can be overridden by subclasses)
 			RegisterFunction("substring", new AnsiSubstringFunction());
 			RegisterFunction("locate", new StandardSQLFunction("locate", NHibernateUtil.Int32));
@@ -204,7 +204,8 @@ namespace NHibernate.Dialect
 			if (sqlType.LengthDefined || sqlType.PrecisionDefined)
 			{
 				string resultWithLength = _typeNames.Get(sqlType.DbType, sqlType.Length, sqlType.Precision, sqlType.Scale);
-				if (resultWithLength != null) return resultWithLength;
+				if (resultWithLength != null)
+					return resultWithLength;
 			}
 
 			string result = _typeNames.Get(sqlType.DbType);
@@ -343,14 +344,14 @@ namespace NHibernate.Dialect
 			res.Append(" constraint ")
 				.Append(constraintName)
 				.Append(" foreign key (")
-				.Append(StringHelper.Join(StringHelper.CommaSpace, foreignKey))
+				.Append(string.Join(StringHelper.CommaSpace, foreignKey))
 				.Append(") references ")
 				.Append(referencedTable);
 
 			if (!referencesPrimaryKey)
 			{
 				res.Append(" (")
-					.Append(StringHelper.Join(StringHelper.CommaSpace, primaryKey))
+					.Append(string.Join(StringHelper.CommaSpace, primaryKey))
 					.Append(')');
 			}
 
@@ -711,15 +712,21 @@ namespace NHibernate.Dialect
 			return " drop constraint " + constraintName;
 		}
 
+
 		/// <summary>
 		/// The syntax that is used to check if a constraint does not exists before creating it
 		/// </summary>
 		/// <param name="table">The table.</param>
 		/// <param name="name">The name.</param>
 		/// <returns></returns>
+		[Obsolete("Can cause issues when a custom schema is defined(https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
 		public virtual string GetIfNotExistsCreateConstraint(Table table, string name)
 		{
-			return "";
+			var catalog = table.Catalog == null ? null : table.GetQuotedCatalog(this);
+			var schema = table.Schema == null ? null : table.GetQuotedSchema(this);
+			var tableName = table.GetQuotedName(this);
+
+			return GetIfNotExistsCreateConstraint(catalog, schema, tableName, name);
 		}
 
 		/// <summary>
@@ -729,9 +736,14 @@ namespace NHibernate.Dialect
 		/// <param name="table">The table.</param>
 		/// <param name="name">The name.</param>
 		/// <returns></returns>
+		[Obsolete("Can cause issues when a custom schema is defined(https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
 		public virtual string GetIfNotExistsCreateConstraintEnd(Table table, string name)
 		{
-			return "";
+			var catalog = table.Catalog == null ? null : table.GetQuotedCatalog(this);
+			var schema = table.Schema == null ? null : table.GetQuotedSchema(this);
+			var tableName = table.GetQuotedName(this);
+
+			return GetIfNotExistsCreateConstraintEnd(catalog, schema, tableName, name);
 		}
 
 		/// <summary>
@@ -740,9 +752,14 @@ namespace NHibernate.Dialect
 		/// <param name="table">The table.</param>
 		/// <param name="name">The name.</param>
 		/// <returns></returns>
+		[Obsolete("Can cause issues when a custom schema is defined(https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
 		public virtual string GetIfExistsDropConstraint(Table table, string name)
 		{
-			return "";
+			var catalog = table.Catalog == null ? null : table.GetQuotedCatalog(this);
+			var schema = table.Schema == null ? null : table.GetQuotedSchema(this);
+			var tableName = table.GetQuotedName(this);
+
+			return GetIfExistsDropConstraint(catalog, schema, tableName, name);
 		}
 
 		/// <summary>
@@ -752,7 +769,66 @@ namespace NHibernate.Dialect
 		/// <param name="table">The table.</param>
 		/// <param name="name">The name.</param>
 		/// <returns></returns>
+		[Obsolete("Can cause issues when a custom schema is defined(https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
 		public virtual string GetIfExistsDropConstraintEnd(Table table, string name)
+		{
+			var catalog = table.Catalog == null ? null : table.GetQuotedCatalog(this);
+			var schema = table.Schema == null ? null : table.GetQuotedSchema(this);
+			var tableName = table.GetQuotedName(this);
+
+			return GetIfExistsDropConstraintEnd(catalog, schema, tableName, name);
+		}
+
+		/// <summary>
+		/// The syntax that is used to check if a constraint does not exists before creating it
+		/// </summary>
+		/// <param name="catalog">The catalog.</param>
+		/// <param name="schema">The schema.</param>
+		/// <param name="table">The table.</param>
+		/// <param name="name">The name.</param>
+		/// <returns></returns>
+		public virtual string GetIfNotExistsCreateConstraint(string catalog, string schema, string table, string name)
+		{
+			return "";
+		}
+
+		/// <summary>
+		/// The syntax that is used to close the if for a constraint exists check, used
+		/// for dialects that requires begin/end for ifs
+		/// </summary>
+		/// <param name="catalog">The catalog.</param>
+		/// <param name="schema">The schema.</param>
+		/// <param name="table">The table.</param>
+		/// <param name="name">The name.</param>
+		/// <returns></returns>
+		public virtual string GetIfNotExistsCreateConstraintEnd(string catalog, string schema, string table, string name)
+		{
+			return "";
+		}
+
+		/// <summary>
+		/// The syntax that is used to check if a constraint exists before dropping it
+		/// </summary>
+		/// <param name="catalog">The catalog.</param>
+		/// <param name="schema">The schema.</param>
+		/// <param name="table">The table</param>
+		/// <param name="name">The name.</param>
+		/// <returns></returns>
+		public virtual string GetIfExistsDropConstraint(string catalog, string schema, string table, string name)
+		{
+			return "";
+		}
+
+		/// <summary>
+		/// The syntax that is used to close the if for a constraint exists check, used
+		/// for dialects that requires begin/end for ifs
+		/// </summary>
+		/// <param name="catalog"></param>
+		/// <param name="schema"></param>
+		/// <param name="table"></param>
+		/// <param name="name">The name.</param>
+		/// <returns></returns>
+		public virtual string GetIfExistsDropConstraintEnd(string catalog, string schema, string table, string name)
 		{
 			return "";
 		}
@@ -1584,10 +1660,9 @@ namespace NHibernate.Dialect
 			return (name[0] == OpenQuote && name[name.Length - 1] == CloseQuote);
 		}
 
-		public virtual string Qualify(string catalog, string schema, string table)
+		public virtual string Qualify(string catalog, string schema, string name)
 		{
-			StringBuilder qualifiedName = new StringBuilder();
-
+			var qualifiedName = new StringBuilder();
 			if (!string.IsNullOrEmpty(catalog))
 			{
 				qualifiedName.Append(catalog).Append(StringHelper.Dot);
@@ -1596,7 +1671,7 @@ namespace NHibernate.Dialect
 			{
 				qualifiedName.Append(schema).Append(StringHelper.Dot);
 			}
-			return qualifiedName.Append(table).ToString();
+			return qualifiedName.Append(name).ToString();
 		}
 
 		/// <summary>
@@ -1698,6 +1773,24 @@ namespace NHibernate.Dialect
 		public virtual string QuoteForSchemaName(string schemaName)
 		{
 			return IsQuoted(schemaName) ? schemaName : Quote(schemaName);
+		}
+
+		/// <summary>
+		/// Quotes a name for being used as a catalogname
+		/// </summary>
+		/// <param name="catalogName">Name of the catalog</param>
+		/// <returns>A Quoted name in the format of OpenQuote + catalogName + CloseQuote</returns>
+		/// <remarks>
+		/// <p>
+		/// If the catalogName is already enclosed in the OpenQuote and CloseQuote then this 
+		/// method will return the catalogName that was passed in without going through any
+		/// Quoting process.  So if catalogName is passed in already Quoted make sure that 
+		/// you have escaped all of the chars according to your DataBase's specifications.
+		/// </p>
+		/// </remarks>
+		public virtual string QuoteForCatalogName(string catalogName)
+		{
+			return IsQuoted(catalogName) ? catalogName : Quote(catalogName);
 		}
 
 		/// <summary>

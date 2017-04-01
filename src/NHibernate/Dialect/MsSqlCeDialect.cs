@@ -151,33 +151,24 @@ namespace NHibernate.Dialect
 			var tableName = new StringBuilder();
 			if (!string.IsNullOrEmpty(schema))
 			{
-				if (schema.StartsWith(OpenQuote.ToString()))
+				if (IsQuoted(schema))
 				{
-					schema = schema.Substring(1, schema.Length - 1);
 					quoted = true;
-				}
-				if (schema.EndsWith(CloseQuote.ToString()))
-				{
-					schema = schema.Substring(0, schema.Length - 1);
-					quoted = true;
+					schema = UnQuote(schema);
 				}
 				tableName.Append(schema).Append(StringHelper.Underscore);
 			}
 
-			if (table.StartsWith(OpenQuote.ToString()))
+			if (IsQuoted(table))
 			{
-				table = table.Substring(1, table.Length - 1);
 				quoted = true;
-			}
-			if (table.EndsWith(CloseQuote.ToString()))
-			{
-				table = table.Substring(0, table.Length - 1);
-				quoted = true;
+				table = UnQuote(table);
 			}
 
 			string name = tableName.Append(table).ToString();
 			if (quoted)
-				name = OpenQuote + name + CloseQuote;
+				name = Quote(name);
+
 			return qualifiedName.Append(name).ToString();
 		}
 

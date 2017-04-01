@@ -24,14 +24,14 @@ namespace NHibernate.Test.DialectTest
 			column.Value = sv;
 
 			// no length, should produce maximum
-			Assert.AreEqual("VARBINARY(8000)", column.GetSqlType(dialect, null));
+			Assert.That(column.GetSqlType(dialect, null), Is.EqualTo("VARBINARY(8000)"));
 
 			// maximum varbinary length is 8000
 			column.Length = 8000;
-			Assert.AreEqual("VARBINARY(8000)", column.GetSqlType(dialect,null));
+			Assert.That(column.GetSqlType(dialect, null), Is.EqualTo("VARBINARY(8000)"));
 
 			column.Length = 8001;
-			Assert.AreEqual("IMAGE", column.GetSqlType(dialect, null));
+			Assert.That(column.GetSqlType(dialect, null), Is.EqualTo("IMAGE"));
 		}
     
         [Test]
@@ -41,8 +41,8 @@ namespace NHibernate.Test.DialectTest
             tbl.Schema = "`schema`";
             tbl.Name = "`name`";
 
-            Assert.AreEqual("\"schema_name\"", tbl.GetQualifiedName(dialect));
-            Assert.AreEqual("\"schema_table\"", dialect.Qualify("", "\"schema\"", "\"table\""));
+            Assert.That(tbl.GetQualifiedName(dialect), Is.EqualTo("\"schema_name\""));
+            Assert.That(dialect.Qualify("", "\"schema\"", "\"table\""), Is.EqualTo("\"schema_table\""));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace NHibernate.Test.DialectTest
             Table tbl = new Table();
             tbl.Name = "`name`";
 
-            Assert.AreEqual("\"name\"", tbl.GetQualifiedName(dialect));
+            Assert.That(tbl.GetQualifiedName(dialect), Is.EqualTo("\"name\""));
         }
 
         [Test]
@@ -61,8 +61,8 @@ namespace NHibernate.Test.DialectTest
             tbl.Schema = "`schema`";
             tbl.Name = "name";
 
-            Assert.AreEqual("\"schema_name\"", tbl.GetQualifiedName(dialect));
-            Assert.AreEqual("\"schema_table\"", dialect.Qualify("", "\"schema\"", "table"));
+            Assert.That(tbl.GetQualifiedName(dialect), Is.EqualTo("\"schema_name\""));
+            Assert.That(dialect.Qualify("", "\"schema\"", "table"), Is.EqualTo("\"schema_table\""));
         }
 
         [Test]
@@ -73,8 +73,8 @@ namespace NHibernate.Test.DialectTest
             tbl.Schema = "`schema`";
             tbl.Name = "`name`";
 
-            Assert.AreEqual("dbo.\"schema_name\"", tbl.GetQualifiedName(dialect));
-            Assert.AreEqual("dbo.\"schema_table\"", dialect.Qualify("dbo", "\"schema\"", "\"table\""));
+            Assert.That(tbl.GetQualifiedName(dialect), Is.EqualTo("dbo.\"schema_name\""));
+            Assert.That(dialect.Qualify("dbo", "\"schema\"", "\"table\""), Is.EqualTo("dbo.\"schema_table\""));
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace NHibernate.Test.DialectTest
             Table tbl = new Table();
             tbl.Name = "`Group`";
 
-            Assert.AreEqual("\"Group\"", tbl.GetQualifiedName(dialect));
+            Assert.That(tbl.GetQualifiedName(dialect), Is.EqualTo("\"Group\""));
         }
 
         [Test]
@@ -93,8 +93,8 @@ namespace NHibernate.Test.DialectTest
             tbl.Schema = "schema";
             tbl.Name = "name";
 
-            Assert.AreEqual("schema_name", tbl.GetQualifiedName(dialect));
-            Assert.AreEqual("schema_table", dialect.Qualify("", "schema", "table"));
+            Assert.That(tbl.GetQualifiedName(dialect), Is.EqualTo("schema_name"));
+            Assert.That(dialect.Qualify("", "schema", "table"), Is.EqualTo("schema_table"));
         }
     }
 }

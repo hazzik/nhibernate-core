@@ -814,8 +814,9 @@ namespace NHibernate.Cfg
 		{
 			SecondPassCompile();
 
-			string defaultCatalog = PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null);
-			string defaultSchema = PropertiesHelper.GetString(Environment.DefaultSchema, properties, null);
+			// we should quote catalog and schema if needed
+			string defaultCatalog = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null), dialect);
+			string defaultSchema = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultSchema, properties, null), dialect);
 
 			var script = new List<string>();
 
@@ -889,8 +890,9 @@ namespace NHibernate.Cfg
 		{
 			SecondPassCompile();
 
-			string defaultCatalog = PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null);
-			string defaultSchema = PropertiesHelper.GetString(Environment.DefaultSchema, properties, null);
+			// we should quote catalog and schema if needed
+			string defaultCatalog = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null), dialect);
+			string defaultSchema = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultSchema, properties, null), dialect);
 
 			var script = new List<string>();
 
@@ -2321,8 +2323,9 @@ namespace NHibernate.Cfg
 		{
 			SecondPassCompile();
 
-			string defaultCatalog = PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null);
-			string defaultSchema = PropertiesHelper.GetString(Environment.DefaultSchema, properties, null);
+			// we should quote catalog and schema if needed
+			string defaultCatalog = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null), dialect);
+			string defaultSchema = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultSchema, properties, null), dialect);
 
 			var script = new List<string>(50);
 			foreach (var table in TableMappings)
@@ -2441,8 +2444,8 @@ namespace NHibernate.Cfg
 		private IEnumerable<IPersistentIdentifierGenerator> IterateGenerators(Dialect.Dialect dialect)
 		{
 			var generators = new Dictionary<string, IPersistentIdentifierGenerator>();
-			string defaultCatalog = PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null);
-			string defaultSchema = PropertiesHelper.GetString(Environment.DefaultSchema, properties, null);
+			string defaultCatalog =  GetQuotedName(PropertiesHelper.GetString(Environment.DefaultCatalog, properties, null), dialect);
+			string defaultSchema = GetQuotedName(PropertiesHelper.GetString(Environment.DefaultSchema, properties, null), dialect);
 
 			foreach (var pc in classes.Values)
 			{
@@ -2477,6 +2480,25 @@ namespace NHibernate.Cfg
 			return generators.Values;
 		}
 
+		/// <summary>
+		/// Returns a quoted name(schema/catalog) if needed
+		/// </summary>
+		/// <param name="name">The schema name</param>
+		/// <param name="dialect">The instance of dicalect to use</param>
+		/// <returns></returns>
+		private string GetQuotedName(string name, Dialect.Dialect dialect)
+		{
+			if (name == null)
+			{
+				return null;
+			}
 
+			if (StringHelper.IsBackticksEnclosed(name))
+			{
+				return dialect.QuoteForSchemaName(StringHelper.PurgeBackticksEnclosing(name));
+			}
+
+			return name;
+		}
 	}
 }

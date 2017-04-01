@@ -218,49 +218,33 @@ namespace NHibernate.Dialect
 			
 			if (!string.IsNullOrEmpty(catalog))
 			{
-				if (catalog.StartsWith(OpenQuote.ToString()))
+				if (IsQuoted(catalog))
 				{
-					catalog = catalog.Substring(1, catalog.Length - 1);
-					quoted = true;
-				} 
-				if (catalog.EndsWith(CloseQuote.ToString()))
-				{
-					catalog = catalog.Substring(0, catalog.Length - 1);
+					catalog = UnQuote(catalog);
 					quoted = true;
 				}
 				qualifiedName.Append(catalog).Append(StringHelper.Underscore);
 			}
 			if (!string.IsNullOrEmpty(schema))
 			{
-				if (schema.StartsWith(OpenQuote.ToString()))
+				if (IsQuoted(schema))
 				{
-					schema = schema.Substring(1, schema.Length - 1);
+					schema = UnQuote(schema);
 					quoted = true;
 				}
-				if (schema.EndsWith(CloseQuote.ToString()))
-				{
-					schema = schema.Substring(0, schema.Length - 1);
-					quoted = true;
-				} 
 				qualifiedName.Append(schema).Append(StringHelper.Underscore);
 			}
-
-			if (table.StartsWith(OpenQuote.ToString()))
+			if (IsQuoted(table))
 			{
-				table = table.Substring(1, table.Length - 1);
 				quoted = true;
+				table = UnQuote(table);
 			}
-			if (table.EndsWith(CloseQuote.ToString()))
-			{
-				table = table.Substring(0, table.Length - 1);
-				quoted = true;
-			}
-
-			string name = qualifiedName.Append(table).ToString();
+			qualifiedName.Append(table);
 			if (quoted)
-				return OpenQuote + name + CloseQuote;
-			return name;
-
+			{
+				return Quote(qualifiedName.ToString());
+			}
+			return qualifiedName.ToString();
 		}
 
 		public override string NoColumnsInsertString
