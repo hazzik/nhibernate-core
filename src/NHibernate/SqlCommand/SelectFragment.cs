@@ -133,8 +133,9 @@ namespace NHibernate.SqlCommand
 		public string ToSqlStringFragment(bool includeLeadingComma)
 		{
 			StringBuilder buf = new StringBuilder(columns.Count * 10);
-			HashSet<string> columnsUnique =
-				usedAliases != null ? new HashSet<string>(usedAliases) : new HashSet<string>();
+			HashSet<string> columnsUnique = usedAliases != null
+				? new HashSet<string>(usedAliases, StringComparer.OrdinalIgnoreCase)
+				: new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			bool found = false;
 			for (int i = 0; i < columns.Count; i++)
