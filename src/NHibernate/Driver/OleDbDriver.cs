@@ -1,3 +1,4 @@
+#if !NETCOREAPP2_0
 using System;
 using System.Data.Common;
 using System.Data.OleDb;
@@ -50,3 +51,4 @@ namespace NHibernate.Driver
 		}
 	}
 }
+#endif

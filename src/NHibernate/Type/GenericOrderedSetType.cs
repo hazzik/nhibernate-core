@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using Iesi.Collections.Generic;
 
 namespace NHibernate.Type
 {
 	/// <summary>
-	/// An <see cref="IType"/> that maps a sorted <see cref="ISet{T}"/> collection
+	/// An <see cref="IType"/> that maps a sorted <c>ISet{T}</c> collection
 	/// to the database.
 	/// </summary>
 	[Serializable]
@@ -26,7 +24,11 @@ namespace NHibernate.Type
 
 		public override object Instantiate(int anticipatedSize)
 		{
-			return new LinkedHashSet<T>();
+#if !NETCOREAPP2_0
+			return new Iesi.Collections.Generic.LinkedHashSet<T>();
+#else
+			throw new NotSupportedException();
+#endif
 		}
 	}
 }

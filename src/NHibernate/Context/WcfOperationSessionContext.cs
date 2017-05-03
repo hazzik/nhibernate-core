@@ -1,3 +1,4 @@
+#if !NETCOREAPP2_0
 using System;
 using System.Collections;
 using System.ServiceModel;
@@ -50,3 +51,4 @@ namespace NHibernate.Context
 		public void Detach(OperationContext owner) { }
 	}
 }
+#endif

@@ -1227,14 +1227,16 @@ namespace NHibernate.Impl
 			{
 				case null:
 					return null;
-				case "call":
-					return new CallSessionContext(this);
 				case "thread_static":
 					return new ThreadStaticSessionContext(this);
 				case "web":
 					return new WebSessionContext(this);
+#if !NETCOREAPP2_0
+				case "call":
+					return new CallSessionContext(this);
 				case "wcf_operation":
 					return new WcfOperationSessionContext(this);
+#endif
 			}
 
 			try

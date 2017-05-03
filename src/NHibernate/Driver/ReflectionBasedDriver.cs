@@ -39,6 +39,7 @@ namespace NHibernate.Driver
 			var connectionType = ReflectHelper.TypeFromAssembly(connectionTypeName, driverAssemblyName, false);
 			var commandType = ReflectHelper.TypeFromAssembly(commandTypeName, driverAssemblyName, false);
 
+#if !NETCOREAPP2_0
 			if (connectionType == null || commandType == null)
 			{
 				if (string.IsNullOrEmpty(providerInvariantName))
@@ -49,6 +50,7 @@ namespace NHibernate.Driver
 				connectionCommandProvider = new DbProviderFactoryDriveConnectionCommandProvider(factory);
 			}
 			else
+#endif
 			{
 				connectionCommandProvider = new ReflectionDriveConnectionCommandProvider(connectionType, commandType);
 			}

@@ -1,3 +1,4 @@
+#if !NETCOREAPP2_0
 using System;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
@@ -37,3 +38,4 @@ namespace NHibernate.Context
 		}
 	}
 }
+#endif
