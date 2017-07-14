@@ -15,7 +15,7 @@ namespace NHibernate.Mapping
 	{
 		private Table table;
 		private readonly List<Column> columns = new List<Column>();
-		private string name;
+		Identifier _name;
 
 		public static string BuildSqlCreateIndexString(Dialect.Dialect dialect, string name, Table table,
 			IEnumerable<Column> columns, bool unique, string defaultCatalog, string defaultSchema)
@@ -134,8 +134,8 @@ namespace NHibernate.Mapping
 		/// <value>The Name used to identify the Index in the database.</value>
 		public string Name
 		{
-			get { return name; }
-			set { name = value; }
+			get { return _name?.Text; }
+			set { _name = Identifier.ToIdentifier(value); }
 		}
 
 		public bool ContainsColumn(Column column)

@@ -35,17 +35,19 @@ namespace NHibernate.Mapping
 		private readonly Dictionary<string, Index> indexes = new Dictionary<string, Index>();
 		private readonly int uniqueInteger;
 		private readonly Dictionary<string, UniqueKey> uniqueKeys = new Dictionary<string, UniqueKey>();
-		private string catalog;
+		
 		private string comment;
 		private bool hasDenormalizedTables;
 		private IKeyValue idValue;
 		private bool isAbstract;
-		private bool isSchemaQuoted;
-		private string name;
-		private bool quoted;
-		private string schema;
+
+
 		private SchemaAction schemaActions = SchemaAction.All;
 		private string subselect;
+
+		Identifier _name;
+		Identifier _schema;
+		Identifier _catalog;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="Table"/>.
@@ -80,19 +82,8 @@ namespace NHibernate.Mapping
 		/// </remarks>
 		public string Name
 		{
-			get { return name; }
-			set
-			{
-				if (value[0] == '`')
-				{
-					quoted = true;
-					name = value.Substring(1, value.Length - 2);
-				}
-				else
-				{
-					name = value;
-				}
-			}
+			get { return _name.Text; }
+			set { _name = Identifier.ToIdentifier(value); }
 		}
 
 		/// <summary>
@@ -172,19 +163,8 @@ namespace NHibernate.Mapping
 		/// </value>
 		public string Schema
 		{
-			get { return schema; }
-			set
-			{
-				if (value != null && value[0] == '`')
-				{
-					isSchemaQuoted = true;
-					schema = value.Substring(1, value.Length - 2);
-				}
-				else
-				{
-					schema = value;
-				}
-			}
+			get { return _schema?.Text; }
+			set { _schema = Identifier.ToIdentifier(value); }
 		}
 
 		/// <summary>
@@ -202,8 +182,12 @@ namespace NHibernate.Mapping
 		/// <value><see langword="true" /> if the column is quoted.</value>
 		public bool IsQuoted
 		{
-			get { return quoted; }
-			set { quoted = value; }
+			get { return _name != null && _name.Quoted; }
+			set
+			{
+				if (value == _name.Quoted) return;
+				_name = new Identifier(_name.Text, value);
+			}
 		}
 
 		public IEnumerable<string> CheckConstraintsIterator
@@ -273,8 +257,8 @@ namespace NHibernate.Mapping
 
 		public string Catalog
 		{
-			get { return catalog; }
-			set { catalog = value; }
+			get { return _catalog?.Text; }
+			set { _catalog = Identifier.ToIdentifier(value); }
 		}
 
 		public string Comment
@@ -315,7 +299,7 @@ namespace NHibernate.Mapping
 
 		public bool IsSchemaQuoted
 		{
-			get { return isSchemaQuoted; }
+			get { return _schema != null && _schema.Quoted; }
 		}
 
 		#region IRelationalModel Members
@@ -490,19 +474,18 @@ namespace NHibernate.Mapping
 		public virtual string GetQualifiedName(Dialect.Dialect dialect, string defaultCatalog, string defaultSchema)
 		{
 			if (!string.IsNullOrEmpty(subselect))
-			{
 				return "( " + subselect + " )";
-			}
+
 			string quotedName = GetQuotedName(dialect);
-			string usedSchema = schema == null ? defaultSchema : GetQuotedSchema(dialect);
-			string usedCatalog = catalog ?? defaultCatalog;
+			string usedSchema = _schema == null ? defaultSchema : _schema.Render(dialect);
+			string usedCatalog = _catalog == null ? defaultCatalog : _catalog.Render(dialect);
 			return dialect.Qualify(usedCatalog, usedSchema, quotedName);
 		}
 
 		/// <summary> returns quoted name as it would be in the mapping file.</summary>
 		public string GetQuotedName()
 		{
-			return quoted ? "`" + name + "`" : name;
+			return _name?.Render();
 		}
 
 		/// <summary>
@@ -517,18 +500,18 @@ namespace NHibernate.Mapping
 		/// </returns>
 		public string GetQuotedName(Dialect.Dialect dialect)
 		{
-			return IsQuoted ? dialect.QuoteForTableName(name) : name;
+			return _name?.Render(dialect);
 		}
 
 		/// <summary> returns quoted name as it is in the mapping file.</summary>
 		public string GetQuotedSchema()
 		{
-			return IsSchemaQuoted ? "`" + schema + "`" : schema;
+			return _schema?.Render();
 		}
 
 		public string GetQuotedSchema(Dialect.Dialect dialect)
 		{
-			return IsSchemaQuoted ? dialect.OpenQuote + schema + dialect.CloseQuote : schema;
+			return _schema?.Render(dialect);
 		}
 
 		/// <summary>
@@ -543,17 +526,7 @@ namespace NHibernate.Mapping
 		/// </returns>
 		public string GetQuotedSchemaName(Dialect.Dialect dialect)
 		{
-			if (schema == null)
-			{
-				return null;
-			}
-
-			if (schema.StartsWith("`"))
-			{
-				return dialect.QuoteForSchemaName(schema.Substring(1, schema.Length - 2));
-			}
-
-			return schema;
+			return _schema?.Render(dialect);
 		}
 
 		/// <summary>
@@ -824,7 +797,7 @@ namespace NHibernate.Mapping
 			{
 				result ^= o.GetHashCode();
 			}
-			return (name.GetHashCode().ToString("X") + result.GetHashCode().ToString("X"));
+			return (_name.GetHashCode().ToString("X") + result.GetHashCode().ToString("X"));
 		}
 
 		/// <summary>
@@ -929,7 +902,7 @@ namespace NHibernate.Mapping
 
 		public virtual string SqlTemporaryTableCreateString(Dialect.Dialect dialect, IMapping mapping)
 		{
-			StringBuilder buffer = new StringBuilder(dialect.CreateTemporaryTableString).Append(' ').Append(name).Append(" (");
+			StringBuilder buffer = new StringBuilder(dialect.CreateTemporaryTableString).Append(' ').Append(_name).Append(" (");
 			bool commaNeeded = false;
 			foreach (Column column in ColumnIterator)
 			{

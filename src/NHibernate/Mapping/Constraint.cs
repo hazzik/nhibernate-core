@@ -102,8 +102,7 @@ namespace NHibernate.Mapping
 			if (IsGenerated(dialect))
 			{
 				string ifExists = dialect.GetIfExistsDropConstraint(Table, Name);
-				string drop =
-					string.Format("alter table {0} drop constraint {1}", Table.GetQualifiedName(dialect, defaultCatalog, defaultSchema), Name);
+				string drop = string.Format("alter table {0} drop constraint {1}", Table.GetQualifiedName(dialect, defaultCatalog, defaultSchema), Name);
 				string end = dialect.GetIfExistsDropConstraintEnd(Table, Name);
 
 				return ifExists + System.Environment.NewLine + drop + System.Environment.NewLine + end;
