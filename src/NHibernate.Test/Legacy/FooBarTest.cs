@@ -2632,6 +2632,8 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public void PersistCollections()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			ISession s = OpenSession();
 			ITransaction txn = s.BeginTransaction();
 			IEnumerator enumer = s.CreateQuery("select count(*) from b in class Bar").Enumerable().GetEnumerator();
@@ -4642,6 +4644,8 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public void ProxyArray()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			ISession s = OpenSession();
 			GlarchProxy g = new Glarch();
 			Glarch g1 = new Glarch();

@@ -38,6 +38,8 @@ namespace NHibernate.Test.NHSpecificTest.NH2773 {
 
       [Test]
       public void DeserializedSession_ProxyType_ShouldBeEqualToOriginalProxyType() {
+         Assume.That(typeof(System.Type).IsSerializable);
+
          System.Type originalProxyType = null;
          System.Type deserializedProxyType = null;
          ISession deserializedSession = null;

@@ -1,3 +1,4 @@
+#if NET461
 using System;
 using System.Data.Common;
 using System.Text;
@@ -163,3 +164,4 @@ namespace NHibernate.AdoNet
 		}
 	}
 }
+#endif

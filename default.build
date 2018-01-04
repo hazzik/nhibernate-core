@@ -33,6 +33,7 @@
 		<exec program="dotnet" verbose="true">
 			<arg value="msbuild" />
 			<arg value="${root.dir}/src/NHibernate.sln" />
+			<arg value="/p:TargetFramework=&quot;net461&quot;" />
 			<arg value="/p:OutputPath=&quot;${path::get-full-path(bin.dir)}&quot;" />
 			<arg value="/p:Platform=&quot;Any CPU&quot;" />
 			<arg value="/p:Configuration=&quot;Debug&quot;" if="${project.config == 'debug'}" />

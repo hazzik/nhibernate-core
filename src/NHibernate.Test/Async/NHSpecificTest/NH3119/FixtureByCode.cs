@@ -98,6 +98,8 @@ namespace NHibernate.Test.NHSpecificTest.NH3119
 		[Test]
 		public async Task PocoComponentTuplizerOfDeserializedConfiguration_Instantiate_UsesReflectonOptimizerAsync()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			MemoryStream configMemoryStream = new MemoryStream();
 			BinaryFormatter writer = new BinaryFormatter();
 			writer.Serialize(configMemoryStream, cfg);

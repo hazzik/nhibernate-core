@@ -24,7 +24,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		public WebImage()
 		{
 
-			OldPosition = -1; //di base un immagine è nuova.
+			OldPosition = -1; //di base un immagine ï¿½ nuova.
 		}
 		/// <summary>
 		/// 
@@ -36,7 +36,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		}
 
 		/// <summary>
-		/// I dati grezzi dell'immagine, è il conenuto binario che io ottengo
+		/// I dati grezzi dell'immagine, ï¿½ il conenuto binario che io ottengo
 		/// scaricando l'immagine
 		/// </summary>
 		/// <value>The image data.</value>
@@ -80,8 +80,8 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		public virtual Int32? ContextEval { get; set; }
 
 		/// <summary>
-		/// L'immagine è trattata talvolta come una vera e propria rilevazione per cui
-		/// ha comunque al suo interno la possibilità di avere uno stato associato.
+		/// L'immagine ï¿½ trattata talvolta come una vera e propria rilevazione per cui
+		/// ha comunque al suo interno la possibilitï¿½ di avere uno stato associato.
 		/// </summary>
 		public virtual Int32 Status { get; set; }
 
@@ -96,15 +96,22 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		public virtual Boolean Bookmarked { get; set; }
 
 		/// <summary>
-		/// La posizione nella ricerca precedente, -1 se è la prima apparizione.
+		/// La posizione nella ricerca precedente, -1 se ï¿½ la prima apparizione.
 		/// </summary>
 		public virtual Int32 OldPosition { get; protected internal set; }
 
 		/// <summary>
-		/// Un'immagine che non è più tornata 
+		/// Un'immagine che non ï¿½ piï¿½ tornata 
 		/// </summary>
 		protected internal virtual Boolean OldImage { get; set; }
 
+		/// <summary>
+		/// La url dell'immagine.
+		/// </summary>
+		/// <value>The image URL.</value>
+		public virtual String ImageUrl { get; set; }
+
+#if NET461
 		private Bitmap _bitmap;
 
 		/// <summary>
@@ -118,12 +125,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 				return _bitmap ?? CreateBitmap();
 			}
 		}
-
-		/// <summary>
-		/// La url dell'immagine.
-		/// </summary>
-		/// <value>The image URL.</value>
-		public virtual String ImageUrl { get; set; }
 
 		private Bitmap CreateBitmap()
 		{
@@ -144,6 +145,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 			}
 
 		}
+#endif
 	}
 
 }

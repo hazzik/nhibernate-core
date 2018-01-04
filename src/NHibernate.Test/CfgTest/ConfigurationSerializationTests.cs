@@ -22,6 +22,8 @@ namespace NHibernate.Test.CfgTest
 		[Test]
 		public void Basic_CRUD_should_work()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			Assembly assembly = Assembly.Load("NHibernate.DomainModel");
 			var cfg = new Configuration();
 			if (TestConfigurationHelper.hibernateConfigFile != null)

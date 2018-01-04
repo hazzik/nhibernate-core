@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Reflection;
 using NHibernate.Event;
 using NUnit.Framework;
 using NHibernate.Cfg;
@@ -27,6 +28,8 @@ namespace NHibernate.Test.CfgTest
 		[Test]
 		public void FromAppConfigTest()
 		{
+			Assume.That(Assembly.GetEntryAssembly()?.GetName().Name != "testhost");
+
 			IHibernateConfiguration hc = ConfigurationManager.GetSection("hibernate-configuration") as IHibernateConfiguration;
 			Assert.That(hc.ByteCodeProviderType, Is.EqualTo("lcg"));
 			Assert.IsTrue(hc.UseReflectionOptimizer);
@@ -36,6 +39,8 @@ namespace NHibernate.Test.CfgTest
 		[Test]
 		public void IgnoreSystemOutOfAppConfig()
 		{
+			Assume.That(Assembly.GetEntryAssembly()?.GetName().Name != "testhost");
+
 			IHibernateConfiguration hc = ConfigurationManager.GetSection("hibernate-configuration") as IHibernateConfiguration;
 			string xml =
 			@"<?xml version='1.0' encoding='utf-8' ?>

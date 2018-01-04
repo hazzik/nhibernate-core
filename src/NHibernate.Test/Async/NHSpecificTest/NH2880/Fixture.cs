@@ -45,6 +45,8 @@ namespace NHibernate.Test.NHSpecificTest.NH2880
 		[Test]
 		public async Task ProxiesFromDeserializedSessionsCanBeLoadedAsync()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			MemoryStream sessionMemoryStream;
 
 			using (ISession s = Sfi.OpenSession())

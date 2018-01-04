@@ -245,6 +245,8 @@ namespace NHibernate.Test.TransformTests
 		[Test]
 		public void Serialization()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			AssertSerialization<PublicPropertiesSimpleDTO>();
 			AssertSerialization<PrivateFieldsSimpleDTO>();
 			AssertSerialization<PublicInheritedPropertiesSimpleDTO>();

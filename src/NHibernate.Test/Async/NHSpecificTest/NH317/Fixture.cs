@@ -38,6 +38,8 @@ namespace NHibernate.Test.NHSpecificTest.NH317
 		[Test]
 		public async Task ProxySerializationAsync()
 		{
+			Assume.That(typeof(System.Type).IsSerializable);
+
 			Node node = new Node();
 			node.Id = 1;
 			node.Name = "Node 1";

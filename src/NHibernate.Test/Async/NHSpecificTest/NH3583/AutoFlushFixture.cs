@@ -61,6 +61,8 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 				Assert.That(result.Count, Is.EqualTo(1));
 			}
 		}
+
+#if NET461
 		[Test]
 		public async Task ShouldAutoFlushWhenInDistributedTransactionAsync()
 		{
@@ -77,5 +79,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 				Assert.That(result.Count, Is.EqualTo(1));
 			}
 		}
+#endif
 	}
 }

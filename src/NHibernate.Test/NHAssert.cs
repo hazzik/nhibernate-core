@@ -53,7 +53,11 @@ namespace NHibernate.Test
 
 		public static void IsSerializable(object obj, string message, params object[] args)
 		{
+#if NET461
 			Assert.That(obj, Is.BinarySerializable, message, args);
+#else
+			//TODO:
+#endif
 		}
 
 		#endregion

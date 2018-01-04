@@ -164,7 +164,7 @@ namespace NHibernate.Test.SystemTransactions
 			Assert.That(interceptor.afterTransactionCompletionCalled, Is.EqualTo(2));
 		}
 
-
+#if NET461
 		[Description("NH2128")]
 		[Theory]
 		public void ShouldNotifyAfterDistributedTransactionWithOwnConnection(bool doCommit)
@@ -201,6 +201,7 @@ namespace NHibernate.Test.SystemTransactions
 
 			Assert.That(interceptor.afterTransactionCompletionCalled, Is.EqualTo(1));
 		}
+#endif
 	}
 
 	[TestFixture]
