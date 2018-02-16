@@ -1,3 +1,4 @@
+using System.IO;
 using log4net;
 using log4net.Config;
 using log4net.Core;
@@ -12,7 +13,7 @@ namespace NHibernate.Test.NHSpecificTest.NH1587
 		[Test]
 		public void Bug()
 		{
-			XmlConfigurator.Configure(LogManager.GetRepository(typeof(Fixture).Assembly));
+			XmlConfigurator.Configure(LogManager.GetRepository(typeof(Fixture).Assembly), new FileInfo("log4net.config"));
 			var cfg = new Configuration();
 			if (TestConfigurationHelper.hibernateConfigFile != null)
 				cfg.Configure(TestConfigurationHelper.hibernateConfigFile);

@@ -1,2 +1,2 @@
 using log4net.Config;
-[assembly: XmlConfigurator()]
+[assembly: XmlConfigurator(ConfigFile = "log4net.config")]

@@ -11,6 +11,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="log4net.config" />
     <None Remove="**\*.hbm.xml" />
     <None Remove="**\*.jpg" />
     <None Update="DbScripts\*.sql">
@@ -30,6 +31,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\NHibernate.DomainModel\ABC.hbm.xml" Link="ABC.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
