@@ -1,28 +1,39 @@
-﻿#if !NET461
+﻿#if NETCOREAPP2_0
 using System.Configuration;
 using System.IO;
-using NHibernate.Cfg.ConfigurationSchema;
-using NUnit.Framework;
 using log4net.Repository.Hierarchy;
 using NHibernate.Cfg;
+using NHibernate.Cfg.ConfigurationSchema;
+using NUnit.Framework;
+#endif
 
 namespace NHibernate.Test
 {
+#if NETCOREAPP2_0
 	[SetUpFixture]
+#endif
 	public class TestsContext
 	{
+		public static bool ExecutingWithVsTest { get; } =
+			System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name == "testhost";
+
+#if NETCOREAPP2_0
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
-			Environment.InitializeGlobalProperties(GetTestAssemblyHibernateConfiguration());
+			//When .NET Core App 2.0 tests run from VS/VSTest the entry assembly is "testhost.dll"
+			//so we need to explicitly load the configuration
+			if (ExecutingWithVsTest)
+			{
+				Environment.InitializeGlobalProperties(GetTestAssemblyHibernateConfiguration());
+			}
 
 			ConfigureLog4Net();
 		}
 
 		public static IHibernateConfiguration GetTestAssemblyHibernateConfiguration()
 		{
-			string assemblyPath = Path.Combine(TestContext.CurrentContext.TestDirectory, Path.GetFileName(typeof(TestsContext).Assembly.Location));
-
+			var assemblyPath = Path.Combine(TestContext.CurrentContext.TestDirectory, Path.GetFileName(typeof(TestsContext).Assembly.Location));
 			var configuration = ConfigurationManager.OpenExeConfiguration(assemblyPath);
 			var section = configuration.GetSection(CfgXmlHelper.CfgSectionName);
 			return HibernateConfiguration.FromAppConfig(section.SectionInformation.GetRawXml());
@@ -32,7 +43,7 @@ namespace NHibernate.Test
 		{
 			var hierarchy = (Hierarchy)log4net.LogManager.GetRepository(typeof(TestsContext).Assembly);
 
-			var consoleAppender = new log4net.Appender.ConsoleAppender()
+			var consoleAppender = new log4net.Appender.ConsoleAppender
 			{
 				Layout = new log4net.Layout.PatternLayout("%d{ABSOLUTE} %-5p %c{1}:%L - %m%n"),
 			};
@@ -45,6 +56,6 @@ namespace NHibernate.Test
 			hierarchy.Root.AddAppender(consoleAppender);
 			hierarchy.Configured = true;
 		}
+#endif
 	}
 }
-#endif

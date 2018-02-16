@@ -24,7 +24,7 @@ namespace NHibernate.Test.Logging
 		[Test]
 		public void WhenNotConfiguredAndLog4NetExistsThenUseLog4NetFactory()
 		{
-			Assume.That(Assembly.GetEntryAssembly()?.GetName().Name != "testhost");
+			Assume.That(!TestsContext.ExecutingWithVsTest);
 
 			// NoLoggingNHibernateLogger is internal
 			Assert.That(NHibernateLogger.For("pizza").GetType().Name, Is.Not.EqualTo("NoLoggingNHibernateLogger"));
@@ -33,7 +33,7 @@ namespace NHibernate.Test.Logging
 		[Test, Obsolete]
 		public void WhenNotConfiguredAndLog4NetExistsThenUseLog4NetFactory_Obsolete()
 		{
-			Assume.That(Assembly.GetEntryAssembly()?.GetName().Name != "testhost");
+			Assume.That(!TestsContext.ExecutingWithVsTest);
 
 			Assert.That(LoggerProvider.LoggerFor("pizza"), Is.Not.InstanceOf<NoLoggingInternalLogger>());
 

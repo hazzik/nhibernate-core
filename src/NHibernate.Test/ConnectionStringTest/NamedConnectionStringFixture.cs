@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Reflection;
 using NHibernate.Connection;
 using NUnit.Framework;
 using Environment=NHibernate.Cfg.Environment;
@@ -36,7 +35,7 @@ namespace NHibernate.Test.ConnectionStringTest
 		[Test]
 		public void CanGetNamedConnectionStringFromConfiguration()
 		{
-			Assume.That(Assembly.GetEntryAssembly()?.GetName().Name != "testhost");
+			Assume.That(!TestsContext.ExecutingWithVsTest);
 
 			Dictionary<string, string> settings = new Dictionary<string, string>();
 			settings.Add(Environment.ConnectionStringName, "DummyConnectionString");
