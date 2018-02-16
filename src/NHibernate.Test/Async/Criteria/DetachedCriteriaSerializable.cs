@@ -50,7 +50,7 @@ namespace NHibernate.Test.Criteria
 		{
 			try
 			{
-				Assume.That(typeof(System.Type).IsSerializable);
+				TestsContext.AssumeSystemTypeIsSerializable();
 
 				DetachedCriteria dc = DetachedCriteria.For(typeof(Student))
 				.Add(Expression.Eq("Name", "Gavin King"));
@@ -65,7 +65,7 @@ namespace NHibernate.Test.Criteria
 		[Test]
 		public async Task ExecutableCriteriaAsync()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			// All query below don't have sense, are only to test if all needed classes are serializable
 

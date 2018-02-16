@@ -640,7 +640,7 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public async Task SerializationAsync()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			ISession s = OpenSession();
 			Master m = new Master();

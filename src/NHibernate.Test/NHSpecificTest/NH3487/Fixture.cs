@@ -53,7 +53,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3487
 		[Test]
 		public void CanDeserializeSessionWithEntityHashCollision()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			IFormatter formatter = new BinaryFormatter();
 			byte[] serializedSessionArray;

@@ -27,7 +27,7 @@ namespace NHibernate.Test.NHSpecificTest.NH317
 		[Test]
 		public void ProxySerialization()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			Node node = new Node();
 			node.Id = 1;

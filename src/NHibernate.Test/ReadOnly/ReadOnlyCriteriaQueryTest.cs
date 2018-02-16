@@ -1056,7 +1056,7 @@ namespace NHibernate.Test.ReadOnly
 		[Test]
 		public void DetachedCriteria()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			DetachedCriteria dc = NHibernate.Criterion.DetachedCriteria.For<Student>()
 				.Add(Property.ForName("Name").Eq("Gavin King"))

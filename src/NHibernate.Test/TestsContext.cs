@@ -1,10 +1,11 @@
-﻿#if NETCOREAPP2_0
+﻿using NUnit.Framework;
+
+#if NETCOREAPP2_0
 using System.Configuration;
 using System.IO;
 using log4net.Repository.Hierarchy;
 using NHibernate.Cfg;
 using NHibernate.Cfg.ConfigurationSchema;
-using NUnit.Framework;
 #endif
 
 namespace NHibernate.Test
@@ -16,6 +17,9 @@ namespace NHibernate.Test
 	{
 		public static bool ExecutingWithVsTest { get; } =
 			System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name == "testhost";
+
+		public static void AssumeSystemTypeIsSerializable() =>
+			Assume.That(typeof(System.Type).IsSerializable);
 
 #if NETCOREAPP2_0
 		[OneTimeSetUp]

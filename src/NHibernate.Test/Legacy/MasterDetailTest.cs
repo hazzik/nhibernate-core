@@ -639,7 +639,7 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public void Serialization()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			ISession s = OpenSession();
 			Master m = new Master();

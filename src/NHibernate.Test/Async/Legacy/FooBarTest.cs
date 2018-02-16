@@ -2644,7 +2644,7 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public async Task PersistCollectionsAsync()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			ISession s = OpenSession();
 			ITransaction txn = s.BeginTransaction();
@@ -4656,7 +4656,7 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public async Task ProxyArrayAsync()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			ISession s = OpenSession();
 			GlarchProxy g = new Glarch();

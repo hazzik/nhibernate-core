@@ -63,7 +63,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3383
 		[Test]
 		public void DeserializedPropertyMapping_RefersToSameCascadeStyle()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			var classMapping = CreateMappingClasses();
 

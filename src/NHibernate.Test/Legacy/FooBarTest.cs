@@ -2632,7 +2632,7 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public void PersistCollections()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			ISession s = OpenSession();
 			ITransaction txn = s.BeginTransaction();
@@ -4644,7 +4644,7 @@ namespace NHibernate.Test.Legacy
 		[Test]
 		public void ProxyArray()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			ISession s = OpenSession();
 			GlarchProxy g = new Glarch();

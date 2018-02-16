@@ -58,7 +58,7 @@ namespace NHibernate.Test.ConnectionTest
 		[Test]
 		public async Task SerializationOnAfterStatementAggressiveReleaseAsync()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			Prepare();
 			ISession s = GetSessionUnderTest();
@@ -81,7 +81,7 @@ namespace NHibernate.Test.ConnectionTest
 		[Test]
 		public async Task SerializationFailsOnAfterStatementAggressiveReleaseWithOpenResourcesAsync()
 		{
-			Assume.That(typeof(System.Type).IsSerializable);
+			TestsContext.AssumeSystemTypeIsSerializable();
 
 			Prepare();
 			ISession s = GetSessionUnderTest();
