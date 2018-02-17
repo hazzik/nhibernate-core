@@ -104,6 +104,9 @@ Task Build {
 }
 
 Task Test -depends Build {
+    $TestResultsFormat = ''
+    if ($env:APPVEYOR -eq $True) { $TestResultsFormat = '--result=myresults.xml;format=AppVeyor' }
+
     @(
         'NHibernate.TestDatabaseSetup',
         'NHibernate.Test',
@@ -111,7 +114,7 @@ Task Test -depends Build {
     ) | ForEach-Object { 
         $assembly = [IO.Path]::Combine("src", $_, "bin", "Release", "netcoreapp2.0", "$_.dll")
         Exec {
-            dotnet $assembly --labels=before --nocolor
+            dotnet $assembly --labels=before --nocolor $TestResultsFormat
         }
     }
 }
