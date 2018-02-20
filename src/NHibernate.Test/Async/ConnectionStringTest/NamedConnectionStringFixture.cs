@@ -11,7 +11,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Reflection;
 using NHibernate.Connection;
 using NUnit.Framework;
 using Environment=NHibernate.Cfg.Environment;
