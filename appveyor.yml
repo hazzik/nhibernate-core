@@ -24,7 +24,6 @@ before_test:
         # Install Firebird
         New-Item -ItemType Directory -Force $FireBirdPath > $null
         Push-Location $FireBirdPath
-        # Download FireBird zip from Sourceforge. Mirror on free.fr due to my ISP, likely not the best one for AppVeyor VM.
         Invoke-WebRequest 'https://github.com/FirebirdSQL/firebird/releases/download/R3_0_3/Firebird-3.0.3.32900-0_x64.zip' -OutFile firebird.zip
         Unblock-File firebird.zip
         7z x firebird.zip
