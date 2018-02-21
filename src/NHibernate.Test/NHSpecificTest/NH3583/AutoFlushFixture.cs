@@ -51,7 +51,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 			}
 		}
 
-#if NET461
+#if NETFX
 		[Test]
 		public void ShouldAutoFlushWhenInDistributedTransaction()
 		{

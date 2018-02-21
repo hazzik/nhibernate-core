@@ -16,7 +16,7 @@ namespace NHibernate.Driver
 	/// Always look for a native .NET DataProvider before using the Odbc DataProvider.
 	/// </remarks>
 	public class OdbcDriver 
-#if NET461
+#if NETFX
 		: DriverBase
 #else
 		: ReflectionBasedDriver
@@ -39,7 +39,7 @@ namespace NHibernate.Driver
 			}
 		}
 
-#if !NET461
+#if !NETFX
 		public OdbcDriver() 
 			: base("System.Data.Odbc", "System.Data.Odbc.OdbcConnection", "System.Data.Odbc.OdbcCommand")
 		{

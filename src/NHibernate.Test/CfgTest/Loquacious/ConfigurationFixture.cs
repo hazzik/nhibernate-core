@@ -46,7 +46,7 @@ namespace NHibernate.Test.CfgTest.Loquacious
 					.Using<MsSql2000Dialect>()
 					.AutoQuoteKeywords()
 					.EnableLogFormattedSql()
-#if NET461
+#if NETFX
 					.BatchingQueries
 						.Through<SqlClientBatchingBatcherFactory>()
 						.Each(15)
@@ -82,7 +82,7 @@ namespace NHibernate.Test.CfgTest.Loquacious
 			Assert.That(cfg.Properties[Environment.Dialect], Is.EqualTo(typeof(MsSql2000Dialect).AssemblyQualifiedName));
 			Assert.That(cfg.Properties[Environment.Hbm2ddlKeyWords], Is.EqualTo("auto-quote"));
 			Assert.That(cfg.Properties[Environment.FormatSql], Is.EqualTo("true"));
-#if NET461
+#if NETFX
 			Assert.That(cfg.Properties[Environment.BatchStrategy], Is.EqualTo(typeof(SqlClientBatchingBatcherFactory).AssemblyQualifiedName));
 			Assert.That(cfg.Properties[Environment.BatchSize], Is.EqualTo("15"));
 #endif

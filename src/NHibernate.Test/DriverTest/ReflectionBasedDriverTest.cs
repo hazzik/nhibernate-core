@@ -38,7 +38,7 @@ namespace NHibernate.Test.DriverTest
 		{
 			public MyDriverWithNoDbProviderFactory() : base(
 				null,
-#if NET461
+#if NETFX
 				"System.Data.OracleClient, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
 #else
 				"System.Data.OracleClient",				
@@ -64,7 +64,7 @@ namespace NHibernate.Test.DriverTest
 			}
 		}
 
-#if NET461
+#if NETFX
 		[Test]
 		public void WhenCreatedWithGoodDbProviderThenNotThrows()
 		{

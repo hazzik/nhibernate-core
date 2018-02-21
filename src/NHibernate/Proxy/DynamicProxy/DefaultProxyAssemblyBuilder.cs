@@ -8,7 +8,7 @@ namespace NHibernate.Proxy.DynamicProxy
 	{
 		public AssemblyBuilder DefineDynamicAssembly(AppDomain appDomain, AssemblyName name)
 		{
-#if DEBUG && NET461
+#if DEBUG && NETFX
 			AssemblyBuilderAccess access = AssemblyBuilderAccess.RunAndSave;
 #else
 			AssemblyBuilderAccess access = AssemblyBuilderAccess.Run;
@@ -18,7 +18,7 @@ namespace NHibernate.Proxy.DynamicProxy
 
 		public ModuleBuilder DefineDynamicModule(AssemblyBuilder assemblyBuilder, string moduleName)
 		{
-#if DEBUG && NET461
+#if DEBUG && NETFX
 			ModuleBuilder moduleBuilder =
 				assemblyBuilder.DefineDynamicModule(moduleName, string.Format("{0}.mod", moduleName), true);
 #else

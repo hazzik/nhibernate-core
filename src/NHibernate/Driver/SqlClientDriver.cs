@@ -13,7 +13,7 @@ namespace NHibernate.Driver
 	/// A NHibernate Driver for using the SqlClient DataProvider
 	/// </summary>
 	public class SqlClientDriver
-#if NET461
+#if NETFX
 		: DriverBase, IEmbeddedBatcherFactoryProvider
 #else
 		: ReflectionBasedDriver
@@ -45,7 +45,7 @@ namespace NHibernate.Driver
 			_dialect = Dialect.Dialect.GetDialect(settings);
 		}
 
-#if !NET461
+#if !NETFX
 		public SqlClientDriver()
 			: base("System.Data.SqlClient", "System.Data.SqlClient.SqlConnection", "System.Data.SqlClient.SqlCommand")
 		{

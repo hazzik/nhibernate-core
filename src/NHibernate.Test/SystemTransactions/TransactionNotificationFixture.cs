@@ -164,7 +164,7 @@ namespace NHibernate.Test.SystemTransactions
 			Assert.That(interceptor.afterTransactionCompletionCalled, Is.EqualTo(2));
 		}
 
-#if NET461
+#if NETFX
 		[Description("NH2128")]
 		[Theory]
 		public void ShouldNotifyAfterDistributedTransactionWithOwnConnection(bool doCommit)

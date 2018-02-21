@@ -11,14 +11,14 @@ namespace NHibernate.Driver
 	/// Always look for a native .NET DataProvider before using the OleDb DataProvider.
 	/// </remarks>
 	public class OleDbDriver 
-#if NET461
+#if NETFX
 		: DriverBase
 #else
 		: ReflectionBasedDriver
 #endif
 	{
 
-#if !NET461
+#if !NETFX
 		public OleDbDriver()
 			: base ("System.Data.OleDb", "System.Data.OleDb.OleDbConnection", "System.Data.OleDb.OleDbCommand")
 		{

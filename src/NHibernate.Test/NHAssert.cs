@@ -53,7 +53,7 @@ namespace NHibernate.Test
 
 		public static void IsSerializable(object obj, string message, params object[] args)
 		{
-#if NET461
+#if NETFX
 			Assert.That(obj, Is.BinarySerializable, message, args);
 #else
 			//TODO:

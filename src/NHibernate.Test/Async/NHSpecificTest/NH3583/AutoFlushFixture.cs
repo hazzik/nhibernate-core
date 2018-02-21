@@ -62,7 +62,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 			}
 		}
 
-#if NET461
+#if NETFX
 		[Test]
 		public async Task ShouldAutoFlushWhenInDistributedTransactionAsync()
 		{

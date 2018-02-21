@@ -183,7 +183,7 @@ namespace NHibernate.Test.MappingTest
 			Assert.That(metaAttribute, Is.Not.Null);
 		}
 
-#if NET461
+#if NETFX
 		[Test]
 		public void XmlSerialization()
 		{

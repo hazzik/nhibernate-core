@@ -14,7 +14,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-    <DefineConstants>NET461,$(DefineConstants)</DefineConstants>
+    <DefineConstants>NETFX,NET461,$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="**\*.hbm.xml" />

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Odbc;
 using System.Data.SqlClient;
-#if NET461
+#if NETFX
 using System.Data.SqlServerCe;
 using System.Data.SQLite;
 #endif
@@ -27,8 +27,8 @@ namespace NHibernate.TestDatabaseSetup
 				{"NHibernate.Driver.MySqlDataDriver", SetupMySql},
 				{"NHibernate.Driver.OracleClientDriver", SetupOracle},
 				{"NHibernate.Driver.OracleManagedDataClientDriver", SetupOracle},
-#if NET461
 				{"NHibernate.Driver.OdbcDriver", SetupSqlServerOdbc},
+#if NETFX
 				{"NHibernate.Driver.SQLite20Driver", SetupSQLite},
 				{"NHibernate.Driver.SqlServerCeDriver", SetupSqlServerCe}
 #endif
@@ -78,7 +78,6 @@ namespace NHibernate.TestDatabaseSetup
 			}
 		}
 
-#if NET461
 		private static void SetupSqlServerOdbc(Cfg.Configuration cfg)
 		{
 			var connStr = cfg.Properties[Cfg.Environment.ConnectionString];
@@ -105,7 +104,6 @@ namespace NHibernate.TestDatabaseSetup
 				}
 			}
 		}
-#endif
 
 		private static void SetupFirebird(Cfg.Configuration cfg)
 		{
@@ -124,7 +122,7 @@ namespace NHibernate.TestDatabaseSetup
 			FbConnection.CreateDatabase(connStr, pageSize:16384, forcedWrites:false);
 		}
 
-#if NET461
+#if NETFX
 		private static void SetupSqlServerCe(Cfg.Configuration cfg)
 		{
 			var connStr = cfg.Properties[Cfg.Environment.ConnectionString];
@@ -192,7 +190,7 @@ namespace NHibernate.TestDatabaseSetup
 			}
 		}
 
-#if NET461
+#if NETFX
 		private static void SetupSQLite(Cfg.Configuration cfg)
 		{
 			var connStr = cfg.Properties[Cfg.Environment.ConnectionString];

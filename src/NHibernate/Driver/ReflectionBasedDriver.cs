@@ -46,12 +46,12 @@ namespace NHibernate.Driver
 
 			if (connectionType == null || commandType == null)
 			{
-#if NET461
+#if NETFX
 				if (string.IsNullOrEmpty(providerInvariantName))
 				{
 #endif
 					throw new HibernateException(string.Format(ReflectionTypedProviderExceptionMessageTemplate, driverAssemblyName));
-#if NET461
+#if NETFX
 				}
 				var factory = DbProviderFactories.GetFactory(providerInvariantName);
 				connectionCommandProvider = new DbProviderFactoryDriveConnectionCommandProvider(factory);

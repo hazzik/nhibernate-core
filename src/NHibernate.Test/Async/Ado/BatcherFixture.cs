@@ -98,7 +98,7 @@ namespace NHibernate.Test.Ado
 			await (CleanupAsync());
 		}
 
-#if NET461
+#if NETFX
 		[Test, Ignore("Not fixed yet.")]
 		[Description("SqlClient: The batcher should run all different INSERT queries in only one roundtrip.")]
 		public async Task SqlClientOneRoundTripForUpdateAndInsertAsync()

@@ -46,7 +46,7 @@ namespace NHibernate.Test.CfgTest.Loquacious
 											{
 												db.Dialect<MsSql2000Dialect>();
 												db.KeywordsAutoImport = Hbm2DDLKeyWords.AutoQuote;
-#if NET461
+#if NETFX
 												db.Batcher<SqlClientBatchingBatcherFactory>();
 #endif
 												db.BatchSize = 15;
@@ -84,7 +84,7 @@ namespace NHibernate.Test.CfgTest.Loquacious
 			Assert.That(configure.Properties[Environment.Dialect],
 						Is.EqualTo(typeof(MsSql2000Dialect).AssemblyQualifiedName));
 			Assert.That(configure.Properties[Environment.Hbm2ddlKeyWords], Is.EqualTo("auto-quote"));
-#if NET461
+#if NETFX
 			Assert.That(configure.Properties[Environment.BatchStrategy],
 						Is.EqualTo(typeof(SqlClientBatchingBatcherFactory).AssemblyQualifiedName));
 #endif

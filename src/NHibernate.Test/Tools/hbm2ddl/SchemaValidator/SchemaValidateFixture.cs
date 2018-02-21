@@ -41,7 +41,7 @@ namespace NHibernate.Test.Tools.hbm2ddl.SchemaValidator
 			validator.Validate();
 		}
 
-#if NET461
+#if NETFX
 		[Test, SetCulture("tr-TR"), SetUICulture("tr-TR")]
 		public void ShouldVerifySameTableTurkish()
 		{

@@ -1,4 +1,4 @@
-#if NET461
+#if NETFX
 using NHibernate.Engine;
 
 namespace NHibernate.AdoNet

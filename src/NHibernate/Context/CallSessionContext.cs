@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Threading;
 using NHibernate.Engine;
-#if NET461
+#if NETFX
 using System.Runtime.Remoting.Messaging;
 #endif
 
@@ -18,7 +18,7 @@ namespace NHibernate.Context
 	[Serializable]
 	public class CallSessionContext : MapBasedSessionContext
 	{
-		#if NET461
+		#if NETFX
 		private const string SessionFactoryMapKey = "NHibernate.Context.CallSessionContext.SessionFactoryMapKey";
 		#else
 		private static readonly AsyncLocal<IDictionary> SessionFactoryMap = new AsyncLocal<IDictionary>();
@@ -33,7 +33,7 @@ namespace NHibernate.Context
 		/// </summary>
 		protected override void SetMap(IDictionary value)
 		{
-#if NET461
+#if NETFX
 			CallContext.SetData(SessionFactoryMapKey, value);
 #else
 			SessionFactoryMap.Value = value;
@@ -45,7 +45,7 @@ namespace NHibernate.Context
 		/// </summary>
 		protected override IDictionary GetMap()
 		{
-#if NET461
+#if NETFX
 			return CallContext.GetData(SessionFactoryMapKey) as IDictionary;
 #else
 			return SessionFactoryMap.Value;

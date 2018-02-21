@@ -111,7 +111,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		/// <value>The image URL.</value>
 		public virtual String ImageUrl { get; set; }
 
-#if NET461
+#if NETFX
 		private Bitmap _bitmap;
 
 		/// <summary>

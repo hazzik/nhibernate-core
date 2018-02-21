@@ -1,4 +1,4 @@
-#if NET461
+#if NETFX
 using System;
 using System.Data.SqlClient;
 using System.Diagnostics;

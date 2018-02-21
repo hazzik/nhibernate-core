@@ -82,7 +82,7 @@ namespace NHibernate.Test.UtilityTest
 			Assert.IsNull(noType);
 		}
 
-#if NET461
+#if NETFX
 		[Test]
 		public void TypeFoundInNotLoadedAssembly()
 		{
