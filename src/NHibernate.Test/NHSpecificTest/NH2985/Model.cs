@@ -24,7 +24,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		public WebImage()
 		{
 
-			OldPosition = -1; //di base un immagine � nuova.
+			OldPosition = -1; //di base un immagine è nuova.
 		}
 		/// <summary>
 		/// 
@@ -36,7 +36,7 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		}
 
 		/// <summary>
-		/// I dati grezzi dell'immagine, � il conenuto binario che io ottengo
+		/// I dati grezzi dell'immagine, è il conenuto binario che io ottengo
 		/// scaricando l'immagine
 		/// </summary>
 		/// <value>The image data.</value>
@@ -80,8 +80,8 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		public virtual Int32? ContextEval { get; set; }
 
 		/// <summary>
-		/// L'immagine � trattata talvolta come una vera e propria rilevazione per cui
-		/// ha comunque al suo interno la possibilit� di avere uno stato associato.
+		/// L'immagine è trattata talvolta come una vera e propria rilevazione per cui
+		/// ha comunque al suo interno la possibilità di avere uno stato associato.
 		/// </summary>
 		public virtual Int32 Status { get; set; }
 
@@ -96,12 +96,12 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		public virtual Boolean Bookmarked { get; set; }
 
 		/// <summary>
-		/// La posizione nella ricerca precedente, -1 se � la prima apparizione.
+		/// La posizione nella ricerca precedente, -1 se è la prima apparizione.
 		/// </summary>
 		public virtual Int32 OldPosition { get; protected internal set; }
 
 		/// <summary>
-		/// Un'immagine che non � pi� tornata 
+		/// Un'immagine che non è più tornata 
 		/// </summary>
 		protected internal virtual Boolean OldImage { get; set; }
 
