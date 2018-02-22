@@ -330,7 +330,7 @@ namespace NHibernate.Cfg
 			}
 		}
 
-		public static IHibernateConfiguration HibernateConfiguration { get; set; }
+		internal static IHibernateConfiguration HibernateConfiguration { get; private set; }
 
 		private static IHibernateConfiguration GetHibernateConfiguration()
 		{
