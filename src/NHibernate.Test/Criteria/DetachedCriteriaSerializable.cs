@@ -300,6 +300,8 @@ namespace NHibernate.Test.Criteria
 		[Test]
 		public void AliasToBeanConstructorResultTransformerIsSerializable()
 		{
+			TestsContext.AssumeSystemTypeIsSerializable();
+			
 			var rt = new AliasToBeanConstructorResultTransformer(typeof(StudentDTO).GetConstructor(System.Type.EmptyTypes));
 			NHAssert.IsSerializable(rt);
 		}
@@ -307,6 +309,8 @@ namespace NHibernate.Test.Criteria
 		[Test]
 		public void AliasToBeanResultTransformerIsSerializable()
 		{
+			TestsContext.AssumeSystemTypeIsSerializable();
+			
 			var rt = new AliasToBeanResultTransformer(typeof(StudentDTO));
 			NHAssert.IsSerializable(rt);
 		}
