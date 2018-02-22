@@ -164,11 +164,12 @@ namespace NHibernate.Test.SystemTransactions
 			Assert.That(interceptor.afterTransactionCompletionCalled, Is.EqualTo(2));
 		}
 
-#if NETFX
 		[Description("NH2128")]
 		[Theory]
 		public void ShouldNotifyAfterDistributedTransactionWithOwnConnection(bool doCommit)
 		{
+			Assume.That(Sfi.ConnectionProvider.Driver.SupportsSystemTransactions);
+			
 			// Note: For system transaction, calling Close() on the session isn't
 			// supported, so we don't need to test that scenario.
 
@@ -201,7 +202,6 @@ namespace NHibernate.Test.SystemTransactions
 
 			Assert.That(interceptor.afterTransactionCompletionCalled, Is.EqualTo(1));
 		}
-#endif
 	}
 
 	[TestFixture]

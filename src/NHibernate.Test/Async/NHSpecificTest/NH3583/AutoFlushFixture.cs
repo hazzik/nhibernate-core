@@ -62,10 +62,11 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 			}
 		}
 
-#if NETFX
 		[Test]
 		public async Task ShouldAutoFlushWhenInDistributedTransactionAsync()
 		{
+			Assume.That(Dialect.SupportsDistributedTransactions);
+			
 			using (new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 			using (var session = OpenSession())
 			{
@@ -79,6 +80,5 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 				Assert.That(result.Count, Is.EqualTo(1));
 			}
 		}
-#endif
 	}
 }

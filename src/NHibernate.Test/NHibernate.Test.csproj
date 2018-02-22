@@ -41,15 +41,10 @@
     <Compile Remove="**\CfgTest\HbmOrderingFixture.cs" />
     <Compile Remove="**\DynamicProxyTests\PeVerifyFixture.cs" />
     <Compile Remove="**\Insertordering\**" />
-    <Compile Remove="**\NHSpecificTest\NH1632\**" />
     <Compile Remove="**\NHSpecificTest\NH1850\**" />
-    <Compile Remove="**\NHSpecificTest\NH2057\**" />
-    <Compile Remove="**\NHSpecificTest\NH2176\**" />
-    <Compile Remove="**\NHSpecificTest\NH2420\**" />
     <Compile Remove="**\NHSpecificTest\NH2484\**" />
     <Compile Remove="**\NHSpecificTest\NH2188\**" />
     <Compile Remove="**\NHSpecificTest\NH3121\**" />
-    <Compile Remove="**\NHSpecificTest\NH3023\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
