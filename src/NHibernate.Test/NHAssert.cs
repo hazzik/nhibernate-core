@@ -61,7 +61,7 @@ namespace NHibernate.Test
 #if NETFX
 			Assert.That(obj, Is.BinarySerializable, message, args);
 #else
-			if (args == null) throw new ArgumentNullException(nameof(args));
+			if (obj == null) throw new ArgumentNullException(nameof(args));
 			var serializer = new BinaryFormatter();
 			var isSuccess = false;
 			using (var memoryStream = new MemoryStream())
