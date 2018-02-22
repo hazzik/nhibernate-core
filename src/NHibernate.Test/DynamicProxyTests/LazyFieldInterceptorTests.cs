@@ -26,7 +26,6 @@ namespace NHibernate.Test.DynamicProxyTests
 			Assert.That(typeof(DefaultDynamicLazyFieldInterceptor), Has.Attribute<SerializableAttribute>());
 		}
 
-#if NETFX
 		[Test]
 		public void LazyFieldInterceptorIsBinarySerializable()
 		{
@@ -36,9 +35,8 @@ namespace NHibernate.Test.DynamicProxyTests
 			var fieldInterceptionProxy = (IFieldInterceptorAccessor)pf.GetFieldInterceptionProxy(new MyClass());
 			fieldInterceptionProxy.FieldInterceptor = new DefaultFieldInterceptor(null, null, null, "MyClass", typeof(MyClass));
 
-			Assert.That(fieldInterceptionProxy, Is.BinarySerializable);
+			NHAssert.IsSerializable(fieldInterceptionProxy);
 		}
-#endif
 
 		[Test]
 		public void DefaultDynamicLazyFieldInterceptorUnWrapsTIEExceptions()

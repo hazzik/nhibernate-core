@@ -183,7 +183,6 @@ namespace NHibernate.Test.MappingTest
 			Assert.That(metaAttribute, Is.Not.Null);
 		}
 
-#if NETFX
 		[Test]
 		public void XmlSerialization()
 		{
@@ -192,9 +191,8 @@ namespace NHibernate.Test.MappingTest
 			using (Stream stream = GetType().Assembly.GetManifestResourceStream("NHibernate.Test.MappingTest.Wicked.hbm.xml"))
 			{
 				HbmMapping mapping = mdp.Parse(stream);
-				Assert.That(mapping, Is.XmlSerializable);
+				NHAssert.IsXmlSerializable(mapping);
 			}
 		}
-#endif
 	}
 }
