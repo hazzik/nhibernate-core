@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 #if !NETFX
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
-using NHibernate.Type;
 #endif
 
 namespace NHibernate.Test
