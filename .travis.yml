@@ -11,9 +11,11 @@ env:
   - DB=PostgreSQL CONNECTION_STRING="Host=localhost;Port=5432;Username=postgres;Database=nhibernate;Enlist=true;"
   - DB=Firebird 
   - DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"   
+  - DB=Odbc CONNECTION_STRING="Server=localhost;Uid=sa;Pwd=P@ssw0rd;Database=nhibernateOdbc;Driver={ODBC Driver 13 for SQL Server};Mars_Connection=yes;"
 matrix:
   allow_failures:
     - env: DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"
+    - env: DB=Odbc CONNECTION_STRING="Server=localhost;Uid=sa;Pwd=P@ssw0rd;Database=nhibernateOdbc;Driver={ODBC Driver 13 for SQL Server};Mars_Connection=yes;"
 before_install:
   - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
   - curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
@@ -41,8 +43,9 @@ before_install:
       sudo /opt/firebird/bin/gsec -modify SYSDBA -pw masterkey -admin yes
       sudo service firebird restart
     fi
+  - if [[ "$DB" == "Odbc" ]]; then sudo ACCEPT_EULA=Y apt-get install msodbcsql=13.1.9.2-1; fi
 before_script:
-  - if [[ "$DB" == "SqlServer2008" ]]; then docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress microsoft/mssql-server-linux:latest; fi
+  - if [[ "$DB" == "SqlServer2008" || "$DB" == "Odbc" ]]; then docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress microsoft/mssql-server-linux:latest; fi
   - if [[ "$DB" == "PostgreSQL" ]]; then psql -c "CREATE DATABASE nhibernate;" -U postgres; fi
   - if [[ "$DB" == "MySQL" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS nhibernate;"; fi
 script:
