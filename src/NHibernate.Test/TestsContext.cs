@@ -19,7 +19,7 @@ namespace NHibernate.Test
 			System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name == "testhost";
 
 		public static void AssumeSystemTypeIsSerializable() =>
-			Assume.That(typeof(System.Type).IsSerializable);
+			Assume.That(typeof(System.Type).IsSerializable, Is.True);
 
 #if NETCOREAPP2_0
 		[OneTimeSetUp]
@@ -37,7 +37,8 @@ namespace NHibernate.Test
 
 		public static IHibernateConfiguration GetTestAssemblyHibernateConfiguration()
 		{
-			var assemblyPath = Path.Combine(TestContext.CurrentContext.TestDirectory, Path.GetFileName(typeof(TestsContext).Assembly.Location));
+			var assemblyPath =
+ Path.Combine(TestContext.CurrentContext.TestDirectory, Path.GetFileName(typeof(TestsContext).Assembly.Location));
 			var configuration = ConfigurationManager.OpenExeConfiguration(assemblyPath);
 			var section = configuration.GetSection(CfgXmlHelper.CfgSectionName);
 			return HibernateConfiguration.FromAppConfig(section.SectionInformation.GetRawXml());

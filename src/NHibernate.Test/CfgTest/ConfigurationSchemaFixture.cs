@@ -28,7 +28,7 @@ namespace NHibernate.Test.CfgTest
 		[Test]
 		public void FromAppConfigTest()
 		{
-			Assume.That(!TestsContext.ExecutingWithVsTest);
+			Assume.That(TestsContext.ExecutingWithVsTest, Is.False);
 
 			IHibernateConfiguration hc = ConfigurationManager.GetSection("hibernate-configuration") as IHibernateConfiguration;
 			Assert.That(hc.ByteCodeProviderType, Is.EqualTo("lcg"));
@@ -39,7 +39,7 @@ namespace NHibernate.Test.CfgTest
 		[Test]
 		public void IgnoreSystemOutOfAppConfig()
 		{
-			Assume.That(!TestsContext.ExecutingWithVsTest);
+			Assume.That(TestsContext.ExecutingWithVsTest, Is.False);
 
 			IHibernateConfiguration hc = ConfigurationManager.GetSection("hibernate-configuration") as IHibernateConfiguration;
 			string xml =

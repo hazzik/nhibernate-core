@@ -168,7 +168,7 @@ namespace NHibernate.Test.SystemTransactions
 		[Theory]
 		public void ShouldNotifyAfterDistributedTransactionWithOwnConnection(bool doCommit)
 		{
-			Assume.That(Sfi.ConnectionProvider.Driver.SupportsSystemTransactions);
+			Assume.That(Sfi.ConnectionProvider.Driver.SupportsSystemTransactions, Is.True);
 			
 			// Note: For system transaction, calling Close() on the session isn't
 			// supported, so we don't need to test that scenario.
