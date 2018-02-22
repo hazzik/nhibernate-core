@@ -267,7 +267,7 @@ namespace NHibernate.Linq.Functions
 
 			var trimChars = ExtractTrimChars(arguments);
 
-			if (trimChars == string.Empty)
+			if (string.IsNullOrEmpty(trimChars))
 			{
 				return treeBuilder.MethodCall("trim", treeBuilder.Ident(trimWhere), treeBuilder.Ident("from"), visitor.Visit(targetObject).AsExpression());
 			}

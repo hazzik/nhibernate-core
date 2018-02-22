@@ -12,7 +12,10 @@ namespace NHibernate.Context
 	/// <summary>
 	/// Provides a <see cref="ISessionFactory.GetCurrentSession()">current session</see>
 	/// for each <see cref="System.Runtime.Remoting.Messaging.CallContext"/>.
-	/// Not recommended for .NET 2.0 web applications.
+	/// Uses <see cref="AsyncLocal{T}"/> instead if run under .NET Core/.NET Standard.
+	/// <remarks>
+	/// <para>Not recommended for .NET 2.0 web applications.</para>
+	/// </remarks>
 	/// </summary>
 #pragma warning restore CS1574
 	[Serializable]
