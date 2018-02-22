@@ -65,7 +65,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3583
 		[Test]
 		public async Task ShouldAutoFlushWhenInDistributedTransactionAsync()
 		{
-			Assume.That(Dialect.SupportsDistributedTransactions);
+			Assume.That(Sfi.ConnectionProvider.Driver.SupportsSystemTransactions);
 			
 			using (new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 			using (var session = OpenSession())
