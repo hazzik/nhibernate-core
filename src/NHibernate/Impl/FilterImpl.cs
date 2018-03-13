@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using NHibernate.Engine;
 using NHibernate.Type;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace NHibernate.Impl
 		private FilterDefinition definition;
 
 		private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
+		private readonly IDictionary<string, IEnumerable> _parameterLists = new Dictionary<string, IEnumerable>();
 
 		public void AfterDeserialize(FilterDefinition factoryDefinition)
 		{
@@ -75,6 +77,7 @@ namespace NHibernate.Impl
 		/// <param name="name">The parameter's name.</param>
 		/// <param name="values">The values to be expanded into an SQL IN list.</param>
 		/// <returns>This FilterImpl instance (for method chaining).</returns>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="values"/> are <see langword="null" />.</exception>
 		public IFilter SetParameterList<T>(string name, ICollection<T> values)
 		{
 			var type = definition.GetParameterType(name);
@@ -88,7 +91,10 @@ namespace NHibernate.Impl
 				throw new HibernateException("Incorrect type for parameter [" + name + "]");
 			}
 
-			parameters[name] = values ?? throw new ArgumentException("Collection must be not null!", nameof(values));
+			_parameterLists[name] = values ??
+				// This guarantees GetParameterList semantic.
+				throw new ArgumentNullException(nameof(values), "Collection must be not null!");
+			parameters[name] = values;
 			return this;
 		}
 
@@ -96,6 +102,17 @@ namespace NHibernate.Impl
 		{
 			object result;
 			parameters.TryGetValue(name, out result);
+			return result;
+		}
+
+		/// <summary>
+		/// Get a parameter list by name. <see langword="null" /> if there is no parameter list for that name.
+		/// </summary>
+		/// <param name="name">The parameter name.</param>
+		/// <returns>The parameter list, or <see langword="null" /> if there is no parameter list for that name.</returns>
+		public IEnumerable GetParameterList(string name)
+		{
+			_parameterLists.TryGetValue(name, out var result);
 			return result;
 		}
 

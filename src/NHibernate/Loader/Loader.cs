@@ -1857,19 +1857,18 @@ namespace NHibernate.Loader
 						string parameterName = parts[1];
 						var filter = (FilterImpl)enabledFilters[filterName];
 
-						object value = filter.GetParameter(parameterName);
+						var listValue = filter.GetParameterList(parameterName);
 						IType type = filter.FilterDefinition.GetParameterType(parameterName);
 						int parameterColumnSpan = type.GetColumnSpan(session.Factory);
-						var collectionValue = value as ICollection;
 						int? collectionSpan = null;
 
 						// Add query chunk
 						string typeBindFragment = string.Join(", ", Enumerable.Repeat("?", parameterColumnSpan).ToArray());
 						string bindFragment;
-						if (collectionValue != null && !type.ReturnedClass.IsArray)
+						if (listValue != null && !type.ReturnedClass.IsArray)
 						{
-							collectionSpan = collectionValue.Count;
-							bindFragment = string.Join(", ", Enumerable.Repeat(typeBindFragment, collectionValue.Count).ToArray());
+							collectionSpan = EnumerableHelper.Count(listValue);
+							bindFragment = string.Join(", ", Enumerable.Repeat(typeBindFragment, collectionSpan.Value).ToArray());
 						}
 						else
 						{
