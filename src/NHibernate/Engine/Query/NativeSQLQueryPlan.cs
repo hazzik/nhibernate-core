@@ -151,18 +151,16 @@ namespace NHibernate.Engine.Query
 						string parameterName = parts[1];
 						var filter = (FilterImpl)enabledFilters[filterName];
 
-						var listValue = filter.GetParameterList(parameterName);
+						var collectionSpan = filter.GetParameterSpan(parameterName);
 						IType type = filter.FilterDefinition.GetParameterType(parameterName);
 						int parameterColumnSpan = type.GetColumnSpan(session.Factory);
-						int? collectionSpan = null;
 
 						// Add query chunk
-						string typeBindFragment = string.Join(", ", Enumerable.Repeat("?", parameterColumnSpan).ToArray());
+						string typeBindFragment = string.Join(", ", Enumerable.Repeat("?", parameterColumnSpan));
 						string bindFragment;
-						if (listValue != null && !type.ReturnedClass.IsArray)
+						if (collectionSpan.HasValue && !type.ReturnedClass.IsArray)
 						{
-							collectionSpan = EnumerableHelper.Count(listValue);
-							bindFragment = string.Join(", ", Enumerable.Repeat(typeBindFragment, collectionSpan.Value).ToArray());
+							bindFragment = string.Join(", ", Enumerable.Repeat(typeBindFragment, collectionSpan.Value));
 						}
 						else
 						{

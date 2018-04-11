@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using NHibernate.Engine;
 using NHibernate.Type;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace NHibernate.Impl
 		private FilterDefinition definition;
 
 		private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
-		private readonly IDictionary<string, IEnumerable> _parameterLists = new Dictionary<string, IEnumerable>();
+		private readonly Dictionary<string, int> _parameterSpans = new Dictionary<string, int>();
 
 		public void AfterDeserialize(FilterDefinition factoryDefinition)
 		{
@@ -80,20 +79,17 @@ namespace NHibernate.Impl
 		/// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="values"/> are <see langword="null" />.</exception>
 		public IFilter SetParameterList<T>(string name, ICollection<T> values)
 		{
+			if (values == null)
+				throw new ArgumentNullException(nameof(values), "Collection must be not null!");
+
 			var type = definition.GetParameterType(name);
 			if (type == null)
-			{
 				throw new HibernateException("Undefined filter parameter [" + name + "]");
-			}
 
 			if (!type.ReturnedClass.IsAssignableFrom(typeof(T)))
-			{
 				throw new HibernateException("Incorrect type for parameter [" + name + "]");
-			}
 
-			_parameterLists[name] = values ??
-				// This guarantees GetParameterList semantic.
-				throw new ArgumentNullException(nameof(values), "Collection must be not null!");
+			_parameterSpans[name] = values.Count;
 			parameters[name] = values;
 			return this;
 		}
@@ -106,14 +102,15 @@ namespace NHibernate.Impl
 		}
 
 		/// <summary>
-		/// Get a parameter list by name. <see langword="null" /> if there is no parameter list for that name.
+		/// Get a span of collection parameter by name. <see langword="null" /> if the parameter is not a collectino or
+		/// there is no such parameter exist.
 		/// </summary>
 		/// <param name="name">The parameter name.</param>
-		/// <returns>The parameter list, or <see langword="null" /> if there is no parameter list for that name.</returns>
-		public IEnumerable GetParameterList(string name)
+		/// <returns>The parameter span, or <see langword="null" /> if the parameter is not a collectino or
+		/// there is no such parameter exist.</returns>
+		public int? GetParameterSpan(string name)
 		{
-			_parameterLists.TryGetValue(name, out var result);
-			return result;
+			return _parameterSpans.TryGetValue(name, out var result) ? result : default(int?);
 		}
 
 		/// <summary>
