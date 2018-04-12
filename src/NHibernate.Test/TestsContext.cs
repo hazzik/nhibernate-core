@@ -18,8 +18,9 @@ namespace NHibernate.Test
 		public static bool ExecutingWithVsTest { get; } =
 			System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name == "testhost";
 
-		public static void AssumeSystemTypeIsSerializable() =>
-			Assume.That(typeof(System.Type).IsSerializable, Is.True);
+		public static void AssumeSystemTypeIsSerializable()
+		{
+		}
 
 #if NETCOREAPP2_0
 		[OneTimeSetUp]

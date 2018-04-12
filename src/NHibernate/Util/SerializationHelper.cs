@@ -1,32 +1,45 @@
 using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NHibernate.Util
 {
-	public class SerializationHelper
+	public static class SerializationHelper
 	{
-		private SerializationHelper()
-		{
-		}
+		private static readonly Lazy<BinaryFormatter> Formatter = new Lazy<BinaryFormatter>(CreateBinaryFormatter);
 
 		public static byte[] Serialize(object obj)
 		{
-			using (MemoryStream ms = new MemoryStream())
+			using (var ms = new MemoryStream())
 			{
-				BinaryFormatter formatter = new BinaryFormatter();
-				formatter.Serialize(ms, obj);
+				Formatter.Value.Serialize(ms, obj);
 				return ms.ToArray();
 			}
 		}
 
 		public static object Deserialize(byte[] data)
 		{
-			using (MemoryStream ms = new MemoryStream(data))
+			using (var ms = new MemoryStream(data))
 			{
-				BinaryFormatter formatter = new BinaryFormatter();
-				return formatter.Deserialize(ms);
+				return Formatter.Value.Deserialize(ms);
 			}
+		}
+
+		private static BinaryFormatter CreateBinaryFormatter()
+		{
+			var formatter = new BinaryFormatter();
+#if !NETFX
+			var selector = new SurrogateSelector();
+
+			selector.AddSurrogate(
+				typeof(System.Type),
+				new StreamingContext(StreamingContextStates.All),
+				new Serialization.SystemTypeSurrogate());
+			
+			formatter.SurrogateSelector = selector;
+#endif
+			return formatter;
 		}
 	}
 }
