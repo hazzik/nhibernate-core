@@ -158,7 +158,7 @@ namespace NHibernate.Properties
 		/// An <see cref="IGetter"/> that uses a Field instead of the Property <c>get</c>.
 		/// </summary>
 		[Serializable]
-		public sealed class FieldGetter : IGetter, IOptimizableGetter
+		public sealed class FieldGetter : IGetter, IOptimizableGetter, IMemberInfoAccessor
 		{
 			private readonly FieldInfo field;
 			private readonly System.Type clazz;
@@ -236,13 +236,15 @@ namespace NHibernate.Properties
 			{
 				il.Emit(OpCodes.Ldfld, field);
 			}
+
+			public MemberInfo MemberInfo => field;
 		}
 
 		/// <summary>
 		/// An <see cref="IGetter"/> that uses a Field instead of the Property <c>set</c>.
 		/// </summary>
 		[Serializable]
-		public sealed class FieldSetter : ISetter, IOptimizableSetter
+		public sealed class FieldSetter : ISetter, IOptimizableSetter, IMemberInfoAccessor
 		{
 			private readonly FieldInfo field;
 			private readonly System.Type clazz;
@@ -331,6 +333,8 @@ namespace NHibernate.Properties
 			{
 				il.Emit(OpCodes.Stfld, field);
 			}
+
+			public MemberInfo MemberInfo => field;
 		}
 	}
 }

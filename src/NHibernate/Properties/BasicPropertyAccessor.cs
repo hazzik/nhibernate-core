@@ -159,7 +159,7 @@ namespace NHibernate.Properties
 		/// An <see cref="IGetter"/> for a Property <c>get</c>.
 		/// </summary>
 		[Serializable]
-		public sealed class BasicGetter : IGetter, IOptimizableGetter
+		public sealed class BasicGetter : IGetter, IOptimizableGetter, IMemberInfoAccessor
 		{
 			private readonly System.Type clazz;
 			private readonly PropertyInfo property;
@@ -249,13 +249,15 @@ namespace NHibernate.Properties
 				}
 				il.EmitCall(OpCodes.Callvirt, method, null);
 			}
+
+			public MemberInfo MemberInfo => property;
 		}
 
 		/// <summary>
 		/// An <see cref="ISetter"/> for a Property <c>set</c>.
 		/// </summary>
 		[Serializable]
-		public sealed class BasicSetter : ISetter, IOptimizableSetter
+		public sealed class BasicSetter : ISetter, IOptimizableSetter, IMemberInfoAccessor
 		{
 			private readonly System.Type clazz;
 			private readonly PropertyInfo property;
@@ -304,14 +306,20 @@ namespace NHibernate.Properties
 						// add some details to the error message - there have been a few forum posts an they are 
 						// all related to an ISet and IDictionary mixups.
 						string msg =
-							String.Format("The type {0} can not be assigned to a property of type {1}", value.GetType(),
-														property.PropertyType);
+							String.Format(
+								"The type {0} can not be assigned to a property of type {1}",
+								value.GetType(),
+								property.PropertyType);
 						throw new PropertyAccessException(ae, msg, true, clazz, propertyName);
 					}
 					else
 					{
-						throw new PropertyAccessException(ae, "ArgumentException while setting the property value by reflection", true,
-																							clazz, propertyName);
+						throw new PropertyAccessException(
+							ae,
+							"ArgumentException while setting the property value by reflection",
+							true,
+							clazz,
+							propertyName);
 					}
 				}
 				catch (Exception e)
@@ -352,8 +360,11 @@ namespace NHibernate.Properties
 				{
 					throw new PropertyNotFoundException(clazz, property.Name, "setter");
 				}
+
 				il.EmitCall(OpCodes.Callvirt, method, null);
 			}
+
+			public MemberInfo MemberInfo => property;
 		}
 	}
 }

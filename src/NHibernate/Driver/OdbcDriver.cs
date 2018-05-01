@@ -5,6 +5,9 @@ using System.Data.Common;
 using NHibernate.SqlTypes;
 using NHibernate.Util;
 using Environment = NHibernate.Cfg.Environment;
+#if NETFX
+using System.Data.Odbc;
+#endif
 
 namespace NHibernate.Driver
 {
