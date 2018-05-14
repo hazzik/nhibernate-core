@@ -27,9 +27,8 @@
     <None Remove="NHSpecificTest\NH3023\db-teardown.sql" />
     <EmbeddedResource Include="NHSpecificTest\NH3023\db-seed.sql" />
     <EmbeddedResource Include="NHSpecificTest\NH3023\db-teardown.sql" />
-    <EmbeddedResource Include="TestEmbeddedConfig.cfg.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="TestEmbeddedConfig.cfg.xml" CopyToOutputDirectory="Always" />
+    <None Update="log4net.config" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\NHibernate.DomainModel\ABC.hbm.xml" Link="ABC.hbm.xml">

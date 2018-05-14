@@ -1,6 +1,7 @@
 using System;
+using System.IO;
 using log4net;
-using log4net.Repository.Hierarchy;
+using log4net.Config;
 using NHibernate.Type;
 using NUnit.Framework;
 
@@ -14,7 +15,9 @@ namespace NHibernate.Test.TypesTest
 	{
 		public TypeFactoryFixture()
 		{
-			log4net.Config.XmlConfigurator.Configure(LogManager.GetRepository(typeof(TypeFactoryFixture).Assembly));
+			XmlConfigurator.Configure(
+				LogManager.GetRepository(typeof(TypeFactoryFixture).Assembly),
+				new FileInfo("log4net.config"));
 		}
 
 		private static readonly ILog log = LogManager.GetLogger(typeof(TypeFactoryFixture));

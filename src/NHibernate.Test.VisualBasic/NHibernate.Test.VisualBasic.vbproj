@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\NHibernate.Test\App.config" Link="App.config" />
+    <None Include="..\NHibernate.Test\log4net.config" Link="log4net.config" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualBasic" Version="10.2.0" />
