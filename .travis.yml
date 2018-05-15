@@ -50,7 +50,7 @@ before_script:
     if [[ "$DB" == "OracleManaged" ]]; 
     then 
       docker run -p 1521:1521 -p 8080:8080 -d --name oracle-12c sath89/oracle-12c 
-      curl -s https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh | bash -s 127.0.0.1:8080 --timeout=0
+      curl -s https://raw.githubusercontent.com/vishnubob/wait-for-it/db049716e42767d39961e95dd9696103dca813f1/wait-for-it.sh | bash -s -- 127.0.0.1:8080 --timeout=0
     fi
 script:
   - pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
