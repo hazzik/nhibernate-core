@@ -67,8 +67,8 @@ Task Set-Configuration {
             'connection.connection_string' = 'User ID=nhibernate;Password=nhibernate;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XE)))';
             'connection.driver_class' = 'NHibernate.Driver.OracleManagedDataClientDriver';
             'dialect' = 'NHibernate.Dialect.Oracle10gDialect';
-            'nhibernate.oracle.use_n_prefixed_types_for_unicode' = 'true';
-            'nhibernate.query.default_cast_length' = '2000'
+#            'nhibernate.oracle.use_n_prefixed_types_for_unicode' = 'true';
+#            'nhibernate.query.default_cast_length' = '2000'
         }
     }
     #Settings for current build
