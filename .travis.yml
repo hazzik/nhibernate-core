@@ -7,10 +7,11 @@ services:
   - postgresql
   - docker
 env:
-  - DB=SqlServer2008 CONNECTION_STRING="Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
-  - DB=PostgreSQL CONNECTION_STRING="Host=localhost;Port=5432;Username=postgres;Database=nhibernate;Enlist=true;"
-  - DB=Firebird 
-  - DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"   
+#  - DB=SqlServer2008 CONNECTION_STRING="Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
+#  - DB=PostgreSQL CONNECTION_STRING="Host=localhost;Port=5432;Username=postgres;Database=nhibernate;Enlist=true;"
+#  - DB=Firebird 
+#  - DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"   
+  - DB=OracleManaged CONNECTION_STRING="User ID=system;Password=oracle;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XE)))"   
 matrix:
   allow_failures:
     - env: DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"
@@ -42,8 +43,9 @@ before_install:
       sudo service firebird restart
     fi
 before_script:
-  - if [[ "$DB" == "SqlServer2008" ]]; then docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress microsoft/mssql-server-linux:latest; fi
+  - if [[ "$DB" == "SqlServer2008" ]]; then docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress microsoft/mssql-server-linux; fi
   - if [[ "$DB" == "PostgreSQL" ]]; then psql -c "CREATE DATABASE nhibernate;" -U postgres; fi
   - if [[ "$DB" == "MySQL" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS nhibernate;"; fi
+  - if [[ "$DB" == "Oracle" ]]; then docker run -p 1521:1521 -d --name oracle-12c sath89/oracle-12c; fi
 script:
   - pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
