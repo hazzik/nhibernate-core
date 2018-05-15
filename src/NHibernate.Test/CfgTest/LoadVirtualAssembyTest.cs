@@ -22,7 +22,7 @@ namespace NHibernate.Test.CfgTest
 			var config = new Configuration();
 			var mapper = new ModelMapper();
 			var module = Compile(assemblyGenerateCount);
-			config.AddMemoryAssembly(module.Assembly);
+			//config.AddMemoryAssembly(module.Assembly);
 			mapper.AddMappings(module.Assembly.GetExportedTypes());
 			config.AddMapping(mapper.CompileMappingForAllExplicitlyAddedEntities());
 
