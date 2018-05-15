@@ -46,6 +46,6 @@ before_script:
   - if [[ "$DB" == "SqlServer2008" ]]; then docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress microsoft/mssql-server-linux; fi
   - if [[ "$DB" == "PostgreSQL" ]]; then psql -c "CREATE DATABASE nhibernate;" -U postgres; fi
   - if [[ "$DB" == "MySQL" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS nhibernate;"; fi
-  - if [[ "$DB" == "Oracle" ]]; then docker run -p 1521:1521 -d --name oracle-12c sath89/oracle-12c; fi
+  - if [[ "$DB" == "OracleManaged" ]]; then docker run -p 1521:1521 -d --name oracle-12c sath89/oracle-12c; fi
 script:
   - pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
