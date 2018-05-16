@@ -22,7 +22,7 @@ namespace NHibernate.Test.CfgTest
 			var config = new Configuration();
 			var mapper = new ModelMapper();
 			var module = Compile(assemblyGenerateCount);
-			//config.AddMemoryAssembly(module.Assembly);
+
 			mapper.AddMappings(module.Assembly.GetExportedTypes());
 			config.AddMapping(mapper.CompileMappingForAllExplicitlyAddedEntities());
 
@@ -39,7 +39,7 @@ namespace NHibernate.Test.CfgTest
 
 		public Module Compile(int assemblyCount = 1)
 		{
-			CompilerParameters CompilerParams = new CompilerParameters();
+			var CompilerParams = new CompilerParameters();
 			CompilerParams.GenerateInMemory = true;
 			CompilerParams.TreatWarningsAsErrors = false;
 			CompilerParams.GenerateExecutable = false;
