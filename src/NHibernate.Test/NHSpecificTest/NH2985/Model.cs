@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 
 namespace NHibernate.Test.NHSpecificTest.NH2985
 {
@@ -110,42 +108,5 @@ namespace NHibernate.Test.NHSpecificTest.NH2985
 		/// </summary>
 		/// <value>The image URL.</value>
 		public virtual String ImageUrl { get; set; }
-
-#if NETFX
-		private Bitmap _bitmap;
-
-		/// <summary>
-		/// Gets the bitmap.
-		/// </summary>
-		/// <value>The bitmap.</value>
-		public virtual Bitmap Bitmap
-		{
-			get
-			{
-				return _bitmap ?? CreateBitmap();
-			}
-		}
-
-		private Bitmap CreateBitmap()
-		{
-			try
-			{
-				if (ImageData != null)
-				{
-					using (MemoryStream stream = new MemoryStream(ImageData))
-					{
-						_bitmap = (Bitmap)Bitmap.FromStream(stream);
-					}
-				}
-				return _bitmap;
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-
-		}
-#endif
 	}
-
 }

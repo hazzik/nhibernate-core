@@ -12,7 +12,7 @@
 
 		<property name="UnsizedArray" />
 			
-		<property name="Image" type="System.Drawing.Image, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+		<property name="Image" type="System.Drawing.Image, System.Drawing.Common, Version=4.0.0.0, PublicKeyToken=cc7b13ffcd2ddd51">
 			<column name="Image" length="7000" not-null="false" />
 		</property>
 

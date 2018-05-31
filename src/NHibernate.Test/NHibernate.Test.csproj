@@ -42,12 +42,11 @@
     <Compile Remove="**\DynamicProxyTests\PeVerifyFixture.cs" />
     <Compile Remove="**\Insertordering\**" />
     <Compile Remove="**\NHSpecificTest\NH1850\**" />
-    <Compile Remove="**\NHSpecificTest\NH2484\**" />
     <Compile Remove="**\NHSpecificTest\NH2188\**" />
-    <Compile Remove="**\NHSpecificTest\NH3121\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.8" />
     <PackageReference Include="NSubstitute" Version="3.0.1" />
     <PackageReference Include="NUnit" Version="3.10.1" />
@@ -71,7 +70,7 @@
     <PackageReference Include="System.CodeDom" Version="4.4.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
     <PackageReference Include="System.Data.OracleClient" Version="1.0.8" />
-    <PackageReference Include="System.Data.Odbc" Version="4.5.0-preview1-25914-04" />
+    <PackageReference Include="System.Data.Odbc" Version="4.5.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="NUnitLite" Version="3.10.1" />
     <PackageReference Include="MySql.Data" Version="6.10.6" />
