@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chapter id="transactions">
-    <title>Transactions And Concurrency</title>
+    <title>Транзакции и параллелизм</title>
 
     <para>
-        NHibernate is not itself a database. It is a lightweight object-relational
-        mapping tool. Transaction management is delegated to the underlying database
-        connection. If the connection is enlisted with a distributed transaction,
-        operations performed by the <literal>ISession</literal> are atomically part
-        of the wider distributed transaction. NHibernate can be seen as a thin adapter
-        to ADO.NET, adding object-oriented semantics.
+        NHibernate не является базой данных. Это легкий инструмент для объектно-реляционное отображения. Управление транзакциями делегируется соединению с базой данных. Если соединение прикрепляется к распределенной транзакции, выполняемые операции <literal>ISession</literal> автоматически являются частью более широкой распределенной транзакции. NHibernate можно рассматривать как тонкий адаптер для ADO.NET, добавляющий объектно-ориентированную семантику.
     </para>
 
     <sect1 id="transactions-basics">
-        <title>Configurations, Sessions and Factories</title>
+        <title>Конфигурации, Сессий и Фабрики</title>
         <para>
             An <literal>ISessionFactory</literal> is an expensive-to-create, threadsafe object 
             intended to be shared by all application threads. An <literal>ISession</literal> 
@@ -133,7 +128,7 @@
         </variablelist>
 
         <para>
-            Then for objects attached to a <emphasis>particular</emphasis> <literal>Session</literal>,
+            Then for objects attached to a <emphasis>определенной</emphasis> <literal>Session</literal>,
             the two notions are equivalent. However, while the application might concurrently access
             the "same" (persistent identity) business object in two different sessions, the two
             instances will actually be "different" (CLR identity).
