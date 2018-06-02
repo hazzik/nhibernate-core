@@ -1,0 +1,5 @@
+files:
+  - source: /doc/reference/**/*.xml
+    ignore:
+      - /doc/reference/support
+    translation: /doc/reference/%two_letters_code%/**/*.xml
