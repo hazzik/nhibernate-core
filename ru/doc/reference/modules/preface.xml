@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preface id="preface" revision="1">
-	<title>Preface</title>
+	<title>Предисловие</title>
 
 	<para>
 		Working with object-oriented software and a relational database can be cumbersome
