@@ -4,10 +4,10 @@
     <title>Architecture</title>
 
     <sect1 id="architecture-overview">
-        <title>Overview</title>
+        <title>Обзор</title>
         
         <para>
-            A (very) high-level view of the NHibernate architecture:
+            (Очень) высокоуровневое представление архитектуры NHibernate:
         </para>
 
         <mediaobject>
@@ -23,8 +23,7 @@
         </mediaobject>
 
         <para>
-            This diagram shows NHibernate using the database and configuration data to
-            provide persistence services (and persistent objects) to the application.
+            Эта диаграмма показывает NHibernate, используя базу данных и данные конфигурации для предоставления услуги сохранения (и постоянные объекты) в приложение.
         </para>
 
         <para>
