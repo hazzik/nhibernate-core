@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chapter id="mapping">
-    <title>Basic O/R Mapping</title>
+    <title>Базовый O/R Mapping</title>
 
     <sect1 id="mapping-declaration">
         <title>Mapping declaration</title>
 
         <para>
-            Object/relational mappings are defined in an XML document. The mapping document
+            Объект/реляционные преобразования описаны в XML-документах. The mapping document
             is designed to be readable and hand-editable. The mapping language is object-centric,
             meaning that mappings are constructed around persistent class declarations, not
             table declarations.
