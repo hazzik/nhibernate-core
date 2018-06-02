@@ -3,11 +3,7 @@
 	<title>Предисловие</title>
 
 	<para>
-		Working with object-oriented software and a relational database can be cumbersome
-		and time consuming in today's enterprise environments. NHibernate is an object/relational
-		mapping tool for .NET environments. The term object/relational mapping (<emphasis>ORM</emphasis>) refers to
-		the technique of mapping a data representation from an object model to a relational
-		data model with a SQL-based schema.
+		Работа с объектно ориентированным программным обеспечением и реляционными базами данных может быть громоздким и трудоемким в корпоративной среде. NHibernate - инструмент для объект/реляционного отображения в среде .NET. Термин объектно-реляционное отображение (<emphasis>ОРМ</emphasis>) относится к способу сопоставления представления данных из объектной модели в реляционную модель данных со схемой на основе SQL.
 	</para>
 
 	<para>
