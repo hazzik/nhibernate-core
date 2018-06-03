@@ -47,5 +47,7 @@ before_script:
   - if [[ "$DB" == "MySQL" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS nhibernate;"; fi
 jobs:
   include:
-    - script: pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
-    - script: pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test-Full -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
+    - stage: .NET Core
+      script: pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
+    - stage: Mono
+      script: pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test-Full -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
