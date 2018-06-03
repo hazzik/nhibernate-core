@@ -95,9 +95,7 @@ Task Set-Configuration {
 }
 
 Task Install-Tools {
-    Push-Location ./Tools
-    Exec { nuget restore }
-    Pop-Location
+    Exec -workingDirectory ./Tools { nuget restore }
 }
 
 Task Build {
