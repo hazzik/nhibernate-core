@@ -95,7 +95,7 @@ Task Set-Configuration {
 }
 
 Task Install-Tools {
-    Exec -workingDirectory ./Tools { nuget restore }
+    Exec -workingDirectory ./Tools { nuget install }
 }
 
 Task Build {
