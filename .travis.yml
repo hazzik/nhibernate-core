@@ -7,17 +7,18 @@ services:
   - postgresql
   - docker
 env:
-  global:
-    - MONO=true
-    - MONO=false
-  matrix: 
-    - DB=SqlServer2008 CONNECTION_STRING="Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
-    - DB=PostgreSQL CONNECTION_STRING="Host=localhost;Port=5432;Username=postgres;Database=nhibernate;Enlist=true;"
-    - DB=Firebird 
-    - DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"   
+  - MONO=1 DB=SqlServer2008 CONNECTION_STRING="Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
+  - MONO=1 DB=PostgreSQL CONNECTION_STRING="Host=localhost;Port=5432;Username=postgres;Database=nhibernate;Enlist=true;"
+  - MONO=1 DB=Firebird 
+  - MONO=1 DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"   
+  - MONO=0 DB=SqlServer2008 CONNECTION_STRING="Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
+  - MONO=0 DB=PostgreSQL CONNECTION_STRING="Host=localhost;Port=5432;Username=postgres;Database=nhibernate;Enlist=true;"
+  - MONO=0 DB=Firebird 
+  - MONO=0 DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"   
 matrix:
   allow_failures:
-    - env: DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"
+    - env: MONO=1 DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"
+    - env: MONO=0 DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"
 before_install:
   - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
   - curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
@@ -50,4 +51,5 @@ before_script:
   - if [[ "$DB" == "PostgreSQL" ]]; then psql -c "CREATE DATABASE nhibernate;" -U postgres; fi
   - if [[ "$DB" == "MySQL" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS nhibernate;"; fi
 script:
-  - pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}"
+  - if [[ "$MONO" == "1" ]] then pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test-Full -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}" fi;
+  - if [[ "$MONO" == "0" ]] then pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{\"Database\" = \"$DB\";\"ConnectionString\"=\"$CONNECTION_STRING\"}" fi;
