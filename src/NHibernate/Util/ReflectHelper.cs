@@ -369,6 +369,11 @@ namespace NHibernate.Util
 
 		private static System.Type GetType(Assembly assembly, string typeFullName)
 		{
+			if (assembly is System.Reflection.Emit.AssemblyBuilder)
+			{
+				return null;
+			}
+
 			try
 			{
 				return assembly.GetType(typeFullName, false, false);
