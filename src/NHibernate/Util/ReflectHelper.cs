@@ -361,10 +361,22 @@ namespace NHibernate.Util
 			if (!string.IsNullOrEmpty(classFullName))
 				return System.Type.GetType(classFullName, false, false) ??
 				       AppDomain.CurrentDomain.GetAssemblies()
-				                .Select(a => a.GetType(classFullName, false, false))
+				                .Select(a => GetType(a, classFullName))
 				                .FirstOrDefault(t => t != null);
 
 			return null;
+		}
+
+		private static System.Type GetType(Assembly assembly, string typeFullName)
+		{
+			try
+			{
+				return assembly.GetType(typeFullName, false, false);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 
 		public static System.Type TypeFromAssembly(string type, string assembly, bool throwIfError)
