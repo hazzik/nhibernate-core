@@ -331,7 +331,7 @@ namespace NHibernate.Util
 		/// the method try to find the System.Type scanning all Assemblies of the <see cref="AppDomain.CurrentDomain"/>.
 		/// </remarks>
 		/// <exception cref="TypeLoadException">If no System.Type was found for <paramref name="classFullName"/>.</exception>
-				public static System.Type ClassForFullName(string classFullName)
+		public static System.Type ClassForFullName(string classFullName)
 		{
 			var result = ClassForFullNameOrNull(classFullName);
 			if (result == null)
@@ -344,38 +344,28 @@ namespace NHibernate.Util
 		}
 
 		/// <summary>
-				/// Load a System.Type given its name.
-				/// </summary>
-				/// <param name="classFullName">The class FullName or AssemblyQualifiedName</param>
-				/// <returns>The System.Type or null</returns>
-				/// <remarks>
-				/// If the <paramref name="classFullName"/> don't represent an <see cref="System.Type.AssemblyQualifiedName"/>
-				/// the method try to find the System.Type scanning all Assemblies of the <see cref="AppDomain.CurrentDomain"/>.
-				/// </remarks>
-				public static System.Type ClassForFullNameOrNull(string classFullName)
-				{
-					System.Type result = null;
-					AssemblyQualifiedTypeName parsedName = TypeNameParser.Parse(classFullName);
-					if (!string.IsNullOrEmpty(parsedName.Assembly))
-					{
-						result = TypeFromAssembly(parsedName, false);
-					}
-					else
-					{
-						if (!string.IsNullOrEmpty(classFullName))
-						{
-							Assembly[] ass = AppDomain.CurrentDomain.GetAssemblies();
-							foreach (Assembly a in ass)
-							{
-								result = a.GetType(classFullName, false, false);
-								if (result != null)
-									break; //<<<<<================
-							}
-						}
-					}
+		/// Load a System.Type given its name.
+		/// </summary>
+		/// <param name="classFullName">The class FullName or AssemblyQualifiedName</param>
+		/// <returns>The System.Type or null</returns>
+		/// <remarks>
+		/// If the <paramref name="classFullName"/> don't represent an <see cref="System.Type.AssemblyQualifiedName"/>
+		/// the method try to find the System.Type scanning all Assemblies of the <see cref="AppDomain.CurrentDomain"/>.
+		/// </remarks>
+		public static System.Type ClassForFullNameOrNull(string classFullName)
+		{
+			var parsedName = TypeNameParser.Parse(classFullName);
+			if (!string.IsNullOrEmpty(parsedName.Assembly))
+				return TypeFromAssembly(parsedName, false);
 
-					return result;
-				}
+			if (!string.IsNullOrEmpty(classFullName))
+				return System.Type.GetType(classFullName, false, false) ??
+				       AppDomain.CurrentDomain.GetAssemblies()
+				                .Select(a => a.GetType(classFullName, false, false))
+				                .FirstOrDefault(t => t != null);
+
+			return null;
+		}
 
 		public static System.Type TypeFromAssembly(string type, string assembly, bool throwIfError)
 		{
