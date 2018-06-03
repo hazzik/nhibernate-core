@@ -94,6 +94,12 @@ Task Set-Configuration {
     $config.Save($configFile)
 }
 
+Task Install-Tools {
+    Exec { pushd ./Tools }
+    Exec { nuget restore }
+    Exec { popd }
+}
+
 Task Build {
     Exec { 
         dotnet `
@@ -111,6 +117,19 @@ Task Test -depends Build {
         $assembly = [IO.Path]::Combine("src", $_, "bin", "Release", "netcoreapp2.0", "$_.dll")
         Exec {
             dotnet $assembly --labels=before --nocolor "--result=$_-TestResult.xml"
+        }
+    }
+}
+
+Task Test-Full -depends Install-Tools, Build {
+    @(
+        'NHibernate.TestDatabaseSetup',
+        'NHibernate.Test',
+        'NHibernate.Test.VisualBasic'
+    ) | ForEach-Object { 
+        $assembly = [IO.Path]::Combine("src", $_, "bin", "Release", "net461", "$_.dll")
+        Exec {
+            mono ./Tools/NUnit.ConsoleRunner.3.7.0/tools/nunit3-console.exe $assembly --labels=before --nocolor "--result=$_-TestResult.xml"
         }
     }
 }
