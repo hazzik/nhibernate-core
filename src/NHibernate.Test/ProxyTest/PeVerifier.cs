@@ -31,18 +31,27 @@ namespace NHibernate.Test.ProxyTest
 				dir = Directory.GetParent(dir).FullName;
 			}
 
-			var versionFolder = "4.0";
-			if (Environment.Version.Major == 2)
-				versionFolder = "3.5";
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+			{
+				var versionFolder = Environment.Version.Major == 2 ? "3.5" : "4.0";
 
-			_peVerifyPath = Path.Combine(dir, "Tools", "PEVerify", versionFolder, "PEVerify.exe");
+				_peVerifyPath = Path.Combine(dir, "Tools", "PEVerify", versionFolder, "PEVerify.exe");
 
-			if (!File.Exists(_peVerifyPath))
-				throw new FileNotFoundException(string.Format("Could not find PEVerify.exe at {0}", _peVerifyPath));
+				if (!File.Exists(_peVerifyPath))
+					throw new FileNotFoundException(string.Format("Could not find PEVerify.exe at {0}", _peVerifyPath));
+			}
+			else
+			{
+				_peVerifyPath = "pedump";
+			}
 		}
 
 		public void AssertIsValid()
 		{
+			var arguments = Environment.OSVersion.Platform == PlatformID.Win32NT
+				? $"\"{_assemlyLocation}\" /VERBOSE /NOLOGO"
+				: $"--verify metadata,code \"{_assemlyLocation}\"";
+
 			var process = new Process
 			{
 				StartInfo =
@@ -50,7 +59,7 @@ namespace NHibernate.Test.ProxyTest
 					FileName = _peVerifyPath,
 					RedirectStandardOutput = true,
 					UseShellExecute = false,
-					Arguments = "\"" + _assemlyLocation + "\" /VERBOSE",
+					Arguments = arguments,
 					CreateNoWindow = true
 				}
 			};
