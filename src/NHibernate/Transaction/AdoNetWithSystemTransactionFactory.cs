@@ -6,7 +6,6 @@ using System.Transactions;
 using NHibernate.AdoNet;
 using NHibernate.Engine;
 using NHibernate.Engine.Transaction;
-using NHibernate.Impl;
 using NHibernate.Util;
 
 namespace NHibernate.Transaction
@@ -183,7 +182,6 @@ namespace NHibernate.Transaction
 
 			private readonly ISessionImplementor _session;
 			private readonly bool _useConnectionOnSystemTransactionPrepare;
-			private readonly System.Transactions.Transaction _originalTransaction;
 			private readonly ManualResetEventSlim _lock = new ManualResetEventSlim(true);
 			private volatile bool _needCompletionLocking = true;
 			// Required for not locking the completion phase itself when locking session usages from concurrent threads.
@@ -204,8 +202,7 @@ namespace NHibernate.Transaction
 				bool useConnectionOnSystemTransactionPrepare)
 			{
 				_session = session ?? throw new ArgumentNullException(nameof(session));
-				_originalTransaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
-				EnlistedTransaction = transaction.Clone();
+				EnlistedTransaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
 				_systemTransactionCompletionLockTimeout = systemTransactionCompletionLockTimeout;
 				_useConnectionOnSystemTransactionPrepare = useConnectionOnSystemTransactionPrepare;
 			}
@@ -283,18 +280,11 @@ namespace NHibernate.Transaction
 			{
 				try
 				{
-					// Cloned transaction is not disposed "unexpectedly", its status is accessible till context disposal.
-					var status = EnlistedTransaction.TransactionInformation.Status;
-					if (status != TransactionStatus.Active)
-						return status;
-
-					// The clone status can be out of date when active, check the original one (which could be disposed if
-					// the clone is out of date).
-					return _originalTransaction.TransactionInformation.Status;
+					return EnlistedTransaction.TransactionInformation.Status;
 				}
 				catch (ObjectDisposedException ode)
 				{
-					_logger.Warn(ode, "Enlisted transaction status was wrongly active, original transaction being already disposed. Will assume neither active nor committed.");
+					_logger.Warn(ode, "Enlisted transaction already disposed. Will assume not active.");
 					return null;
 				}
 			}
@@ -415,9 +405,11 @@ namespace NHibernate.Transaction
 			/// otherwise.</param>
 			protected virtual void CompleteTransaction(bool isCommitted)
 			{
+				// Mono calls and additional rollback on transaction dispose if it is still considered active, which may
+				// happen when disposing a clone of the transaction in the completion process. Guards against this.
 				if (!IsInActiveTransaction)
 					return;
-				
+
 				try
 				{
 					// Allow transaction completed actions to run while others stay blocked.
@@ -522,7 +514,6 @@ namespace NHibernate.Transaction
 				if (disposing)
 				{
 					Unlock();
-					EnlistedTransaction.Dispose();
 					_lock.Dispose();
 				}
 			}
