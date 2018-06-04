@@ -392,6 +392,10 @@ namespace NHibernate.Transaction
 					{
 						CompleteTransaction(success ?? false);
 					}
+					catch
+					{
+						//Do nothing - the exception has been logged already.
+					}
 					finally
 					{
 						enlistment.Done();
@@ -480,6 +484,7 @@ namespace NHibernate.Transaction
 				// Do not nullify TransactionContext here, could create a race condition with
 				// would be await-er on session for disposal (test cases cleanup checks by example).
 				// Race condition with session disposal is protected on session side by Wait.
+
 				if (context.ShouldCloseSessionOnSystemTransactionCompleted)
 				{
 					// This closes the connection manager, which will release the connection.
