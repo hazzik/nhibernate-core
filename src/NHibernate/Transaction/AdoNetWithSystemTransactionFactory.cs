@@ -411,6 +411,9 @@ namespace NHibernate.Transaction
 			/// otherwise.</param>
 			protected virtual void CompleteTransaction(bool isCommitted)
 			{
+				if (!IsInActiveTransaction)
+					return;
+				
 				try
 				{
 					// Allow transaction completed actions to run while others stay blocked.
