@@ -5,8 +5,32 @@ namespace NHibernate.Test.NHSpecificTest.NH2783
 	[TestFixture]
 	public class Fixture : BugTestCase
 	{
+		private object _fooId;
+		private object _barId;
+
 		protected override void OnSetUp()
 		{
+			using (var session = OpenSession())
+			using (var transaction = session.BeginTransaction())
+			{
+				var bar = new Bar
+				{
+					MyProps = 
+					{
+						["DynValString2"] = "a"
+					}
+				};
+				_barId = session.Save(bar);
+				_fooId = session.Save(
+					new Foo
+					{
+						MyProps =
+						{
+							["DynPointer"] = bar
+						}
+					});
+				transaction.Commit();
+			}
 		}
 
 		protected override void OnTearDown()
@@ -26,8 +50,17 @@ namespace NHibernate.Test.NHSpecificTest.NH2783
 		}
 
 		[Test]
-		public void DoNothing()
+		public void CanReadDynPointerFromFoo()
 		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var foo = session.Get<Foo>(_fooId);
+				var bar = foo.MyProps["DynPointer"];
+				Assert.That(bar, Is.Not.Null);
+				Assert.That(bar, Is.InstanceOf<Bar>());
+				Assert.That(bar, Has.Property("Id").EqualTo(_barId));
+			}
 		}
 	}
 }
