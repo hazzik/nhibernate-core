@@ -49,6 +49,7 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Configuration" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
@@ -63,6 +64,7 @@
     <PackageReference Include="System.Security.Permissions" Version="4.4.1" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
   </ItemGroup>
 
   <ItemGroup>
