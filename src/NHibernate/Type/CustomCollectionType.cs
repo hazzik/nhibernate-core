@@ -47,14 +47,15 @@ namespace NHibernate.Type
 
 		public override IPersistentCollection Instantiate(ISessionImplementor session, ICollectionPersister persister, object key)
 		{
-			IPersistentCollection createdCollection = userType.Instantiate(session, persister);
+			var createdCollection = userType.Instantiate(session, persister);
 			EnsureNotInitialized(createdCollection);
 			return createdCollection;
 		}
 
-		private static void EnsureNotInitialized(IPersistentCollection createdCollection) 
+		private static void EnsureNotInitialized(IPersistentCollection createdCollection)
 		{
-			if (createdCollection.WasInitialized) {
+			if (createdCollection.WasInitialized)
+			{
 				throw new HibernateException(
 					"UserCollectionType.Instantiate should return a non-initialized persistent collection. Implement UserCollectionType.Instantiate(int anticipatedSize) to actually create the collection that needs to be wrapped by the persistent collection.");
 			}
