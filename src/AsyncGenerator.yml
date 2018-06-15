@@ -5,6 +5,8 @@
   applyChanges: true
   analyzation:
     methodConversion:
+    - conversion: Smart
+      containingType: NHibernate.Transaction.ISynchronization
     - conversion: Ignore
       name: PostProcessInsert
       containingTypeName: HqlSqlWalker
@@ -144,6 +146,7 @@
     scanMethodBody: true
     scanForMissingAsyncMembers:
     - all: true
+    searchAsyncCounterpartsInInheritedTypes: true
   transformation:
     configureAwaitArgument: false
     localFunctions: true

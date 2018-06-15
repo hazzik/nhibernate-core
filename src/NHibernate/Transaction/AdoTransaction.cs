@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-
+using System.Threading;
+using System.Threading.Tasks;
 using NHibernate.Engine;
 using NHibernate.Impl;
 
@@ -21,7 +22,7 @@ namespace NHibernate.Transaction
 		private bool committed;
 		private bool rolledBack;
 		private bool commitFailed;
-		private IList<ISynchronization> synchronizations;
+		private List<IAsyncSynchronization> _synchronizations;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AdoTransaction"/> class.
@@ -85,12 +86,17 @@ namespace NHibernate.Transaction
 
 		public void RegisterSynchronization(ISynchronization sync)
 		{
-			if (sync == null) throw new ArgumentNullException("sync");
-			if (synchronizations == null)
+			RegisterSynchronization(sync as IAsyncSynchronization ?? new SynchronizationWrapper(sync)); 
+		}
+
+		public void RegisterSynchronization(IAsyncSynchronization sync)
+		{
+			if (sync == null) throw new ArgumentNullException(nameof(sync));
+			if (_synchronizations == null)
 			{
-				synchronizations = new List<ISynchronization>();
+				_synchronizations = new List<IAsyncSynchronization>();
 			}
-			synchronizations.Add(sync);
+			_synchronizations.Add(sync);
 		}
 
 		public void Begin()
@@ -414,11 +420,11 @@ namespace NHibernate.Transaction
 
 		private void NotifyLocalSynchsBeforeTransactionCompletion()
 		{
-			if (synchronizations != null)
+			if (_synchronizations != null)
 			{
-				for (int i = 0; i < synchronizations.Count; i++)
+				for (int i = 0; i < _synchronizations.Count; i++)
 				{
-					ISynchronization sync = synchronizations[i];
+					var sync = _synchronizations[i];
 					try
 					{
 						sync.BeforeCompletion();
@@ -435,11 +441,11 @@ namespace NHibernate.Transaction
 		private void NotifyLocalSynchsAfterTransactionCompletion(bool success)
 		{
 			begun = false;
-			if (synchronizations != null)
+			if (_synchronizations != null)
 			{
-				for (int i = 0; i < synchronizations.Count; i++)
+				for (int i = 0; i < _synchronizations.Count; i++)
 				{
-					ISynchronization sync = synchronizations[i];
+					var sync = _synchronizations[i];
 					try
 					{
 						sync.AfterCompletion(success);
@@ -448,6 +454,65 @@ namespace NHibernate.Transaction
 					{
 						log.Error(e, "exception calling user Synchronization");
 					}
+				}
+			}
+		}
+
+		private class SynchronizationWrapper : IAsyncSynchronization
+		{
+			private readonly ISynchronization _inner;
+
+			public SynchronizationWrapper(ISynchronization inner)
+			{
+				_inner = inner;
+			}
+
+			public void BeforeCompletion()
+			{
+				_inner.BeforeCompletion();
+			}
+
+			public void AfterCompletion(bool success)
+			{
+				_inner.AfterCompletion(success);
+			}
+			
+			public Task BeforeCompletionAsync(
+				CancellationToken cancellationToken = default(CancellationToken))
+			{
+				if (cancellationToken.IsCancellationRequested)
+				{
+					return Task.FromCanceled(cancellationToken);
+				}
+
+				try
+				{
+					BeforeCompletion();
+					return Task.CompletedTask;
+				}
+				catch (Exception e)
+				{
+					return Task.FromException(e);
+				}
+			}
+
+			public Task AfterCompletionAsync(
+				bool success,
+				CancellationToken cancellationToken = default(CancellationToken))
+			{
+				if (cancellationToken.IsCancellationRequested)
+				{
+					return Task.FromCanceled(cancellationToken);
+				}
+
+				try
+				{
+					AfterCompletion(success);
+					return Task.CompletedTask;
+				}
+				catch (Exception e)
+				{
+					return Task.FromException(e);
 				}
 			}
 		}
