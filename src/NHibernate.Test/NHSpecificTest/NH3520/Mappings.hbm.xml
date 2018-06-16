@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.NH3520">
+  
+  <class name="OrderLine" table="`OrderLine`">
+    <id name="ID" generator="native" />
+    <property name="Name" />
+    <many-to-one cascade="none" name="Order" column="OrderID" />
+  </class>
+  
+  <class name="Order" table="`Order`">
+    <id name="ID" generator="native" />
+    <bag cascade="all" inverse="true" lazy="true" name="Lines">
+      <key column="OrderID" />
+      <one-to-many class="OrderLine" />
+    </bag>
+    <property name="Name"/>
+  </class>
+
+</hibernate-mapping>
