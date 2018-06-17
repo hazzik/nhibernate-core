@@ -26,22 +26,29 @@ namespace NHibernate.Type
 			{
 				return Task.FromCanceled<object>(cancellationToken);
 			}
-			return NullSafeGetAsync(rs, names[0], session, owner, cancellationToken);
-		}
-
-		public override Task<object> NullSafeGetAsync(DbDataReader rs,string name,ISessionImplementor session,object owner, CancellationToken cancellationToken)
-		{
-			if (cancellationToken.IsCancellationRequested)
-			{
-				return Task.FromCanceled<object>(cancellationToken);
-			}
 			try
 			{
-				return Task.FromResult<object>(NullSafeGet(rs, name, session, owner));
+				return NullSafeGetAsync(rs, names[0], session, owner, cancellationToken);
 			}
 			catch (Exception ex)
 			{
 				return Task.FromException<object>(ex);
+			}
+		}
+
+		public override async Task<object> NullSafeGetAsync(DbDataReader rs,string name,ISessionImplementor session,object owner, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			int index = rs.GetOrdinal(name);
+
+			if (await (rs.IsDBNullAsync(index, cancellationToken)).ConfigureAwait(false))
+			{
+				return null;
+			}
+			else
+			{
+				string str = (string) NHibernateUtil.String.Get(rs, index, session);
+				return string.IsNullOrEmpty(str) ? null : str;
 			}
 		}
 

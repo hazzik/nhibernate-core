@@ -11,7 +11,7 @@ namespace NHibernate.DomainModel.NHSpecific
 	/// the Nullables library.
 	/// </summary>
 	[Serializable]
-	public abstract class NullableTypesType : ImmutableType
+	public abstract partial class NullableTypesType : ImmutableType
 	{
 		public NullableTypesType(SqlType type) : base(type)
 		{
