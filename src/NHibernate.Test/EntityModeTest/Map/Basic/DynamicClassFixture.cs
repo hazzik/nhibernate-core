@@ -214,7 +214,8 @@ namespace NHibernate.Test.EntityModeTest.Map.Basic
 				Assert.That(models.Count, Is.EqualTo(2));
 				Assert.That(NHibernateUtil.IsInitialized(models), Is.True);
 				s.Clear();
-				var list = s.Query<dynamic>("Model").ToList();
+
+				var list = s.Query<dynamic>("Model").Where("ProductLine.Description = @0", "Cars").ToList();
 				foreach (var model in list)
 				{
 					Assert.That(NHibernateUtil.IsInitialized(model.ProductLine), Is.False);
