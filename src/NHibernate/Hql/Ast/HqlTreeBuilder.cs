@@ -497,9 +497,15 @@ namespace NHibernate.Hql.Ast
 			return new HqlCoalesce(_factory, lhs, rhs);
 		}
 
+		[Obsolete("Please use Index method instead.")]
 		public HqlTreeNode DictionaryItem(HqlExpression dictionary, HqlExpression index)
 		{
 			return new HqlDictionaryIndex(_factory, dictionary, index);
+		}
+
+		public HqlTreeNode Index(HqlExpression collection, HqlExpression index)
+		{
+			return new HqlIndex(_factory, collection, index);
 		}
 
 		public HqlTreeNode Indices(HqlExpression dictionary)
