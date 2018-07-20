@@ -15,7 +15,7 @@ namespace NHibernate.Bytecode.CodeDom
 	{
 		private static readonly ILog log = LogManager.GetLogger(typeof(BytecodeProviderImpl));
 
-		public IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters)
+        public IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter identifierGetter, ISetter identifierSetter)
 		{
 			if (clazz.IsValueType)
 			{
@@ -23,7 +23,7 @@ namespace NHibernate.Bytecode.CodeDom
 				log.Info("Disabling reflection optimizer for value type " + clazz.FullName);
 				return null;
 			}
-			return new Generator(clazz, getters, setters).CreateReflectionOptimizer();
+			return new Generator(clazz, getters, setters, identifierGetter, identifierSetter).CreateReflectionOptimizer();
 		}
 
 		public class Generator
@@ -32,18 +32,22 @@ namespace NHibernate.Bytecode.CodeDom
 			private System.Type mappedClass;
 			private IGetter[] getters;
 			private ISetter[] setters;
+            private IGetter identifierGetter;
+            private ISetter identifierSetter;
 
 			/// <summary>
 			/// ctor
 			/// </summary>
 			/// <param name="mappedClass">The target class</param>
-			/// <param name="setters">Array of setters</param>
-			/// <param name="getters">Array of getters</param>
-			public Generator(System.Type mappedClass, IGetter[] getters, ISetter[] setters)
+			/// <param name="setters">Array of setters (except identifier)</param>
+            /// <param name="getters">Array of getters (except identifier)</param>
+            public Generator(System.Type mappedClass, IGetter[] getters, ISetter[] setters, IGetter identifierGetter, ISetter identifierSetter)
 			{
 				this.mappedClass = mappedClass;
 				this.getters = getters;
 				this.setters = setters;
+                this.identifierGetter = identifierGetter;
+                this.identifierSetter = identifierSetter;
 			}
 
 			public IReflectionOptimizer CreateReflectionOptimizer()
@@ -147,7 +151,7 @@ namespace NHibernate.Bytecode.CodeDom
 				System.Type[] types = assembly.GetTypes();
 				IReflectionOptimizer optimizer = (IReflectionOptimizer) assembly.CreateInstance(types[0].FullName, false,
 				                                                                                BindingFlags.CreateInstance, null,
-				                                                                                new object[] {setters, getters},
+				                                                                                new object[] {setters, getters, identifierGetter, identifierSetter},
 				                                                                                null, null);
 
 				return optimizer;
@@ -159,13 +163,18 @@ namespace NHibernate.Bytecode.CodeDom
 				"namespace NHibernate.Bytecode.CodeDom {\n";
 
 			private const string classDef =
-				@"public class GetSetHelper_{0} : IReflectionOptimizer, IAccessOptimizer {{
+                @"public class GetSetHelper_{0} : IReflectionOptimizer, IAccessOptimizer, IPropertyAccessOptimizer {{
 					ISetter[] setters;
 					IGetter[] getters;
+					ISetter identifierSetter;
+					IGetter identifierGetter;
 					
-					public GetSetHelper_{0}(ISetter[] setters, IGetter[] getters) {{
+					public GetSetHelper_{0}(ISetter[] setters, IGetter[] getters, IGetter identifierGetter, ISetter identifierSetter) {{
 						this.setters = setters;
 						this.getters = getters;
+						this.identifierSetter = identifierSetter;
+						this.identifierGetter = identifierGetter;
+
 					}}
 
 					public IInstantiationOptimizer InstantiationOptimizer {{
@@ -175,6 +184,11 @@ namespace NHibernate.Bytecode.CodeDom
 					public IAccessOptimizer AccessOptimizer {{
 						get {{ return this; }}
 					}}
+
+					public IPropertyAccessOptimizer IdentifierAccessOptimizer {{
+						get {{ return null; }}
+					}}
+
 					";
 
 			private const string startSetMethod =
@@ -193,8 +207,25 @@ namespace NHibernate.Bytecode.CodeDom
 				"  return ret;\n" +
 				"}\n";
 
+            private const string startIdentifierSetMethod =
+                "public void SetValue(object obj, object value) {{\n" +
+                "  {0} t = ({0})obj;\n";
+
+            private const string closeIdentifierSetMethod =
+                "}\n";
+
+            private const string startIdentifierGetMethod =
+                "public object GetValue(object obj) {{\n" +
+                "  {0} t = ({0})obj;\n" +
+                "  object ret;\n";
+
+            private const string closeIdentifierGetMethod =
+                "  return ret;\n" +
+                "}\n";
+
+
 			/// <summary>
-			/// Check if the property is public
+			/// Check if the get of property is public
 			/// </summary>
 			/// <remarks>
 			/// <para>If IsPublic==true I can directly set the property</para>
@@ -202,10 +233,32 @@ namespace NHibernate.Bytecode.CodeDom
 			/// </remarks>
 			/// <param name="propertyName"></param>
 			/// <returns></returns>
-			private bool IsPublic(string propertyName)
+			private bool IsGetPublic(string propertyName)
 			{
-				return mappedClass.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public) != null;
+                PropertyInfo propertyInfo = mappedClass.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+                if ((propertyInfo != null) && (propertyInfo.GetGetMethod() != null))
+                    return true;
+
+                return false;
 			}
+
+            /// <summary>
+            /// Check if the set of property is public
+            /// </summary>
+            /// <remarks>
+            /// <para>If IsPublic==true I can directly set the property</para>
+            /// <para>If IsPublic==false I need to use the setter/getter</para>
+            /// </remarks>
+            /// <param name="propertyName"></param>
+            /// <returns></returns>
+            private bool IsSetPublic(string propertyName)
+            {
+                PropertyInfo propertyInfo = mappedClass.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+                if ((propertyInfo != null) && (propertyInfo.GetSetMethod() != null))
+                    return true;
+
+                return false;
+            }
 
 			/// <summary>
 			/// Generate the required code
@@ -218,58 +271,117 @@ namespace NHibernate.Bytecode.CodeDom
 				sb.Append(header);
 				sb.AppendFormat(classDef, mappedClass.FullName.Replace('.', '_').Replace("+", "__"));
 
-				sb.AppendFormat(startSetMethod, mappedClass.FullName.Replace('+', '.'));
-				for (int i = 0; i < setters.Length; i++)
-				{
-					ISetter setter = setters[i];
+                GenerateSetValuesMethod(sb);
 
-					if (setter is BasicSetter && IsPublic(setter.PropertyName))
-					{
-						System.Type type = getters[i].ReturnType;
+                GenerateGetValuesMethod(sb);
 
-						if (type.IsValueType)
-						{
-							sb.AppendFormat(
-								"  t.{0} = values[{2}] == null ? new {1}() : ({1})values[{2}];\n",
-								setter.PropertyName,
-								type.FullName.Replace('+', '.'),
-								i);
-						}
-						else
-						{
-							sb.AppendFormat("  t.{0} = ({1})values[{2}];\n",
-							                setter.PropertyName,
-							                type.FullName.Replace('+', '.'),
-							                i);
-						}
-					}
-					else
-					{
-						sb.AppendFormat("  setters[{0}].Set(obj, values[{0}]);\n", i);
-					}
-				}
-				sb.Append(closeSetMethod); // Close Set
+                GenerateSetIdentifierMethod(sb);
 
-				sb.AppendFormat(startGetMethod, mappedClass.FullName.Replace('+', '.'), getters.Length);
-				for (int i = 0; i < getters.Length; i++)
-				{
-					IGetter getter = getters[i];
-					if (getter is BasicGetter && IsPublic(getter.PropertyName))
-					{
-						sb.AppendFormat("  ret[{0}] = t.{1};\n", i, getter.PropertyName);
-					}
-					else
-					{
-						sb.AppendFormat("  ret[{0}] = getters[{0}].Get(obj);\n", i);
-					}
-				}
-				sb.Append(closeGetMethod);
+                GenerateGetIdentifierMethod(sb);
 
 				sb.Append("}\n"); // Close class
 				sb.Append("}\n"); // Close namespace
 
 				return sb.ToString();
 			}
+
+            private void GenerateGetIdentifierMethod(StringBuilder sb)
+            {
+                sb.AppendFormat(startIdentifierGetMethod, mappedClass.FullName.Replace('+', '.'), getters.Length);
+                IGetter getter = identifierGetter;
+                if (getter is BasicGetter && IsGetPublic(getter.PropertyName))
+                {
+                    sb.AppendFormat("  ret = t.{0};\n",getter.PropertyName);
+                }
+                else
+                {
+                    sb.AppendFormat("  ret = identifierGetter.Get(obj);\n");
+                }
+                sb.Append(closeIdentifierGetMethod);
+            }
+
+            private void GenerateSetIdentifierMethod(StringBuilder sb)
+            {
+                sb.AppendFormat(startIdentifierSetMethod, mappedClass.FullName.Replace('+', '.'));
+                ISetter setter = identifierSetter;
+
+                if (setter is BasicSetter && IsSetPublic(setter.PropertyName))
+                {
+                    System.Type type = identifierGetter.ReturnType;
+
+                    if (type.IsValueType)
+                    {
+                        sb.AppendFormat(
+                            "  t.{0} = value == null ? new {1}() : ({1})value;\n",
+                            setter.PropertyName,
+                            type.FullName.Replace('+', '.'));
+                    }
+                    else
+                    {
+                        sb.AppendFormat("  t.{0} = ({1})value;\n",
+                                        setter.PropertyName,
+                                        type.FullName.Replace('+', '.'));
+                    }
+                }
+                else
+                {
+                    sb.AppendFormat("  identifierSetter.Set(obj, value);\n");
+                }
+                sb.Append(closeIdentifierSetMethod); // Close Set
+            }
+
+            private void GenerateGetValuesMethod(StringBuilder sb)
+            {
+                sb.AppendFormat(startGetMethod, mappedClass.FullName.Replace('+', '.'), getters.Length);
+                for (int i = 0; i < getters.Length; i++)
+                {
+                    IGetter getter = getters[i];
+                    if (getter is BasicGetter && IsGetPublic(getter.PropertyName))
+                    {
+                        sb.AppendFormat("  ret[{0}] = t.{1};\n", i, getter.PropertyName);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("  ret[{0}] = getters[{0}].Get(obj);\n", i);
+                    }
+                }
+                sb.Append(closeGetMethod);
+            }
+
+            private void GenerateSetValuesMethod(StringBuilder sb)
+            {
+                sb.AppendFormat(startSetMethod, mappedClass.FullName.Replace('+', '.'));
+                for (int i = 0; i < setters.Length; i++)
+                {
+                    ISetter setter = setters[i];
+
+                    if (setter is BasicSetter && IsSetPublic(setter.PropertyName))
+                    {
+                        System.Type type = getters[i].ReturnType;
+
+                        if (type.IsValueType)
+                        {
+                            sb.AppendFormat(
+                                "  t.{0} = values[{2}] == null ? new {1}() : ({1})values[{2}];\n",
+                                setter.PropertyName,
+                                type.FullName.Replace('+', '.'),
+                                i);
+                        }
+                        else
+                        {
+                            sb.AppendFormat("  t.{0} = ({1})values[{2}];\n",
+                                            setter.PropertyName,
+                                            type.FullName.Replace('+', '.'),
+                                            i);
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendFormat("  setters[{0}].Set(obj, values[{0}]);\n", i);
+                    }
+                }
+                sb.Append(closeSetMethod); // Close Set
+            }
 		}
 	}
 }

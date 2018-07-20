@@ -9,7 +9,7 @@ namespace NHibernate.Bytecode
 	/// </summary>
 	public class NullBytecodeProvider : IBytecodeProvider
 	{
-		public IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters)
+        public IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter identifierGetter, ISetter identifierSetter)
 		{
 			return null;
 		}

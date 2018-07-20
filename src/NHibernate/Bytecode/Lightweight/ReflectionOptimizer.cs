@@ -6,6 +6,7 @@ using System.Security;
 using System.Security.Permissions;
 using NHibernate.Property;
 using NHibernate.Util;
+using System.Collections;
 
 namespace NHibernate.Bytecode.Lightweight
 {
@@ -13,6 +14,12 @@ namespace NHibernate.Bytecode.Lightweight
 	{
 		private IAccessOptimizer accessOptimizer;
 		private CreateInstanceInvoker createInstanceMethod;
+        private IPropertyAccessOptimizer identifierAccessOptimizer;
+
+        public IPropertyAccessOptimizer IdentifierAccessOptimizer
+        {
+            get { return identifierAccessOptimizer; }
+        }
 
 		public IAccessOptimizer AccessOptimizer
 		{
@@ -36,7 +43,7 @@ namespace NHibernate.Bytecode.Lightweight
 		/// Class constructor.
 		/// </summary>
 		public ReflectionOptimizer(
-			System.Type mappedType, IGetter[] getters, ISetter[] setters)
+            System.Type mappedType, IGetter[] getters, ISetter[] setters, IGetter identifierGetter, ISetter identifierSetter)
 		{
 			// save off references
 			this.mappedType = mappedType;
@@ -44,17 +51,36 @@ namespace NHibernate.Bytecode.Lightweight
 			//this.getters = getters;
 			//this.setters = setters;
 
-			GetPropertyValuesInvoker getInvoker = GenerateGetPropertyValuesMethod(getters);
-			SetPropertyValuesInvoker setInvoker = GenerateSetPropertyValuesMethod(getters, setters);
-
-			this.accessOptimizer = new AccessOptimizer(
-				getInvoker,
-				setInvoker,
-				getters,
-				setters);
+            InitAccessOptimizer(getters, setters);
 
 			this.createInstanceMethod = CreateCreateInstanceMethod(mappedType);
-		}
+
+            InitIdentifierAccessOptimizers(identifierGetter, identifierSetter);
+        }
+
+        private void InitIdentifierAccessOptimizers(IGetter getter, ISetter setter)
+        {
+            // create identifier optimizer only if identifer property exist
+            if ((getter != null) && (setter != null))
+            {
+                GetPropertyValueInvoker getInvoker = GenerateGetPropertyValueMethod(getter);
+                SetPropertyValueInvoker setInvoker = GenerateSetPropertyValueMethod(getter, setter);
+
+                this.identifierAccessOptimizer = new PropertyAccessOptimizer(getInvoker, setInvoker, getter, setter);
+            }
+        }
+
+        private void InitAccessOptimizer(IGetter[] getters, ISetter[] setters)
+        {
+            GetPropertyValuesInvoker getInvoker = GenerateGetPropertyValuesMethod(getters);
+            SetPropertyValuesInvoker setInvoker = GenerateSetPropertyValuesMethod(getters, setters);
+
+            this.accessOptimizer = new AccessOptimizer(
+                getInvoker,
+                setInvoker,
+                getters,
+                setters);
+        }
 
 		/// <summary>
 		/// Generates a dynamic method which creates a new instance of <paramref name="type" />
@@ -242,7 +268,106 @@ namespace NHibernate.Bytecode.Lightweight
 
 			return (SetPropertyValuesInvoker) method.CreateDelegate(typeof(SetPropertyValuesInvoker));
 		}
-	}
+
+        /// <summary>
+        /// Generates a dynamic method on the given type.
+        /// </summary>
+        /// <returns></returns>
+        private GetPropertyValueInvoker GenerateGetPropertyValueMethod(IGetter getter)
+        {
+            System.Type[] methodArguments = new System.Type[] { typeof(object), typeof(PropertyGetterCallback) };
+            DynamicMethod method = CreateDynamicMethod(typeof(object), methodArguments);
+
+            ILGenerator il = method.GetILGenerator();
+
+            LocalBuilder thisLocal = il.DeclareLocal(typeOfThis);
+
+            // Cast the 'this' pointer to the appropriate type and store it in a local variable
+            il.Emit(OpCodes.Ldarg_0);
+            EmitCastToReference(il, mappedType);
+            il.Emit(OpCodes.Stloc, thisLocal);
+
+
+            // get the value...
+            IOptimizableGetter optimizableGetter = getter as IOptimizableGetter;
+            if (optimizableGetter != null)
+            {
+                il.Emit(OpCodes.Ldloc, thisLocal);
+                optimizableGetter.Emit(il);
+                EmitUtil.EmitBoxIfNeeded(il, getter.ReturnType);
+            }
+            else
+            {
+                // using the getter itself via a callback
+                MethodInfo invokeMethod =
+                    typeof(PropertyGetterCallback).GetMethod(
+                        "Invoke", new System.Type[] { typeof(object)});
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Callvirt, invokeMethod);
+            }
+
+            il.Emit(OpCodes.Ret);
+
+            return (GetPropertyValueInvoker)method.CreateDelegate(typeof(GetPropertyValueInvoker));
+        }
+
+        /// <summary>
+        /// Generates a dynamic method on the given type.
+        /// </summary>
+        private SetPropertyValueInvoker GenerateSetPropertyValueMethod(IGetter getter, ISetter setter)
+        {
+            System.Type[] methodArguments = new System.Type[] { typeof(object), typeof(object), typeof(PropertySetterCallback) };
+            DynamicMethod method = CreateDynamicMethod(null, methodArguments);
+
+            ILGenerator il = method.GetILGenerator();
+
+            // Declare a local variable used to store the object reference (typed)
+            LocalBuilder thisLocal = il.DeclareLocal(typeOfThis);
+
+            il.Emit(OpCodes.Ldarg_0);
+            EmitCastToReference(il, mappedType);
+            il.Emit(OpCodes.Stloc, thisLocal.LocalIndex);
+
+            // get the member accessor
+            System.Type valueType = getter.ReturnType;
+
+            IOptimizableSetter optimizableSetter = setter as IOptimizableSetter;
+
+            if (optimizableSetter != null)
+            {
+                // load 'this'
+                il.Emit(OpCodes.Ldloc, thisLocal);
+
+                // load the value 
+                il.Emit(OpCodes.Ldarg_1);
+
+                EmitUtil.PreparePropertyForSet(il, valueType);
+
+                // using the setter's emitted IL
+                optimizableSetter.Emit(il);
+            }
+            else
+            {
+                // using the setter itself via a callback
+                MethodInfo invokeMethod =
+                    typeof(PropertySetterCallback).GetMethod(
+                        "Invoke", new System.Type[] { typeof(object), typeof(object) });
+                il.Emit(OpCodes.Ldarg_2);
+                il.Emit(OpCodes.Ldarg_0);
+
+                // load the value from 
+                il.Emit(OpCodes.Ldarg_1);
+
+                il.Emit(OpCodes.Callvirt, invokeMethod);
+            }
+
+            // Setup the return
+            il.Emit(OpCodes.Ret);
+
+            return (SetPropertyValueInvoker)method.CreateDelegate(typeof(SetPropertyValueInvoker));
+        }
+    }
 }
 
 #endif

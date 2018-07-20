@@ -98,7 +98,7 @@ namespace NHibernate.Type
 			if (Environment.UseReflectionOptimizer)
 			{
 				// NH: reflection optimizer works with custom accessors
-				this.optimizer = Environment.BytecodeProvider.GetReflectionOptimizer(componentClass, getters, setters);
+                this.optimizer = Environment.BytecodeProvider.GetReflectionOptimizer(componentClass, getters, setters, null, null);
 			}
 		}
 

@@ -22,13 +22,15 @@ namespace NHibernate.Bytecode.Lightweight
 		/// Generate the IReflectionOptimizer object
 		/// </summary>
 		/// <param name="mappedClass">The target class</param>
-		/// <param name="setters">Array of setters</param>
-		/// <param name="getters">Array of getters</param>
+		/// <param name="setters">Array of setters (except identifier)</param>
+        /// <param name="getters">Array of getters (except identifier)</param>
+        /// <param name="identifierGetter">identifier getter</param>
+        /// <param name="identifierSetter">identifer setter</param>
 		/// <returns><see langword="null" /> if the generation fails</returns>
 		public IReflectionOptimizer GetReflectionOptimizer(
-			System.Type mappedClass, IGetter[] getters, ISetter[] setters)
+            System.Type mappedClass, IGetter[] getters, ISetter[] setters, IGetter identifierGetter, ISetter identifierSetter)
 		{
-			return new ReflectionOptimizer(mappedClass, getters, setters);
+			return new ReflectionOptimizer(mappedClass, getters, setters, identifierGetter, identifierSetter);
 		}
 	}
 }

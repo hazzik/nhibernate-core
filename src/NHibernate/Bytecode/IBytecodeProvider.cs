@@ -13,9 +13,11 @@ namespace NHibernate.Bytecode
 		/// capable of generating reflection optimization components.
 		/// </summary>
 		/// <param name="clazz">The class to be reflected upon.</param>
-		/// <param name="getters">All property getters to be accessed via reflection.</param>
-		/// <param name="setters">All property setters to be accessed via reflection.</param>
+		/// <param name="getters">All property (except identifier) getters to be accessed via reflection.</param>
+        /// <param name="setters">All property (except identifier) setters to be accessed via reflection.</param>
+        /// <param name="identifierGetter">identifier property getter to be accessed via reflection. (can be null)</param>
+        /// <param name="identifierSetter">identifier property setter to be accessed via reflection. (can be null)</param>
 		/// <returns>The reflection optimization delegate.</returns>
-		IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters);
+		IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter identifierGetter, ISetter identifierSetter);
 	}
 }
