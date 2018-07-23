@@ -7,7 +7,7 @@ namespace NHibernate.Test.NHSpecificTest.GH1265
 		public virtual int? ChangeId { get; set; }
 		public virtual int? ChangeSystemId { get; set; }
 		public virtual Person Person { get; set; }
-		
+
 		public virtual bool IsExportable { get; set; }
 
 		public virtual bool Equals(PersonChange other)

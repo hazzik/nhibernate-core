@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.GH1265">
+
+  <class lazy="true" name="PersonChange">
+    <id generator="native" type="int"/>
+    <property name="ChangeId">
+      <column name="CID" not-null="false"/>
+    </property>
+    <property name="ChangeSystemId">
+      <column name="CSI" not-null="false"/>
+    </property>
+    <many-to-one name="Person" class="Person" not-null="true">
+      <column name="PersonId"/>
+    </many-to-one>
+    <property name="IsExportable" type="Boolean"/>
+  </class>
+
+  <class name="Person">
+    <id name="Id"/>
+    <property name="Name"/>
+  </class>
+
+</hibernate-mapping>
