@@ -59,12 +59,12 @@ namespace NHibernate.Linq.Visitors.ResultOperatorProcessors
 					    sessionFactory);
 			    }
 		    }
-		    else if (type.IsEntityType)
+		    else if (type.IsAssociationType)
 		    {
-			    var entityType = (EntityType) type;
+			    var entityType = (IAssociationType) type;
 
 			    var ptp = new EntityPropertyTypeProvider(
-				    sessionFactory.GetClassMetadata(entityType.GetAssociatedEntityName()));
+				    sessionFactory.GetClassMetadata(entityType.GetAssociatedEntityName(sessionFactory)));
 			    
 			    var alias = queryModelVisitor.Model.GetNewName("_");
 
