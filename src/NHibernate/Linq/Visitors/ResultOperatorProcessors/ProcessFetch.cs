@@ -1,32 +1,131 @@
-﻿using Remotion.Linq.EagerFetching;
+﻿using System;
+using NHibernate.Engine;
+using NHibernate.Hql.Ast;
+using NHibernate.Metadata;
+using NHibernate.Type;
+using Remotion.Linq.EagerFetching;
 
 namespace NHibernate.Linq.Visitors.ResultOperatorProcessors
 {
     public class ProcessFetch
     {
-        public void Process(FetchRequestBase resultOperator, QueryModelVisitor queryModelVisitor, IntermediateHqlTree tree)
-        {
-            var querySource = QuerySourceLocator.FindQuerySource(queryModelVisitor.Model, resultOperator.RelationMember.DeclaringType);
+	    public void Process(
+		    FetchRequestBase resultOperator,
+		    QueryModelVisitor queryModelVisitor,
+		    IntermediateHqlTree tree)
+	    {
+		    var querySource = QuerySourceLocator.FindQuerySource(
+			    queryModelVisitor.Model,
+			    resultOperator.RelationMember.DeclaringType);
 
-            Process(resultOperator, queryModelVisitor, tree, querySource.ItemName);
-        }
+		    var sessionFactory = queryModelVisitor.VisitorParameters.SessionFactory;
 
-        public void Process(FetchRequestBase resultOperator, QueryModelVisitor queryModelVisitor, IntermediateHqlTree tree, string sourceAlias)
-        {
-            var join = tree.TreeBuilder.Dot(
-                tree.TreeBuilder.Ident(sourceAlias),
-                tree.TreeBuilder.Ident(resultOperator.RelationMember.Name));
+		    Process(
+			    resultOperator,
+			    queryModelVisitor,
+			    tree,
+			    tree.TreeBuilder.Ident(querySource.ItemName),
+			    new EntityPropertyTypeProvider(sessionFactory.GetClassMetadata(querySource.ItemType.FullName)),
+			    sessionFactory);
+	    }
 
-            string alias = queryModelVisitor.Model.GetNewName("_");
+	    public void Process(
+		    FetchRequestBase resultOperator,
+		    QueryModelVisitor queryModelVisitor,
+		    IntermediateHqlTree tree,
+		    HqlExpression source,
+		    IPropertyTypeProvider propertyTypeProvider,
+		    ISessionFactoryImplementor sessionFactory)
+	    {
+		    var propertyName = resultOperator.RelationMember.Name;
+		    var type = propertyTypeProvider.GetPropertyType(propertyName);
+		    if (type.IsComponentType)
+		    {
+			    var componentType = (IAbstractComponentType) type;
+			    var ptp = new ComponentPropertyTypeProvider(componentType);
 
-            tree.AddFromClause(tree.TreeBuilder.LeftFetchJoin(join, tree.TreeBuilder.Alias(alias)));
-            tree.AddDistinctRootOperator();
+			    foreach (var innerFetch in resultOperator.InnerFetchRequests)
+			    {
+				    var join = tree.TreeBuilder.Dot(
+					    source,
+					    tree.TreeBuilder.Ident(propertyName));
 
-            foreach (var innerFetch in resultOperator.InnerFetchRequests)
-            {
-                Process(innerFetch, queryModelVisitor, tree, alias);
-            }
-        }
+				    Process(
+					    innerFetch,
+					    queryModelVisitor,
+					    tree,
+					    join,
+					    ptp,
+					    sessionFactory);
+			    }
+		    }
+		    else if (type.IsEntityType)
+		    {
+			    var entityType = (EntityType) type;
 
+			    var ptp = new EntityPropertyTypeProvider(
+				    sessionFactory.GetClassMetadata(entityType.GetAssociatedEntityName()));
+			    
+			    var alias = queryModelVisitor.Model.GetNewName("_");
+
+			    var join = tree.TreeBuilder.Dot(
+				    source,
+				    tree.TreeBuilder.Ident(propertyName));
+
+			    tree.AddFromClause(tree.TreeBuilder.LeftFetchJoin(join, tree.TreeBuilder.Alias(alias)));
+			    tree.AddDistinctRootOperator();
+
+			    foreach (var innerFetch in resultOperator.InnerFetchRequests)
+			    {
+				    Process(
+					    innerFetch,
+					    queryModelVisitor,
+					    tree,
+					    tree.TreeBuilder.Ident(alias),
+					    ptp,
+					    queryModelVisitor.VisitorParameters.SessionFactory);
+			    }
+		    }
+		    else
+		    {
+			    throw new NotSupportedException();
+		    }
+	    }
+
+	    public interface IPropertyTypeProvider
+	    {
+		    IType GetPropertyType(string property);
+	    }
+
+	    private class EntityPropertyTypeProvider : IPropertyTypeProvider
+	    {
+		    private readonly IClassMetadata _classMetadata;
+
+		    public EntityPropertyTypeProvider(IClassMetadata classMetadata)
+		    {
+			    _classMetadata = classMetadata;
+		    }
+
+		    public IType GetPropertyType(string property)
+		    {
+			    return _classMetadata.GetPropertyType(property);
+		    }
+	    }
+
+	    private class ComponentPropertyTypeProvider: IPropertyTypeProvider
+	    {
+		    private readonly IAbstractComponentType _type;
+
+		    public ComponentPropertyTypeProvider(IAbstractComponentType type)
+		    {
+			    _type = type;
+		    }
+
+		    public IType GetPropertyType(string property)
+		    {
+			    var index = Array.FindIndex(_type.PropertyNames, n => n == property);
+			    return _type.Subtypes[index];
+		    }
+	    }
     }
 }
