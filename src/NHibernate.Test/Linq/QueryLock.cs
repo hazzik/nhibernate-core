@@ -17,7 +17,7 @@ namespace NHibernate.Test.Linq
 			using (session.BeginTransaction())
 			{
 				var result = (from e in db.Customers
-				              select e).SetLockMode(LockMode.Upgrade).ToList();
+				              select e).WithLock(LockMode.Upgrade).ToList();
 
 				Assert.That(result, Has.Count.EqualTo(91));
 				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
@@ -25,6 +25,31 @@ namespace NHibernate.Test.Linq
 			}
 		}
 
+		[Test]
+		public void CanSetLockOnSubquery()
+		{
+			using (session.BeginTransaction())
+			{
+				var result = (from c in db.Customers
+				              from o in c.Orders.DefaultIfEmpty()
+				              select o).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(91));
+				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
+			}
+		}
+
+		[Test]
+		public void CanSetLockOnSubqueryHql()
+		{
+			using (session.BeginTransaction())
+			{
+				session
+					.CreateQuery("select o from Customer c join c.Orders o")
+					.SetLockMode("o", LockMode.Upgrade)
+					.List();
+			}
+		}
 
 		[Test]
 		public void CanSetLockOnLinqPagingQuery()
@@ -32,7 +57,7 @@ namespace NHibernate.Test.Linq
 			using (session.BeginTransaction())
 			{
 				var result = (from e in db.Customers
-				              select e).Skip(5).Take(5).SetLockMode(LockMode.Upgrade).ToList();
+				              select e).Skip(5).Take(5).WithLock(LockMode.Upgrade).ToList();
 
 				Assert.That(result, Has.Count.EqualTo(5));
 				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
@@ -48,7 +73,7 @@ namespace NHibernate.Test.Linq
 				var result = (from e in db.Customers
 				              orderby e.CompanyName
 				              select e)
-				             .SetLockMode(LockMode.Upgrade).Skip(5).Take(5).ToList();
+				             .WithLock(LockMode.Upgrade).Skip(5).Take(5).ToList();
 
 				Assert.That(result, Has.Count.EqualTo(5));
 				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
@@ -70,7 +95,7 @@ namespace NHibernate.Test.Linq
 								from e in s2.Query<Customer>()
 								where e.CustomerId == customerId
 								select e
-							).SetLockMode(LockMode.UpgradeNoWait)
+							).WithLock(LockMode.UpgradeNoWait)
 							 .WithOptions(o => o.SetTimeout(5))
 							 .ToList();
 						Assert.That(result2, Is.Not.Null);
@@ -107,7 +132,7 @@ namespace NHibernate.Test.Linq
 			IQueryable<Customer> dbCustomers,
 			LockMode lockMode)
 		{
-			return (from e in dbCustomers select e).SetLockMode(lockMode).WithOptions(o => o.SetTimeout(5));
+			return (from e in dbCustomers select e).WithLock(lockMode).WithOptions(o => o.SetTimeout(5));
 		}
 	}
 }
