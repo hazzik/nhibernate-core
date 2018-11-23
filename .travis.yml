@@ -1,3 +1,4 @@
+dist: xenial
 language: csharp
 mono: latest
 dotnet: 2.1.300
@@ -17,7 +18,7 @@ matrix:
     - env: DB=MySQL CONNECTION_STRING="Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;"
 before_install:
   - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-  - curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+  - curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
   - sudo apt-get update -qq
   - sudo apt-get install -y powershell 
   - |-
@@ -30,9 +31,9 @@ before_install:
     if [[ "$DB" == "Firebird" ]]
     then
       sudo apt-get install -y libicu-dev libtommath-dev curl
-      curl -L -O https://github.com/FirebirdSQL/firebird/releases/download/R3_0_3/Firebird-3.0.3.32900-0.amd64.tar.gz
-      tar xzvf Firebird-3.0.3.32900-0.amd64.tar.gz
-      pushd Firebird-3.0.3.32900-0.amd64
+      curl -L -O https://github.com/FirebirdSQL/firebird/releases/download/R3_0_4/Firebird-3.0.4.33054-0.amd64.tar.gz
+      tar xzvf Firebird-3.0.4.33054-0.amd64.tar.gz
+      pushd Firebird-3.0.4.33054-0.amd64
         sudo ./install.sh -silent   
       popd
       export $(sudo cat /opt/firebird/SYSDBA.password | grep -v ^# | xargs)
