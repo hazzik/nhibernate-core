@@ -126,6 +126,23 @@ namespace NHibernate.Test.Linq
 		}
 
 		[Test]
+		public void CanSetLockOnBothJoinAndMainComplex()
+		{
+			using (session.BeginTransaction())
+			{
+				var result = (
+					from c in db.Customers.Where(x => true).WithLock(LockMode.Upgrade)
+					from o in c.Orders.Where(x => true).WithLock(LockMode.Upgrade)
+					select new {o, c}
+				).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(830));
+				Assert.That(session.GetCurrentLockMode(result[0].o), Is.EqualTo(LockMode.Upgrade));
+				Assert.That(session.GetCurrentLockMode(result[0].c), Is.EqualTo(LockMode.Upgrade));
+			}
+		}
+
+		[Test]
 		public void CanSetLockOnLinqPagingQuery()
 		{
 			using (session.BeginTransaction())

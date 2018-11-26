@@ -9,9 +9,9 @@ namespace NHibernate.Linq
 {
 	internal class LockResultOperator : ResultOperatorBase
 	{
-		private readonly QuerySourceReferenceExpression _qsrExpression;
+		private QuerySourceReferenceExpression _qsrExpression;
 
-		public string Alias => _qsrExpression.ReferencedQuerySource.ItemName;
+		public IQuerySource QuerySource => _qsrExpression.ReferencedQuerySource;
 
 		public ConstantExpression LockMode { get; }
 
@@ -38,6 +38,7 @@ namespace NHibernate.Linq
 
 		public override void TransformExpressions(Func<Expression, Expression> transformation)
 		{
+			_qsrExpression = (QuerySourceReferenceExpression) transformation(_qsrExpression);
 		}
 	}
 }
