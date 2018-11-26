@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Transactions;
 using NHibernate.Dialect;
 using NHibernate.DomainModel.Northwind.Entities;
@@ -12,7 +13,7 @@ namespace NHibernate.Test.Linq
 	public class QueryLock : LinqTestCase
 	{
 		[Test]
-		public void CanSetLockLinqQueries()
+		public void CanSetLockLinqQueriesOuter()
 		{
 			using (session.BeginTransaction())
 			{
@@ -26,21 +27,21 @@ namespace NHibernate.Test.Linq
 		}
 
 		[Test]
-		public void CanSetLockOnSubquery()
+		public void CanSetLockLinqQueries()
 		{
 			using (session.BeginTransaction())
 			{
-				var result = (from c in db.Customers
-				              from o in c.Orders.DefaultIfEmpty()
-				              select o).ToList();
+				var result = (from e in db.Customers.WithLock(LockMode.Upgrade)
+				              select e).ToList();
 
 				Assert.That(result, Has.Count.EqualTo(91));
 				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
+				AssertSeparateTransactionIsLockedOut(result[0].CustomerId);
 			}
 		}
 
 		[Test]
-		public void CanSetLockOnSubqueryHql()
+		public void CanSetLockOnJoinHql()
 		{
 			using (session.BeginTransaction())
 			{
@@ -48,6 +49,79 @@ namespace NHibernate.Test.Linq
 					.CreateQuery("select o from Customer c join c.Orders o")
 					.SetLockMode("o", LockMode.Upgrade)
 					.List();
+			}
+		}
+
+		[Test]
+		public void CanSetLockOnJoin()
+		{
+			using (session.BeginTransaction())
+			{
+				var result = (from c in db.Customers
+				              from o in c.Orders.WithLock(LockMode.Upgrade)
+				              select o).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(830));
+				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
+			}
+		}
+
+		[Test]
+		public void CanSetLockOnJoinOuter()
+		{
+			using (session.BeginTransaction())
+			{
+				var result = (from c in db.Customers
+				              from o in c.Orders
+				              select o).WithLock(LockMode.Upgrade).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(830));
+				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
+			}
+		}
+
+		[Test]
+		public void CanSetLockOnJoinOuterNotSupported()
+		{
+			using (session.BeginTransaction())
+			{
+				var query = (
+					from c in db.Customers
+					from o in c.Orders
+					select new {o, c}
+				).WithLock(LockMode.Upgrade);
+
+				Assert.Throws<NotSupportedException>(() => query.ToList());
+			}
+		}
+
+		[Test]
+		public void CanSetLockOnJoinOuter2Hql()
+		{
+			using (session.BeginTransaction())
+			{
+				session
+					.CreateQuery("select o, c from Customer c join c.Orders o")
+					.SetLockMode("o", LockMode.Upgrade)
+					.SetLockMode("c", LockMode.Upgrade)
+					.List();
+			}
+		}
+
+		[Test]
+		public void CanSetLockOnBothJoinAndMain()
+		{
+			using (session.BeginTransaction())
+			{
+				var result = (
+					from c in db.Customers.WithLock(LockMode.Upgrade)
+					from o in c.Orders.WithLock(LockMode.Upgrade)
+					select new {o, c}
+				).ToList();
+
+				Assert.That(result, Has.Count.EqualTo(830));
+				Assert.That(session.GetCurrentLockMode(result[0].o), Is.EqualTo(LockMode.Upgrade));
+				Assert.That(session.GetCurrentLockMode(result[0].c), Is.EqualTo(LockMode.Upgrade));
 			}
 		}
 
@@ -61,7 +135,9 @@ namespace NHibernate.Test.Linq
 
 				Assert.That(result, Has.Count.EqualTo(5));
 				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
-				AssertSeparateTransactionIsLockedOut(result[0].CustomerId);
+
+				if (!(Dialect is MsSql2000Dialect) && !(Dialect is MsSqlCeDialect))
+					AssertSeparateTransactionIsLockedOut(result[0].CustomerId);
 			}
 		}
 
@@ -77,7 +153,9 @@ namespace NHibernate.Test.Linq
 
 				Assert.That(result, Has.Count.EqualTo(5));
 				Assert.That(session.GetCurrentLockMode(result[0]), Is.EqualTo(LockMode.Upgrade));
-				AssertSeparateTransactionIsLockedOut(result[0].CustomerId);
+			
+				if (!(Dialect is MsSql2000Dialect) && !(Dialect is MsSqlCeDialect))
+					AssertSeparateTransactionIsLockedOut(result[0].CustomerId);
 			}
 		}
 

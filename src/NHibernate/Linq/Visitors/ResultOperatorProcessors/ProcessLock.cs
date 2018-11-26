@@ -4,7 +4,7 @@
 	{
 		public void Process(LockResultOperator resultOperator, QueryModelVisitor queryModelVisitor, IntermediateHqlTree tree)
 		{
-			tree.AddAdditionalCriteria((q, p) => q.SetLockMode(queryModelVisitor.Model.MainFromClause.ItemName, (LockMode)resultOperator.LockMode.Value));
+			tree.AddAdditionalCriteria((q, p) => q.SetLockMode(resultOperator.Alias, (LockMode) resultOperator.LockMode.Value));
 		}
 	}
 }
