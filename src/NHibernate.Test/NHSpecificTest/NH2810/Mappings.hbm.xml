@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test" namespace="NHibernate.Test.NHSpecificTest.NH2810">
+
+	<class name="NHibernate.Test.NHSpecificTest.NH2810.ClassA, NHibernate.Test" table="A" lazy="true" dynamic-update="true" polymorphism="explicit">
+		<id name="A_ID" column="A_ID" type="int" unsaved-value="0">
+			<generator class="native" >
+				<param name="sequence">gen_a_id</param>
+			</generator>
+		</id>
+		<property name="Text" column="TEXT" type="string" length="200" not-null="false" lazy="true"/>
+		<property name="B_ID" column="B_ID" type="int" not-null="false"/>
+	</class>
+
+	<class name="NHibernate.Test.NHSpecificTest.NH2810.ClassB, NHibernate.Test" table="B" lazy="true" dynamic-update="true" polymorphism="explicit">
+		<id name="B_ID" column="B_ID" type="int" unsaved-value="0">
+			<generator class="native" >
+				<param name="sequence">gen_b_id</param>
+			</generator>
+		</id>
+		<property name="Text" column="TEXT" type="string" length="200" not-null="false"/>
+
+		<bag name="classA_list" inverse="true" lazy="true" fetch="subselect">
+			<key column="B_ID"/>
+			<one-to-many class="NHibernate.Test.NHSpecificTest.NH2810.ClassA, NHibernate.Test"/>
+		</bag>
+
+	</class>
+
+</hibernate-mapping>
