@@ -227,7 +227,7 @@ namespace NHibernate.Type
 			RegisterType(typeof (Byte), NHibernateUtil.Byte, new[]{ "byte"});
 			RegisterType(typeof (Char), NHibernateUtil.Character, new[] {"character", "char"});
 			RegisterType(typeof (CultureInfo), NHibernateUtil.CultureInfo, new[]{ "locale"});
-			RegisterType(typeof(DateTime), NHibernateUtil.DateTime, new[] { "datetime", "datetime2" },
+			RegisterType(typeof(DateTime), NHibernateUtil.DateTime, new[] { "datetime", "datetime2", "timestamp" },
 				s => GetType(NHibernateUtil.DateTime, s, scale => new DateTimeType(SqlTypeFactory.GetDateTime((byte)scale))));
 			RegisterType(typeof (DateTimeOffset), NHibernateUtil.DateTimeOffset, new[]{ "datetimeoffset"},
 				s => GetType(NHibernateUtil.DateTimeOffset, s, scale => new DateTimeOffsetType(SqlTypeFactory.GetDateTimeOffset((byte)scale))));
@@ -292,9 +292,6 @@ namespace NHibernate.Type
 
 			RegisterType(NHibernateUtil.DateTimeNoMs, new[] { "datetimenoms" });
 			RegisterType(NHibernateUtil.Date, new[] { "date" });
-#pragma warning disable 618 // Timestamp is obsolete
-			RegisterType(NHibernateUtil.Timestamp, new[] { "timestamp" });
-#pragma warning restore 618
 			RegisterType(NHibernateUtil.DbTimestamp, new[] { "dbtimestamp" });
 			RegisterType(NHibernateUtil.UtcDbTimestamp, new[] { "utcdbtimestamp" });
 			RegisterType(NHibernateUtil.Time, new[] { "time" },

@@ -371,22 +371,6 @@ namespace NHibernate.Impl
 			return this;
 		}
 
-		// Since v5.0
-		[Obsolete("Use SetDateTime instead.")]
-		public IDetachedQuery SetTimestamp(int position, DateTime val)
-		{
-			SetParameter(position, val, NHibernateUtil.Timestamp);
-			return this;
-		}
-
-		// Since v5.0
-		[Obsolete("Use SetDateTime instead.")]
-		public IDetachedQuery SetTimestamp(string name, DateTime val)
-		{
-			SetParameter(name, val, NHibernateUtil.Timestamp);
-			return this;
-		}
-
 		public IDetachedQuery SetGuid(int position, Guid val)
 		{
 			SetParameter(position, val, NHibernateUtil.Guid);

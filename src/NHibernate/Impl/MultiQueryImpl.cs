@@ -297,17 +297,6 @@ namespace NHibernate.Impl
 			return this;
 		}
 
-		// Since v5.0
-		[Obsolete("Use SetDateTime instead.")]
-		public IMultiQuery SetTimestamp(string name, DateTime val)
-		{
-			foreach (IQuery query in queries)
-			{
-				query.SetTimestamp(name, val);
-			}
-			return this;
-		}
-
 		#endregion
 
 		public IMultiQuery AddNamedQuery<T>(string key, string namedQuery)

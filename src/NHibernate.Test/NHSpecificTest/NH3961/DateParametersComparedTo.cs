@@ -103,23 +103,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3961
 
 		// Non-reg test case
 		[Test]
-		[Obsolete]
-		public void NonNullableMappedAsTimestampShouldBeCultureAgnostic()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var result = session.Query<Entity>()
-					.Where(e => e.NonNullableDateTime == _testDate.MappedAs(NHibernateUtil.Timestamp))
-					.ToList();
-
-				Assert.AreEqual(1, result.Count);
-				Assert.AreEqual("Bob", result[0].Name);
-			}
-		}
-
-		// Non-reg test case
-		[Test]
 		public void NonNullableParameterValueShouldNotBeCachedWithMappedAsAnd()
 		{
 			// Dodges the query parameter formatting bug for showcasing the parameter value bug
@@ -208,23 +191,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3961
 			{
 				var result = session.Query<Entity>()
 					.Where(e => e.NullableDateTime == _testDate.MappedAs(NHibernateUtil.DateTime))
-					.ToList();
-
-				Assert.AreEqual(1, result.Count);
-				Assert.AreEqual("Bob", result[0].Name);
-			}
-		}
-
-		// Failing test case till NH-3961 is fixed
-		[Test]
-		[Obsolete]
-		public void NullableMappedAsTimestampShouldBeCultureAgnostic()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var result = session.Query<Entity>()
-					.Where(e => e.NullableDateTime == _testDate.MappedAs(NHibernateUtil.Timestamp))
 					.ToList();
 
 				Assert.AreEqual(1, result.Count);

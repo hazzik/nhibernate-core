@@ -225,13 +225,6 @@ namespace NHibernate
 		/// </summary>
 		public static readonly TimeSpanType TimeSpan = new TimeSpanType();
 
-		// Obsolete since v5.0
-		/// <summary>
-		/// NHibernate Timestamp type
-		/// </summary>
-		[Obsolete("Use DateTime instead.")]
-		public static readonly TimestampType Timestamp = new TimestampType();
-
 		/// <summary>
 		/// NHibernate Timestamp type, seeded db side.
 		/// </summary>

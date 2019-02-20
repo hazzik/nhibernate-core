@@ -114,23 +114,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3961
 
 		// Non-reg test case
 		[Test]
-		[Obsolete]
-		public async Task NonNullableMappedAsTimestampShouldBeCultureAgnosticAsync()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var result = await (session.Query<Entity>()
-					.Where(e => e.NonNullableDateTime == _testDate.MappedAs(NHibernateUtil.Timestamp))
-					.ToListAsync());
-
-				Assert.AreEqual(1, result.Count);
-				Assert.AreEqual("Bob", result[0].Name);
-			}
-		}
-
-		// Non-reg test case
-		[Test]
 		public async Task NonNullableParameterValueShouldNotBeCachedWithMappedAsAndAsync()
 		{
 			// Dodges the query parameter formatting bug for showcasing the parameter value bug
@@ -219,23 +202,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3961
 			{
 				var result = await (session.Query<Entity>()
 					.Where(e => e.NullableDateTime == _testDate.MappedAs(NHibernateUtil.DateTime))
-					.ToListAsync());
-
-				Assert.AreEqual(1, result.Count);
-				Assert.AreEqual("Bob", result[0].Name);
-			}
-		}
-
-		// Failing test case till NH-3961 is fixed
-		[Test]
-		[Obsolete]
-		public async Task NullableMappedAsTimestampShouldBeCultureAgnosticAsync()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var result = await (session.Query<Entity>()
-					.Where(e => e.NullableDateTime == _testDate.MappedAs(NHibernateUtil.Timestamp))
 					.ToListAsync());
 
 				Assert.AreEqual(1, result.Count);
