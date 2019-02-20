@@ -4,23 +4,6 @@ using NHibernate.Engine;
 using NHibernate.SqlCommand;
 using NHibernate.Type;
 
-// 6.0 TODO: remove NHibernate.Dialect.BitwiseFunctionOperation,
-// and remove "Function." prefix where the non obsolete one is used.
-namespace NHibernate.Dialect
-{
-	/// <inheritdoc />
-	[Serializable]
-	// Since 5.2
-	[Obsolete("Use NHibernate.Dialect.Function.BitwiseFunctionOperation instead")]
-	public class BitwiseFunctionOperation : Function.BitwiseFunctionOperation
-	{
-		/// <inheritdoc />
-		public BitwiseFunctionOperation(string functionName): base(functionName)
-		{
-		}
-	}
-}
-
 namespace NHibernate.Dialect.Function
 {
 	/// <summary>
