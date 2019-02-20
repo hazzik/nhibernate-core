@@ -5181,11 +5181,6 @@ namespace NHibernate.Test.Legacy
 
 			s = OpenSession();
 			var list = await (s.CreateQuery("from Bar bar where bar.Object.id = ? and bar.Object.class = ?")
-#pragma warning disable 618
-			              .SetParameter(0, oid, NHibernateUtil.Int64).SetParameter(1, typeof(One).FullName, NHibernateUtil.ClassMetaType).ListAsync());
-#pragma warning restore 618
-			Assert.AreEqual(1, list.Count);
-			list = await (s.CreateQuery("from Bar bar where bar.Object.id = ? and bar.Object.class = ?")
 				.SetParameter(0, oid, NHibernateUtil.Int64).SetParameter(1, typeof(One).FullName, NHibernateUtil.MetaType).ListAsync());
 			Assert.AreEqual(1, list.Count);
 
