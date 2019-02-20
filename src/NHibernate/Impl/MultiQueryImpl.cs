@@ -170,16 +170,6 @@ namespace NHibernate.Impl
 			return this;
 		}
 
-		// Since v5.0
-		[Obsolete("Use SetDateTime instead, it uses DateTime2 with dialects supporting it.")]
-		public IMultiQuery SetDateTime2(string name, DateTime val)
-		{
-			foreach (IQuery query in queries)
-			{
-				query.SetParameter(name, val, NHibernateUtil.DateTime2);
-			}
-			return this;
-		}
 
 		public IMultiQuery SetTimeSpan(string name, TimeSpan val)
 		{

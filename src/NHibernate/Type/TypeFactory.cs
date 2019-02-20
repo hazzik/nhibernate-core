@@ -227,7 +227,7 @@ namespace NHibernate.Type
 			RegisterType(typeof (Byte), NHibernateUtil.Byte, new[]{ "byte"});
 			RegisterType(typeof (Char), NHibernateUtil.Character, new[] {"character", "char"});
 			RegisterType(typeof (CultureInfo), NHibernateUtil.CultureInfo, new[]{ "locale"});
-			RegisterType(typeof(DateTime), NHibernateUtil.DateTime, new[] { "datetime" },
+			RegisterType(typeof(DateTime), NHibernateUtil.DateTime, new[] { "datetime", "datetime2" },
 				s => GetType(NHibernateUtil.DateTime, s, scale => new DateTimeType(SqlTypeFactory.GetDateTime((byte)scale))));
 			RegisterType(typeof (DateTimeOffset), NHibernateUtil.DateTimeOffset, new[]{ "datetimeoffset"},
 				s => GetType(NHibernateUtil.DateTimeOffset, s, scale => new DateTimeOffsetType(SqlTypeFactory.GetDateTimeOffset((byte)scale))));
@@ -315,10 +315,6 @@ namespace NHibernate.Type
 			RegisterType(NHibernateUtil.Currency, new[] { "currency" },
 				(p, s) => GetType(NHibernateUtil.Currency, p, s, st => new CurrencyType(st)));
 
-#pragma warning disable 618 // DateTime2 is obsolete
-			RegisterType(NHibernateUtil.DateTime2, new[] { "datetime2" },
-				s => GetType(NHibernateUtil.DateTime2, s, scale => new DateTime2Type(SqlTypeFactory.GetDateTime2((byte)scale))));
-#pragma warning restore 618
 			RegisterType(NHibernateUtil.Serializable, new[] {"Serializable", "serializable"},
 						 l =>
 						 GetType(NHibernateUtil.Serializable, l,
@@ -774,19 +770,6 @@ namespace NHibernate.Type
 		{
 			var key = GetKeyForLengthOrScaleBased(NHibernateUtil.DateTime.Name, fractionalSecondsPrecision);
 			return (NullableType)typeByTypeOfName.GetOrAdd(key, k => new DateTimeType(SqlTypeFactory.GetDateTime(fractionalSecondsPrecision)));
-		}
-
-		/// <summary>
-		/// Gets a <see cref="DateTime2Type" /> with desired fractional seconds precision.
-		/// </summary>
-		/// <param name="fractionalSecondsPrecision">The fractional seconds precision.</param>
-		/// <returns>The NHibernate type.</returns>
-		// Since v5.0
-		[Obsolete("Use GetDateTimeType instead, it uses DateTime2 with dialects supporting it.")]
-		public static NullableType GetDateTime2Type(byte fractionalSecondsPrecision)
-		{
-			var key = GetKeyForLengthOrScaleBased(NHibernateUtil.DateTime2.Name, fractionalSecondsPrecision);
-			return (NullableType)typeByTypeOfName.GetOrAdd(key, k => new DateTime2Type(SqlTypeFactory.GetDateTime2(fractionalSecondsPrecision)));
 		}
 
 		/// <summary>

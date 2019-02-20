@@ -433,12 +433,6 @@ namespace NHibernate
 		/// <param name="name">The name of the parameter</param>
 		IQuery SetDateTimeNoMs(string name, DateTime val);
 
-		// Since v5.0
-		[Obsolete("Use SetDateTime instead, it uses DateTime2 with dialects supporting it.")]
-		IQuery SetDateTime2(int position, DateTime val);
-		// Since v5.0
-		[Obsolete("Use SetDateTime instead, it uses DateTime2 with dialects supporting it.")]
-		IQuery SetDateTime2(string name, DateTime val);
 		IQuery SetTimeSpan(int position, TimeSpan val);
 		IQuery SetTimeSpan(string name, TimeSpan val);
 		IQuery SetTimeAsTimeSpan(int position, TimeSpan val);

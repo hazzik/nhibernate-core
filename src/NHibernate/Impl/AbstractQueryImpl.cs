@@ -458,12 +458,6 @@ namespace NHibernate.Impl
 		}
 
 		// Since v5.0
-		[Obsolete("Use SetDateTime instead, it uses DateTime2 with dialects supporting it.")]
-		public IQuery SetDateTime2(int position, DateTime val)
-		{
-			SetParameter(position, val, NHibernateUtil.DateTime2);
-			return this;
-		}
 
 		public IQuery SetTime(int position, DateTime val)
 		{
@@ -576,12 +570,6 @@ namespace NHibernate.Impl
 		}
 
 		// Since v5.0
-		[Obsolete("Use SetDateTime instead, it uses DateTime2 with dialects supporting it.")]
-		public IQuery SetDateTime2(string name, DateTime val)
-		{
-			SetParameter(name, val, NHibernateUtil.DateTime2);
-			return this;
-		}
 
 		public IQuery SetTimeSpan(int position, TimeSpan val)
 		{

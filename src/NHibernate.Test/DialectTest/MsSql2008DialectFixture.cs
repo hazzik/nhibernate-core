@@ -26,9 +26,6 @@ namespace NHibernate.Test.DialectTest
 			AssertSqlType(NHibernateUtil.DbTimestamp, SqlTypeFactory.DateTime, mapping);
 			AssertSqlType(NHibernateUtil.LocalDateTime, SqlTypeFactory.DateTime, mapping);
 			AssertSqlType(NHibernateUtil.UtcDateTime, SqlTypeFactory.DateTime, mapping);
-#pragma warning disable 618 // DateTime2 is obsolete
-			AssertSqlType(NHibernateUtil.DateTime2, SqlTypeFactory.DateTime2, mapping);
-#pragma warning restore 618
 		}
 
 		[Test]
@@ -40,9 +37,6 @@ namespace NHibernate.Test.DialectTest
 			AssertSqlType(TypeFactory.GetDateTimeType(0), SqlTypeFactory.GetDateTime(0), mapping);
 			AssertSqlType(TypeFactory.GetLocalDateTimeType(1), SqlTypeFactory.GetDateTime(1), mapping);
 			AssertSqlType(TypeFactory.GetUtcDateTimeType(2), SqlTypeFactory.GetDateTime(2), mapping);
-#pragma warning disable 618 // DateTime2 is obsolete
-			AssertSqlType(TypeFactory.GetDateTime2Type(3), SqlTypeFactory.GetDateTime2(3), mapping);
-#pragma warning restore 618
 		}
 
 		[Test]
@@ -58,9 +52,6 @@ namespace NHibernate.Test.DialectTest
 			AssertSqlType(NHibernateUtil.DbTimestamp, SqlTypeFactory.DateTime2, mapping);
 			AssertSqlType(NHibernateUtil.LocalDateTime, SqlTypeFactory.DateTime2, mapping);
 			AssertSqlType(NHibernateUtil.UtcDateTime, SqlTypeFactory.DateTime2, mapping);
-#pragma warning disable 618 // DateTime2 is obsolete
-			AssertSqlType(NHibernateUtil.DateTime2, SqlTypeFactory.DateTime2, mapping);
-#pragma warning restore 618
 		}
 
 		[Test]
@@ -72,9 +63,6 @@ namespace NHibernate.Test.DialectTest
 			AssertSqlType(TypeFactory.GetDateTimeType(4), SqlTypeFactory.GetDateTime2(4), mapping);
 			AssertSqlType(TypeFactory.GetLocalDateTimeType(5), SqlTypeFactory.GetDateTime2(5), mapping);
 			AssertSqlType(TypeFactory.GetUtcDateTimeType(6), SqlTypeFactory.GetDateTime2(6), mapping);
-#pragma warning disable 618 // DateTime2 is obsolete
-			AssertSqlType(TypeFactory.GetDateTime2Type(7), SqlTypeFactory.GetDateTime2(7), mapping);
-#pragma warning restore 618
 		}
 
 		[Test]
@@ -91,9 +79,6 @@ namespace NHibernate.Test.DialectTest
 			AssertSqlType(NHibernateUtil.DbTimestamp, SqlTypeFactory.DateTime, mapping);
 			AssertSqlType(NHibernateUtil.LocalDateTime, SqlTypeFactory.DateTime, mapping);
 			AssertSqlType(NHibernateUtil.UtcDateTime, SqlTypeFactory.DateTime, mapping);
-#pragma warning disable 618 // DateTime2 is obsolete
-			AssertSqlType(NHibernateUtil.DateTime2, SqlTypeFactory.DateTime2, mapping);
-#pragma warning restore 618
 		}
 
 		[Test]
@@ -106,9 +91,6 @@ namespace NHibernate.Test.DialectTest
 			AssertSqlType(TypeFactory.GetDateTimeType(0), SqlTypeFactory.GetDateTime(0), mapping);
 			AssertSqlType(TypeFactory.GetLocalDateTimeType(1), SqlTypeFactory.GetDateTime(1), mapping);
 			AssertSqlType(TypeFactory.GetUtcDateTimeType(2), SqlTypeFactory.GetDateTime(2), mapping);
-#pragma warning disable 618 // DateTime2 is obsolete
-			AssertSqlType(TypeFactory.GetDateTime2Type(3), SqlTypeFactory.GetDateTime2(3), mapping);
-#pragma warning restore 618
 		}
 
 		[Test]
