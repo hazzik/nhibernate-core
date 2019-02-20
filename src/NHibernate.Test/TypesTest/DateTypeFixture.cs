@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using NHibernate.Dialect;
 using NHibernate.Type;
 using NUnit.Framework;
@@ -6,32 +5,6 @@ using System;
 
 namespace NHibernate.Test.TypesTest
 {
-	[TestFixture]
-	public class DateTypeTest
-	{
-		[Test, Obsolete("Testing obsolete SetParameterValues")]
-		public void WhenNoParameterThenDefaultValueIsBaseDateValue()
-		{
-			var dateType = new DateType();
-			Assert.That(dateType.DefaultValue, Is.EqualTo(DateType.BaseDateValue));
-		}
-
-		[Test, Obsolete("Testing obsolete SetParameterValues")]
-		public void WhenSetParameterThenDefaultValueIsParameterValue()
-		{
-			var dateType = new DateType();
-			dateType.SetParameterValues(new Dictionary<string, string> { { DateType.BaseValueParameterName, "0001/01/01" } });
-			Assert.That(dateType.DefaultValue, Is.EqualTo(DateTime.MinValue));
-		}
-
-		[Test, Obsolete("Testing obsolete SetParameterValues")]
-		public void WhenSetParameterNullThenNotThrow()
-		{
-			var dateType = new DateType();
-			Assert.That(() => dateType.SetParameterValues(null), Throws.Nothing);
-		}
-	}
-
 	[TestFixture]
 	public class DateTypeFixture : AbstractDateTimeTypeFixture
 	{

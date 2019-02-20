@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
-using NHibernate.UserTypes;
 
 namespace NHibernate.Type
 {
@@ -12,19 +10,8 @@ namespace NHibernate.Type
 	/// <see cref="DbType.Date"/> column
 	/// </summary>
 	[Serializable]
-	public class DateType : AbstractDateTimeType, IParameterizedType
+	public class DateType : AbstractDateTimeType
 	{
-		private static readonly INHibernateLogger _log = NHibernateLogger.For(typeof(DateType));
-		// Since v5.0
-		[Obsolete("Explicitly affect your values to your entities properties instead.")]
-		public const string BaseValueParameterName = "BaseValue";
-		// Since v5.0
-		[Obsolete("Use DateTime.MinValue.")]
-		public static readonly DateTime BaseDateValue = DateTime.MinValue;
-		private DateTime customBaseDate = _baseDateValue;
-
-		private static readonly DateTime _baseDateValue = DateTime.MinValue;
-
 		/// <summary>Default constructor</summary>
 		public DateType() : base(SqlTypeFactory.Date)
 		{
@@ -90,28 +77,10 @@ namespace NHibernate.Type
 			((DateTime) val).ToShortDateString();
 
 		/// <inheritdoc />
-		public override object DefaultValue => customBaseDate;
+		public override object DefaultValue => DateTime.MinValue;
 
 		/// <inheritdoc />
 		public override string ObjectToSQLString(object value, Dialect.Dialect dialect) =>
 			"\'" + ((DateTime)value).ToShortDateString() + "\'";
-
-		// Since v5
-		[Obsolete("Its only parameter, BaseValue, is obsolete.")]
-		public void SetParameterValues(IDictionary<string, string> parameters)
-		{
-			if(parameters == null)
-			{
-				return;
-			}
-			string value;
-			if (parameters.TryGetValue(BaseValueParameterName, out value))
-			{
-				_log.Warn(
-					"Parameter {0} is obsolete and will be remove in a future version. Explicitly affect your values to your entities properties instead.",
-					BaseValueParameterName);
-				customBaseDate = DateTime.Parse(value);
-			}
-		}
 	}
 }
