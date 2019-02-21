@@ -282,10 +282,6 @@ namespace NHibernate.Impl
 		public abstract string GuessEntityName(object entity);
 		public abstract int ExecuteNativeUpdate(NativeSQLQuerySpecification specification, QueryParameters queryParameters);
 
-		//Since 5.2
-		[Obsolete("Replaced by FutureBatch")]
-		public abstract FutureCriteriaBatch FutureCriteriaBatch { get; protected internal set; }
-
 		public virtual IQueryBatch FutureBatch
 			=>_futureMultiBatch ?? (_futureMultiBatch = new QueryBatch(this, true));
 

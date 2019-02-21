@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 
-using System;
 using NHibernate.Multi;
 using NUnit.Framework;
 
@@ -48,21 +47,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2959
 				session.Delete("from System.Object");
 				session.Flush();
 				transaction.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public async Task CanUsePolymorphicCriteriaInMultiCriteriaAsync()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var results = await (session.CreateMultiCriteria()
-					.Add(session.CreateCriteria(typeof(BaseEntity)))
-					.ListAsync());
-
-				Assert.That(results, Has.Count.EqualTo(1));
-				Assert.That(results[0], Has.Count.EqualTo(2));
 			}
 		}
 

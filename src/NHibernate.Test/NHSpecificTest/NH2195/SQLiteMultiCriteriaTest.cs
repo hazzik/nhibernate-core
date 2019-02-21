@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
 using NHibernate.Dialect;
@@ -80,65 +78,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2195
 				criteriaWithRowCount.SetProjection(Projections.RowCountInt64());
 
 				IList<DomainClass> list = criteriaWithPagination.List<DomainClass>();
-
-				Assert.AreEqual(2, criteriaWithRowCount.UniqueResult<long>());
-				Assert.AreEqual(1, list.Count);
-			}
-		}
-
-		[Test, Obsolete]
-		public void MultiCriteriaQueriesWithIntsShouldExecuteCorrectly()
-		{
-			var driver = Sfi.ConnectionProvider.Driver;
-			if (!driver.SupportsMultipleQueries)
-				Assert.Ignore("Driver {0} does not support multi-queries", driver.GetType().FullName);
-
-			// Test querying IntData
-			using (ISession session = this.OpenSession())
-			{
-				ICriteria criteriaWithPagination = session.CreateCriteria<DomainClass>();
-				criteriaWithPagination.Add(Expression.Le("IntData", 2));
-				ICriteria criteriaWithRowCount = CriteriaTransformer.Clone(criteriaWithPagination);
-				criteriaWithPagination.SetFirstResult(0).SetMaxResults(1);
-				criteriaWithRowCount.SetProjection(Projections.RowCountInt64());
-
-				IMultiCriteria multiCriteria = session.CreateMultiCriteria();
-				multiCriteria.Add(criteriaWithPagination);
-				multiCriteria.Add(criteriaWithRowCount);
-
-				IList results = multiCriteria.List();
-				long numResults = (long)((IList)results[1])[0];
-				IList list = (IList)results[0];
-
-				Assert.AreEqual(2, criteriaWithRowCount.UniqueResult<long>());
-				Assert.AreEqual(1, list.Count);
-			}
-		}
-
-		[Test, Obsolete]
-		public void MultiCriteriaQueriesWithStringsShouldExecuteCorrectly()
-		{
-			var driver = Sfi.ConnectionProvider.Driver;
-			if (!driver.SupportsMultipleQueries)
-				Assert.Ignore("Driver {0} does not support multi-queries", driver.GetType().FullName);
-
-			// Test querying StringData
-			using (ISession session = this.OpenSession())
-			{
-				ICriteria criteriaWithPagination = session.CreateCriteria<DomainClass>();
-				criteriaWithPagination.Add(Expression.Like("StringData", "%Doe%"));
-				ICriteria criteriaWithRowCount = CriteriaTransformer.Clone(criteriaWithPagination);
-				criteriaWithPagination.SetFirstResult(0).SetMaxResults(1);
-				criteriaWithRowCount.SetProjection(Projections.RowCountInt64());
-
-				IMultiCriteria multiCriteria = session.CreateMultiCriteria();
-				multiCriteria.Add(criteriaWithPagination);
-				multiCriteria.Add(criteriaWithRowCount);
-
-				IList results = multiCriteria.List();
-
-				long numResults = (long)((IList)results[1])[0];
-				IList list = (IList)results[0];
 
 				Assert.AreEqual(2, criteriaWithRowCount.UniqueResult<long>());
 				Assert.AreEqual(1, list.Count);

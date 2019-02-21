@@ -254,15 +254,6 @@ namespace NHibernate.Test.Stats
 			var driver = Sfi.ConnectionProvider.Driver;
 			if (driver.SupportsMultipleQueries)
 			{
-#pragma warning disable 618
-				stats.Clear();
-				using (var s = OpenSession())
-				{
-					var r = await (s.CreateMultiCriteria().Add(DetachedCriteria.For<Country>()).Add(DetachedCriteria.For<Continent>()).ListAsync());
-				}
-				Assert.AreEqual(1, stats.QueryExecutionCount);
-#pragma warning restore 618
-
 				stats.Clear();
 				using (var s = OpenSession())
 				{

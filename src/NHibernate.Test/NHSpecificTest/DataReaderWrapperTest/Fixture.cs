@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using NUnit.Framework;
 using NHibernate.Multi;
 
@@ -33,20 +31,6 @@ namespace NHibernate.Test.NHSpecificTest.DataReaderWrapperTest
 			{
 				s.Delete("from System.Object");
 				tx.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public void CanUseDatareadersGetValue()
-		{
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var crit = s.CreateCriteria(typeof (TheEntity));
-				var multi = s.CreateMultiCriteria();
-				multi.Add(crit);
-				var res = (IList) multi.List()[0];
-				Assert.That(res.Count, Is.EqualTo(1));
 			}
 		}
 

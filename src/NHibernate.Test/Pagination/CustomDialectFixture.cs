@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using NHibernate.Cfg;
 using NHibernate.Criterion;
 using NHibernate.Dialect;
@@ -93,31 +91,6 @@ namespace NHibernate.Test.Pagination
 						.SetFirstResult(1)
 						.SetMaxResults(2)
 						.List<DataPoint>();
-
-				Assert.That(points.Count, Is.EqualTo(2));
-				Assert.That(points[0].X, Is.EqualTo(7d));
-				Assert.That(points[1].X, Is.EqualTo(8d));
-			}
-		}
-
-		[Test, Obsolete]
-		public void LimitFirstMultiCriteria()
-		{
-			using (ISession s = OpenSession())
-			{
-				CustomDialect.ForcedSupportsVariableLimit = true;
-				CustomDialect.ForcedBindLimitParameterFirst = true;
-
-				var criteria =
-					s.CreateMultiCriteria()
-						.Add<DataPoint>(
-							s.CreateCriteria<DataPoint>()
-								.Add(Restrictions.Gt("X", 5.1d))
-								.AddOrder(Order.Asc("X"))
-								.SetFirstResult(1)
-								.SetMaxResults(2));
-
-				var points = (IList<DataPoint>)criteria.List()[0];
 
 				Assert.That(points.Count, Is.EqualTo(2));
 				Assert.That(points[0].X, Is.EqualTo(7d));

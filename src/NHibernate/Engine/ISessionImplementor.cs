@@ -379,12 +379,6 @@ namespace NHibernate.Engine
 		/// <summary> Execute a HQL update or delete query</summary>
 		int ExecuteUpdate(IQueryExpression query, QueryParameters queryParameters);
 
-		//Since 5.2
-		[Obsolete("Replaced by FutureBatch")]
-		FutureCriteriaBatch FutureCriteriaBatch { get; }
-
-		//Since 5.2
-
 		Guid SessionId { get; }
 
 		ITransactionContext TransactionContext { get; set; }

@@ -341,62 +341,6 @@ namespace NHibernate.Test.Criteria.Lambda
 			}
 		}
 
-		[Test, Obsolete]
-		public void MultiCriteria()
-		{
-			var driver = Sfi.ConnectionProvider.Driver;
-			if (!driver.SupportsMultipleQueries)
-				Assert.Ignore("Driver {0} does not support multi-queries", driver.GetType().FullName);
-
-			SetupPagingData();
-
-			using (ISession s = OpenSession())
-			{
-				IQueryOver<Person> query =
-					s.QueryOver<Person>()
-						.JoinQueryOver(p => p.Children)
-						.OrderBy(c => c.Age).Desc
-						.Skip(2)
-						.Take(1);
-
-				var multiCriteria =
-					s.CreateMultiCriteria()
-						.Add("page", query)
-						.Add<int>("count", query.ToRowCountQuery());
-
-				var pageResults = (IList<Person>) multiCriteria.GetResult("page");
-				var countResults = (IList<int>) multiCriteria.GetResult("count");
-
-				Assert.That(pageResults.Count, Is.EqualTo(1));
-				Assert.That(pageResults[0].Name, Is.EqualTo("Name 3"));
-				Assert.That(countResults.Count, Is.EqualTo(1));
-				Assert.That(countResults[0], Is.EqualTo(4));
-			}
-
-			using (ISession s = OpenSession())
-			{
-				QueryOver<Person> query =
-					QueryOver.Of<Person>()
-						.JoinQueryOver(p => p.Children)
-						.OrderBy(c => c.Age).Desc
-						.Skip(2)
-						.Take(1);
-
-				var multiCriteria =
-					s.CreateMultiCriteria()
-						.Add("page", query)
-						.Add<int>("count", query.ToRowCountQuery());
-
-				var pageResults = (IList<Person>) multiCriteria.GetResult("page");
-				var countResults = (IList<int>) multiCriteria.GetResult("count");
-
-				Assert.That(pageResults.Count, Is.EqualTo(1));
-				Assert.That(pageResults[0].Name, Is.EqualTo("Name 3"));
-				Assert.That(countResults.Count, Is.EqualTo(1));
-				Assert.That(countResults[0], Is.EqualTo(4));
-			}
-		}
-
 		[Test]
 		public void MultiQuery()
 		{

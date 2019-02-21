@@ -1,4 +1,3 @@
-using System;
 using NHibernate.Cfg;
 using NHibernate.Driver;
 using NHibernate.Engine;
@@ -60,23 +59,6 @@ namespace NHibernate.Test.NHSpecificTest.SqlConverterAndMultiQuery
 				s.Connection.Close();
 				Assert.Throws<UnitTestException>(() =>
 												 s.CreateCriteria(typeof (ClassA)).List());
-			}
-		}
-
-		[Test, Obsolete]
-		public void MultiCriteriaShouldThrowUserException()
-		{
-			var driver = Sfi.ConnectionProvider.Driver;
-			if (!driver.SupportsMultipleQueries)
-				Assert.Ignore("Driver {0} does not support multi-queries", driver.GetType().FullName);
-
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var multi = s.CreateMultiCriteria();
-				multi.Add(s.CreateCriteria(typeof (ClassA)));
-				s.Connection.Close();
-				Assert.Throws<UnitTestException>(() => multi.List());
 			}
 		}
 

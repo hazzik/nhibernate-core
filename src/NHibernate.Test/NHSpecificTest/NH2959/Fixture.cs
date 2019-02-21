@@ -1,5 +1,4 @@
-﻿using System;
-using NHibernate.Multi;
+﻿using NHibernate.Multi;
 using NUnit.Framework;
 
 namespace NHibernate.Test.NHSpecificTest.NH2959
@@ -36,21 +35,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2959
 				session.Delete("from System.Object");
 				session.Flush();
 				transaction.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public void CanUsePolymorphicCriteriaInMultiCriteria()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var results = session.CreateMultiCriteria()
-					.Add(session.CreateCriteria(typeof(BaseEntity)))
-					.List();
-
-				Assert.That(results, Has.Count.EqualTo(1));
-				Assert.That(results[0], Has.Count.EqualTo(2));
 			}
 		}
 

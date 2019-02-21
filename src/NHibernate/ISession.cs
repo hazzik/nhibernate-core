@@ -986,15 +986,6 @@ namespace NHibernate
 		/// </returns>
 		ISessionImplementor GetSessionImplementation();
 
-		/// <summary>
-		/// An <see cref="IMultiCriteria"/> that can return a list of all the results
-		/// of all the criterias.
-		/// </summary>
-		/// <returns></returns>
-		// Since v5.2
-		[Obsolete("Use ISession.CreateQueryBatch instead.")]
-		IMultiCriteria CreateMultiCriteria();
-
 		/// <summary> Get the statistics for this session.</summary>
 		ISessionStatistics Statistics { get; }
 

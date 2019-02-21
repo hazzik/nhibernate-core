@@ -41,11 +41,6 @@ namespace NHibernate.Impl
 
 		private CacheMode cacheMode = CacheMode.Normal;
 
-		//Since 5.2
-		[Obsolete()]
-		[NonSerialized]
-		private FutureCriteriaBatch futureCriteriaBatch;
-
 		[NonSerialized]
 		private readonly EventListeners listeners;
 
@@ -211,20 +206,6 @@ namespace NHibernate.Impl
 		}
 
 		//Since 5.2
-		[Obsolete("Replaced by QueryBatch")]
-		public override FutureCriteriaBatch FutureCriteriaBatch
-		{
-			get
-			{
-				if (futureCriteriaBatch == null)
-					futureCriteriaBatch = new FutureCriteriaBatch(this);
-				return futureCriteriaBatch;
-			}
-			protected internal set
-			{
-				futureCriteriaBatch = value;
-			}
-		}
 
 		//Since 5.2
 
@@ -1945,16 +1926,6 @@ namespace NHibernate.Impl
 			string filterName = filterParameterName.Substring(0, dot);
 			string parameterName = filterParameterName.Substring(dot + 1);
 			return new[] { filterName, parameterName };
-		}
-
-		// Since v5.2
-		[Obsolete("Use ISession.CreateQueryBatch instead.")]
-		public IMultiCriteria CreateMultiCriteria()
-		{
-			using (BeginProcess())
-			{
-				return new MultiCriteriaImpl(this, Factory);
-			}
 		}
 
 		/// <summary> Get the statistics for this session.</summary>
