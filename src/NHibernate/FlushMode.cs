@@ -23,14 +23,6 @@ namespace NHibernate
 		/// transactions
 		/// </summary>
 		Manual = 0,
-		// Obsolete in v5.
-		/// <summary>
-		/// The <c>ISession</c> is never flushed unless <c>Flush()</c> is explicitly
-		/// called by the application. This mode is very efficient for read only
-		/// transactions
-		/// </summary>
-		[Obsolete("Please use Manual instead.")]
-		Never = Manual,
 		/// <summary>
 		/// The <c>ISession</c> is flushed when <c>Transaction.Commit()</c> is called
 		/// </summary>
