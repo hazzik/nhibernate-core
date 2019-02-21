@@ -118,7 +118,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3119
 
 	public class TestBytecodeProviderImpl : AbstractBytecodeProvider
 	{
-		public override IReflectionOptimizer GetReflectionOptimizer(System.Type mappedClass, IGetter[] getters, ISetter[] setters)
+		public override IReflectionOptimizer GetReflectionOptimizer(System.Type mappedClass, IGetter[] getters, ISetter[] setters, IGetter specializedGetter, ISetter specializedSetter)
 		{
 			return new ComponentTestReflectionOptimizer(mappedClass, getters, setters);
 		}

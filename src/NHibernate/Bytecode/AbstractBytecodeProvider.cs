@@ -32,7 +32,8 @@ namespace NHibernate.Bytecode
 			}
 		}
 
-		public abstract IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters);
+		/// <inheritdoc/>
+		public abstract IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter specializedGetter, ISetter specializedSetter);
 
 		public virtual ICollectionTypeFactory CollectionTypeFactory
 		{

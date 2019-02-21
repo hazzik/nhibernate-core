@@ -8,13 +8,9 @@ namespace NHibernate.Bytecode
 	/// </summary>
 	public class NullBytecodeProvider : AbstractBytecodeProvider
 	{
-		#region IBytecodeProvider Members
-
-		public override IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters)
+		public override IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter specializedGetter, ISetter specializedSetter)
 		{
 			return null;
 		}
-
-		#endregion
 	}
 }

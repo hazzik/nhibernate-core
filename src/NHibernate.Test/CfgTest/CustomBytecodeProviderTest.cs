@@ -12,7 +12,7 @@ namespace NHibernate.Test.CfgTest
 	{
 		private class MyByteCodeProvider : AbstractBytecodeProvider
 		{
-			public override IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters)
+			public override IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter specializedGetter, ISetter specializedSetter)
 			{
 				throw new NotImplementedException();
 			}
@@ -23,8 +23,8 @@ namespace NHibernate.Test.CfgTest
 		private class InvalidNoCtorByteCodeProvider : AbstractBytecodeProvider
 		{
 			public InvalidNoCtorByteCodeProvider(string pizza) {}
-
-			public override IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters)
+		
+			public override IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters, IGetter specializedGetter, ISetter specializedSetter)
 			{
 				throw new NotImplementedException();
 			}
