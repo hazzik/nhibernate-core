@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 
-using System;
 using NUnit.Framework;
 
 namespace NHibernate.Test.NHSpecificTest.NH1082
@@ -44,30 +43,6 @@ namespace NHibernate.Test.NHSpecificTest.NH1082
 			var c = new C { ID = 1, Value = "value" };
 
 			var synchronization = new TransactionSynchronizationThatThrowsExceptionAtBeforeTransactionCompletion();
-			using (ISession s = Sfi.OpenSession())
-			using (ITransaction t = s.BeginTransaction())
-			{
-				t.RegisterSynchronization(synchronization);
-
-				await (s.SaveAsync(c));
-
-				Assert.ThrowsAsync<BadException>(() => t.CommitAsync());
-			}
-
-			using (ISession s = Sfi.OpenSession())
-			{
-				var objectInDb = await (s.GetAsync<C>(1));
-				Assert.IsNull(objectInDb);
-			}
-		}
-
-		// Since v5.2
-		[Test, Obsolete]
-		public async Task ExceptionsInSynchronizationBeforeTransactionCompletionAbortTransactionAsync()
-		{
-			var c = new C { ID = 1, Value = "value" };
-
-			var synchronization = new SynchronizationThatThrowsExceptionAtBeforeTransactionCompletion();
 			using (ISession s = Sfi.OpenSession())
 			using (ITransaction t = s.BeginTransaction())
 			{

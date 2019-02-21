@@ -196,23 +196,6 @@ namespace NHibernate.Transaction
 		private async Task NotifyLocalSynchsBeforeTransactionCompletionAsync(CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
-#pragma warning disable 612
-			if (synchronizations != null)
-			{
-				foreach (var sync in synchronizations)
-#pragma warning restore 612
-				{
-					try
-					{
-						sync.BeforeCompletion();
-					}
-					catch (Exception e)
-					{
-						log.Error(e, "exception calling user Synchronization");
-						throw;
-					}
-				}
-			}
 
 			if (_completionSynchronizations == null)
 				return;
@@ -227,23 +210,6 @@ namespace NHibernate.Transaction
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			begun = false;
-
-#pragma warning disable 612
-			if (synchronizations != null)
-			{
-				foreach (var sync in synchronizations)
-#pragma warning restore 612
-				{
-					try
-					{
-						sync.AfterCompletion(success);
-					}
-					catch (Exception e)
-					{
-						log.Error(e, "exception calling user Synchronization");
-					}
-				}
-			}
 
 			if (_completionSynchronizations == null)
 				return;

@@ -137,7 +137,7 @@ namespace NHibernate.Test.TransactionTest
 		{
 			using (var custom = new CustomTransaction())
 			{
-				TransactionExtensions.RegisterSynchronization(custom, new Synchronization());
+				custom.RegisterSynchronization(new Synchronization());
 				Assert.That(custom.HasRegisteredSynchronization, Is.True);
 			}
 		}
@@ -178,12 +178,6 @@ namespace NHibernate.Test.TransactionTest
 		public bool WasCommitted => throw new NotImplementedException();
 
 		public void Enlist(DbCommand command)
-		{
-			throw new NotImplementedException();
-		}
-
-		[Obsolete]
-		public void RegisterSynchronization(ISynchronization synchronization)
 		{
 			throw new NotImplementedException();
 		}

@@ -22,8 +22,6 @@ namespace NHibernate.Transaction
 		private bool rolledBack;
 		private bool commitFailed;
 		// Since v5.2
-		[Obsolete]
-		private IList<ISynchronization> synchronizations;
 		private IList<ITransactionCompletionSynchronization> _completionSynchronizations;
 
 		/// <summary>
@@ -84,18 +82,6 @@ namespace NHibernate.Transaction
 				// here instead.  Because of this, we set the trans field to null in when Dispose is called.
 				command.Transaction = trans;
 			}
-		}
-
-		// Since 5.2
-		[Obsolete("Use RegisterSynchronization(ITransactionCompletionSynchronization) instead")]
-		public void RegisterSynchronization(ISynchronization sync)
-		{
-			if (sync == null) throw new ArgumentNullException("sync");
-			if (synchronizations == null)
-			{
-				synchronizations = new List<ISynchronization>();
-			}
-			synchronizations.Add(sync);
 		}
 
 		public void RegisterSynchronization(ITransactionCompletionSynchronization synchronization)
@@ -425,24 +411,6 @@ namespace NHibernate.Transaction
 
 		private void NotifyLocalSynchsBeforeTransactionCompletion()
 		{
-#pragma warning disable 612
-			if (synchronizations != null)
-			{
-				foreach (var sync in synchronizations)
-#pragma warning restore 612
-				{
-					try
-					{
-						sync.BeforeCompletion();
-					}
-					catch (Exception e)
-					{
-						log.Error(e, "exception calling user Synchronization");
-						throw;
-					}
-				}
-			}
-
 			if (_completionSynchronizations == null)
 				return;
 
@@ -455,23 +423,6 @@ namespace NHibernate.Transaction
 		private void NotifyLocalSynchsAfterTransactionCompletion(bool success)
 		{
 			begun = false;
-
-#pragma warning disable 612
-			if (synchronizations != null)
-			{
-				foreach (var sync in synchronizations)
-#pragma warning restore 612
-				{
-					try
-					{
-						sync.AfterCompletion(success);
-					}
-					catch (Exception e)
-					{
-						log.Error(e, "exception calling user Synchronization");
-					}
-				}
-			}
 
 			if (_completionSynchronizations == null)
 				return;
