@@ -142,20 +142,6 @@ namespace NHibernate.Engine
 			afterTransactionProcesses.Register(process);
 		}
 
-		//Since v5.2
-		[Obsolete("This method is not used and will be removed in a future version.")]
-		public void RegisterProcess(BeforeTransactionCompletionProcessDelegate process)
-		{
-			RegisterProcess(new BeforeTransactionCompletionDelegatedProcess(process));
-		}
-
-		//Since v5.2
-		[Obsolete("This method is not used and will be removed in a future version.")]
-		public void RegisterProcess(AfterTransactionCompletionProcessDelegate process)
-		{
-			RegisterProcess(new AfterTransactionCompletionDelegatedProcess(process));
-		}
-
 		private void ExecuteActions(IList list)
 		{
 			// Actions may raise events to which user code can react and cause changes to action list.
@@ -205,18 +191,9 @@ namespace NHibernate.Engine
 
 		private void RegisterCleanupActions(IExecutable executable)
 		{
-			if (executable is IAsyncExecutable asyncExecutable)
-			{
-				RegisterProcess(asyncExecutable.BeforeTransactionCompletionProcess);
-				RegisterProcess(asyncExecutable.AfterTransactionCompletionProcess);
-			}
-			else
-			{
-#pragma warning disable 618,619
-				RegisterProcess(executable.BeforeTransactionCompletionProcess);
-				RegisterProcess(executable.AfterTransactionCompletionProcess);
-#pragma warning restore 618,619
-			}
+			RegisterProcess(executable.BeforeTransactionCompletionProcess);
+			RegisterProcess(executable.AfterTransactionCompletionProcess);
+
 			if (executable.PropertySpaces != null)
 			{
 				executedSpaces.UnionWith(executable.PropertySpaces);
@@ -558,40 +535,6 @@ namespace NHibernate.Engine
 					}
 				}
 				processes.Clear();
-			}
-		}
-
-		//6.0 TODO: Remove
-		[Obsolete]
-		private partial class BeforeTransactionCompletionDelegatedProcess : IBeforeTransactionCompletionProcess
-		{
-			private readonly BeforeTransactionCompletionProcessDelegate _delegate;
-
-			public BeforeTransactionCompletionDelegatedProcess(BeforeTransactionCompletionProcessDelegate @delegate)
-			{
-				_delegate = @delegate;
-			}
-
-			public void ExecuteBeforeTransactionCompletion()
-			{
-				_delegate?.Invoke();
-			}
-		}
-
-		//6.0 TODO: Remove
-		[Obsolete]
-		private partial class AfterTransactionCompletionDelegatedProcess : IAfterTransactionCompletionProcess
-		{
-			private readonly AfterTransactionCompletionProcessDelegate _delegate;
-
-			public AfterTransactionCompletionDelegatedProcess(AfterTransactionCompletionProcessDelegate @delegate)
-			{
-				_delegate = @delegate;
-			}
-
-			public void ExecuteAfterTransactionCompletion(bool success)
-			{
-				_delegate?.Invoke(success);
 			}
 		}
 

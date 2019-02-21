@@ -14,7 +14,7 @@ namespace NHibernate.Action
 	/// Any action relating to insert/update/delete of a collection
 	/// </summary>
 	[Serializable]
-	public abstract partial class CollectionAction : IAsyncExecutable, IComparable<CollectionAction>, IDeserializationCallback, IAfterTransactionCompletionProcess
+	public abstract partial class CollectionAction : IComparable<CollectionAction>, IDeserializationCallback, IAfterTransactionCompletionProcess, IExecutable
 	{
 		private readonly object key;
 		[NonSerialized] private ICollectionPersister persister;
@@ -49,10 +49,6 @@ namespace NHibernate.Action
 		{
 			get { return persister; }
 		}
-
-		//Since v5.3
-		[Obsolete("Please use GetKey() instead.")]
-		protected internal object Key => GetKey();
 
 		protected object GetKey()
 		{
@@ -106,21 +102,15 @@ namespace NHibernate.Action
 		/// <summary>Execute this action</summary>
 		public abstract void Execute();
 
-		IBeforeTransactionCompletionProcess IAsyncExecutable.BeforeTransactionCompletionProcess => 
+		public IBeforeTransactionCompletionProcess BeforeTransactionCompletionProcess => 
 			null;
 
-		IAfterTransactionCompletionProcess IAsyncExecutable.AfterTransactionCompletionProcess =>
+		public IAfterTransactionCompletionProcess AfterTransactionCompletionProcess =>
 			persister.HasCache ? this : null;
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public virtual BeforeTransactionCompletionProcessDelegate BeforeTransactionCompletionProcess => 
-			null;
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public virtual AfterTransactionCompletionProcessDelegate AfterTransactionCompletionProcess =>
-			persister.HasCache ? ExecuteAfterTransactionCompletion : default(AfterTransactionCompletionProcessDelegate);
 
 		public virtual void ExecuteAfterTransactionCompletion(bool success)
 		{

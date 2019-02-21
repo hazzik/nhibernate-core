@@ -13,12 +13,10 @@ namespace NHibernate.Action
 	/// instance.
 	/// </summary>
 	[Serializable]
-	public abstract partial class EntityAction : 
-		IAsyncExecutable,
-		IBeforeTransactionCompletionProcess,
+	public abstract partial class EntityAction : IBeforeTransactionCompletionProcess,
 		IAfterTransactionCompletionProcess,
 		IComparable<EntityAction>, 
-		IDeserializationCallback
+		IDeserializationCallback, IExecutable
 	{
 		private readonly string entityName;
 		private readonly object id;
@@ -108,23 +106,13 @@ namespace NHibernate.Action
 		public abstract void Execute();
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public virtual BeforeTransactionCompletionProcessDelegate BeforeTransactionCompletionProcess =>
-			NeedsBeforeTransactionCompletion()
-				? BeforeTransactionCompletionProcessImpl
-				: default(BeforeTransactionCompletionProcessDelegate);
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public virtual AfterTransactionCompletionProcessDelegate AfterTransactionCompletionProcess =>
-			NeedsAfterTransactionCompletion()
-				? AfterTransactionCompletionProcessImpl
-				: default(AfterTransactionCompletionProcessDelegate);
 
-		IBeforeTransactionCompletionProcess IAsyncExecutable.BeforeTransactionCompletionProcess =>
+		public IBeforeTransactionCompletionProcess BeforeTransactionCompletionProcess =>
 			NeedsBeforeTransactionCompletion() ? this : null;
 
-		IAfterTransactionCompletionProcess IAsyncExecutable.AfterTransactionCompletionProcess =>
+		public IAfterTransactionCompletionProcess AfterTransactionCompletionProcess =>
 			NeedsAfterTransactionCompletion() ? this : null;
 
 		protected virtual bool NeedsAfterTransactionCompletion()
