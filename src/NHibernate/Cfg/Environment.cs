@@ -294,7 +294,6 @@ namespace NHibernate.Cfg
 
 		private static readonly Dictionary<string, string> GlobalProperties = new Dictionary<string, string>();
 
-		private static IBytecodeProvider BytecodeProviderInstance;
 		private static bool EnableReflectionOptimizer;
 
 		private static readonly INHibernateLogger log = NHibernateLogger.For(typeof(Environment));
@@ -344,7 +343,7 @@ namespace NHibernate.Cfg
 
 			VerifyProperties(GlobalProperties);
 
-			BytecodeProviderInstance = BuildBytecodeProvider(GlobalProperties);
+			BytecodeProvider = BuildBytecodeProvider(GlobalProperties);
 			ObjectsFactory = BuildObjectsFactory(GlobalProperties);
 			EnableReflectionOptimizer = PropertiesHelper.GetBoolean(PropertyUseReflectionOptimizer, GlobalProperties);
 
@@ -399,20 +398,7 @@ namespace NHibernate.Cfg
 		/// manually. This should only be done before a configuration object
 		/// is created, otherwise the change may not take effect.
 		/// </remarks>
-		public static IBytecodeProvider BytecodeProvider
-		{
-			get { return BytecodeProviderInstance; }
-			set
-			{
-				BytecodeProviderInstance = value;
-				// 6.0 TODO: remove following code.
-#pragma warning disable 618
-				var objectsFactory = BytecodeProviderInstance.ObjectsFactory;
-#pragma warning restore 618
-				if (objectsFactory != null)
-					ObjectsFactory = objectsFactory;
-			}
-		}
+		public static IBytecodeProvider BytecodeProvider { get; set; }
 
 		/// <summary>
 		/// NHibernate's object instantiator.
@@ -473,10 +459,7 @@ namespace NHibernate.Cfg
 			var typeAssemblyQualifiedName = PropertiesHelper.GetString(PropertyObjectsFactory, properties, null);
 			if (typeAssemblyQualifiedName == null)
 			{
-				// 6.0 TODO: use default value of ObjectsFactory property
-#pragma warning disable 618
-				var objectsFactory = BytecodeProvider.ObjectsFactory ?? ObjectsFactory;
-#pragma warning restore 618
+				var objectsFactory = ObjectsFactory;
 				log.Info("Objects factory class : {0}", objectsFactory.GetType());
 				return objectsFactory;
 			}

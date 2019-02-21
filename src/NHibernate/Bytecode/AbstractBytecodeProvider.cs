@@ -34,10 +34,6 @@ namespace NHibernate.Bytecode
 
 		public abstract IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters);
 
-		// Since 5.2
-		[Obsolete("Please use NHibernate.Cfg.Environment.ObjectsFactory instead")]
-		public virtual IObjectsFactory ObjectsFactory => Cfg.Environment.ObjectsFactory;
-
 		public virtual ICollectionTypeFactory CollectionTypeFactory
 		{
 			get

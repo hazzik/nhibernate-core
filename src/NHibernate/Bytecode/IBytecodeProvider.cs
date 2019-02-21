@@ -25,16 +25,6 @@ namespace NHibernate.Bytecode
 		IReflectionOptimizer GetReflectionOptimizer(System.Type clazz, IGetter[] getters, ISetter[] setters);
 
 		/// <summary>
-		/// NHibernate's object instantiator.
-		/// </summary>
-		/// <remarks>
-		/// For entities <see cref="IReflectionOptimizer"/> and its implementations.
-		/// </remarks>
-		// Since 5.2
-		[Obsolete("Please use NHibernate.Cfg.Environment.ObjectsFactory instead")]
-		IObjectsFactory ObjectsFactory { get; }
-
-		/// <summary>
 		/// Instantiator of NHibernate's collections default types.
 		/// </summary>
 		ICollectionTypeFactory CollectionTypeFactory { get; }
