@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using NHibernate.Cfg.MappingSchema;
 using NHibernate.Engine;
@@ -9,13 +8,6 @@ namespace NHibernate.Cfg.XmlHbmBinding
 {
 	public class MappingRootBinder : Binder
 	{
-		//Since v5.2
-		[Obsolete("Please use constructor without a dialect parameter.")]
-		public MappingRootBinder(Mappings mappings, Dialect.Dialect dialect)
-			: this(mappings)
-		{
-		}
-
 		public MappingRootBinder(Mappings mappings)
 			: base(mappings)
 		{

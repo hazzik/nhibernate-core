@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using NHibernate.Cfg.MappingSchema;
 using NHibernate.Mapping;
@@ -8,22 +7,8 @@ namespace NHibernate.Cfg.XmlHbmBinding
 {
 	public class UnionSubclassBinder : ClassBinder
 	{
-		//Since v5.2
-		[Obsolete("Please use constructor without a dialect parameter.")]
-		public UnionSubclassBinder(Mappings mappings, Dialect.Dialect dialect)
-			: base(mappings, dialect)
-		{
-		}
-
 		public UnionSubclassBinder(Mappings mappings)
 			: base(mappings)
-		{
-		}
-
-		//Since v5.2
-		[Obsolete("Please use constructor that accepts mappings parameter instead.")]
-		public UnionSubclassBinder(ClassBinder parent)
-			: base(parent)
 		{
 		}
 
