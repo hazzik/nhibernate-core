@@ -552,11 +552,11 @@ namespace NHibernate.Cfg
 			try
 			{
 				var dialect = new Lazy<Dialect.Dialect>(() => Dialect.Dialect.GetDialect(properties));
-				OnBeforeBindMapping(new BindMappingEventArgs(mappingDocument, documentFileName) {LazyDialect = dialect});
+				OnBeforeBindMapping(new BindMappingEventArgs(mappingDocument, documentFileName));
 				var mappings = CreateMappings();
 				mappings.LazyDialect = dialect;
 				new MappingRootBinder(mappings).Bind(mappingDocument);
-				OnAfterBindMapping(new BindMappingEventArgs(mappingDocument, documentFileName) {LazyDialect = dialect});
+				OnAfterBindMapping(new BindMappingEventArgs(mappingDocument, documentFileName));
 			}
 			catch (Exception e)
 			{
