@@ -95,33 +95,6 @@ namespace NHibernate.Test
 			return new SessionBuilder(ActualFactory.WithOptions(), this);
 		}
 
-		ISession ISessionFactory.OpenSession(DbConnection connection)
-		{
-#pragma warning disable CS0618 // Type or member is obsolete
-			var s = ActualFactory.OpenSession(connection);
-#pragma warning restore CS0618 // Type or member is obsolete
-			_openedSessions.Add(s.GetSessionImplementation());
-			return s;
-		}
-
-		ISession ISessionFactory.OpenSession(IInterceptor sessionLocalInterceptor)
-		{
-#pragma warning disable CS0618 // Type or member is obsolete
-			var s = ActualFactory.OpenSession(sessionLocalInterceptor);
-#pragma warning restore CS0618 // Type or member is obsolete
-			_openedSessions.Add(s.GetSessionImplementation());
-			return s;
-		}
-
-		ISession ISessionFactory.OpenSession(DbConnection conn, IInterceptor sessionLocalInterceptor)
-		{
-#pragma warning disable CS0618 // Type or member is obsolete
-			var s = ActualFactory.OpenSession(conn, sessionLocalInterceptor);
-#pragma warning restore CS0618 // Type or member is obsolete
-			_openedSessions.Add(s.GetSessionImplementation());
-			return s;
-		}
-
 		ISession ISessionFactory.OpenSession()
 		{
 			var s = ActualFactory.OpenSession();
@@ -144,19 +117,6 @@ namespace NHibernate.Test
 		IStatelessSession ISessionFactory.OpenStatelessSession(DbConnection connection)
 		{
 			var s = ActualFactory.OpenStatelessSession(connection);
-			_openedSessions.Add(s.GetSessionImplementation());
-			return s;
-		}
-
-		ISession ISessionFactoryImplementor.OpenSession(
-			DbConnection connection,
-			bool flushBeforeCompletionEnabled,
-			bool autoCloseSessionEnabled,
-			ConnectionReleaseMode connectionReleaseMode)
-		{
-#pragma warning disable CS0618 // Type or member is obsolete
-			var s = ActualFactory.OpenSession(connection, flushBeforeCompletionEnabled, autoCloseSessionEnabled, connectionReleaseMode);
-#pragma warning restore CS0618 // Type or member is obsolete
 			_openedSessions.Add(s.GetSessionImplementation());
 			return s;
 		}

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
-using NHibernate.Connection;
 using NHibernate.Engine;
 using NHibernate.Impl;
 using NHibernate.Metadata;
@@ -107,46 +106,6 @@ namespace NHibernate
 		/// </summary>
 		/// <returns>The session builder.</returns>
 		ISessionBuilder WithOptions();
-
-		// Obsolete in v5.
-		/// <summary>
-		/// Open a <see cref="ISession"/> on the given connection
-		/// </summary>
-		/// <param name="connection">A connection provided by the application</param>
-		/// <returns>A session</returns>
-		/// <remarks>
-		/// Note that the second-level cache will be disabled if you
-		/// supply a ADO.NET connection. NHibernate will not be able to track
-		/// any statements you might have executed in the same transaction.
-		/// Consider implementing your own <see cref="IConnectionProvider" />.
-		/// </remarks>
-		[Obsolete("Please use WithOptions instead.")]
-		ISession OpenSession(DbConnection connection);
-
-		// Obsolete in v5.
-		/// <summary>
-		/// Create database connection and open a <see cref="ISession"/> on it, specifying an interceptor
-		/// </summary>
-		/// <param name="sessionLocalInterceptor">A session-scoped interceptor</param>
-		/// <returns>A session.</returns>
-		[Obsolete("Please use WithOptions instead.")]
-		ISession OpenSession(IInterceptor sessionLocalInterceptor);
-
-		// Obsolete in v5.
-		/// <summary>
-		/// Open a <see cref="ISession"/> on the given connection, specifying an interceptor
-		/// </summary>
-		/// <param name="conn">A connection provided by the application</param>
-		/// <param name="sessionLocalInterceptor">A session-scoped interceptor</param>
-		/// <returns>A session.</returns>
-		/// <remarks>
-		/// Note that the second-level cache will be disabled if you
-		/// supply a ADO.NET connection. NHibernate will not be able to track
-		/// any statements you might have executed in the same transaction.
-		/// Consider implementing your own <see cref="IConnectionProvider" />.
-		/// </remarks>
-		[Obsolete("Please use WithOptions instead.")]
-		ISession OpenSession(DbConnection conn, IInterceptor sessionLocalInterceptor);
 
 		/// <summary>
 		/// Create a database connection and open a <see cref="ISession"/> on it

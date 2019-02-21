@@ -475,46 +475,6 @@ namespace NHibernate.Impl
 			return WithOptions().OpenSession();
 		}
 
-		// Obsolete since v5
-		[Obsolete("Please use WithOptions instead.")]
-		public ISession OpenSession(DbConnection connection)
-		{
-			return WithOptions()
-				.Connection(connection)
-				.OpenSession();
-		}
-
-		// Obsolete since v5
-		[Obsolete("Please use WithOptions instead.")]
-		public ISession OpenSession(DbConnection connection, IInterceptor sessionLocalInterceptor)
-		{
-			return WithOptions()
-				.Connection(connection)
-				.Interceptor(sessionLocalInterceptor)
-				.OpenSession();
-		}
-
-		// Obsolete since v5
-		[Obsolete("Please use WithOptions instead.")]
-		public ISession OpenSession(IInterceptor sessionLocalInterceptor)
-		{
-			return WithOptions()
-				.Interceptor(sessionLocalInterceptor)
-				.OpenSession();
-		}
-
-		// Obsolete since v5
-		[Obsolete("Please use WithOptions instead.")]
-		public ISession OpenSession(DbConnection connection, bool flushBeforeCompletionEnabled, bool autoCloseSessionEnabled,
-			ConnectionReleaseMode connectionReleaseMode)
-		{
-			return WithOptions()
-				.Connection(connection)
-				.AutoClose(autoCloseSessionEnabled)
-				.ConnectionReleaseMode(connectionReleaseMode)
-				.OpenSession();
-		}
-
 		public IStatelessSessionBuilder WithStatelessOptions()
 		{
 			return new StatelessSessionBuilderImpl(this);

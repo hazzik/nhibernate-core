@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using NHibernate.Cache;
 using NHibernate.Cfg;
 using NHibernate.Connection;
@@ -133,20 +131,6 @@ namespace NHibernate.Engine
 #pragma warning disable 618
 		ICache GetSecondLevelCacheRegion(string regionName);
 #pragma warning restore 618
-
-		// Obsolete since v5
-		/// <summary>
-		/// Open a session conforming to the given parameters. Used mainly
-		/// for current session processing.
-		/// </summary>
-		/// <param name="connection">The external ado.net connection to use, if one (i.e., optional).</param>
-		/// <param name="flushBeforeCompletionEnabled">No usage.</param>
-		/// <param name="autoCloseSessionEnabled">Not yet implemented.</param>
-		/// <param name="connectionReleaseMode">The release mode for managed jdbc connections.</param>
-		/// <returns>An appropriate session.</returns>
-		[Obsolete("Please use WithOptions() instead.")]
-		ISession OpenSession(DbConnection connection, bool flushBeforeCompletionEnabled, bool autoCloseSessionEnabled,
-		                     ConnectionReleaseMode connectionReleaseMode);
 
 		/// <summary> 
 		/// Retrieves a set of all the collection roles in which the given entity
