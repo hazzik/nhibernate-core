@@ -100,25 +100,6 @@ namespace NHibernate.AdoNet
 		{
 		}
 
-		// Since 5.2
-		[Obsolete]
-		public static void VerifyOutcomeBatched(int expectedRowCount, int rowCount)
-		{
-			if (expectedRowCount > rowCount)
-			{
-				throw new StaleStateException(
-					"Batch update returned unexpected row count from update; actual row count: " + rowCount +
-					"; expected: " + expectedRowCount
-					);
-			}
-			if (expectedRowCount < rowCount)
-			{
-				string msg = "Batch update returned unexpected row count from update; actual row count: " + rowCount +
-				             "; expected: " + expectedRowCount;
-				throw new TooManyRowsAffectedException(msg, expectedRowCount, rowCount);
-			}
-		}
-
 		public static void VerifyOutcomeBatched(int expectedRowCount, int rowCount, DbCommand statement)
 		{
 			if (expectedRowCount > rowCount)
