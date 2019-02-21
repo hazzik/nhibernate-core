@@ -60,24 +60,6 @@ namespace NHibernate.Impl
 			}
 		}
 
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		protected internal override Task<IEnumerable<ITranslator>> GetTranslatorsAsync(ISessionImplementor session, QueryParameters queryParameters, CancellationToken cancellationToken)
-		{
-			if (cancellationToken.IsCancellationRequested)
-			{
-				return Task.FromCanceled<IEnumerable<ITranslator>>(cancellationToken);
-			}
-			try
-			{
-				return Task.FromResult<IEnumerable<ITranslator>>(GetTranslators(session, queryParameters));
-			}
-			catch (Exception ex)
-			{
-				return Task.FromException<IEnumerable<ITranslator>>(ex);
-			}
-		}
-
 		public override Task<IList> ListAsync(CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (cancellationToken.IsCancellationRequested)

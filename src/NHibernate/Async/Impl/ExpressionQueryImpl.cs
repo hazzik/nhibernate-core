@@ -13,7 +13,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NHibernate.Engine;
 using NHibernate.Engine.Query;
 using NHibernate.Hql.Ast.ANTLR;
 using NHibernate.Hql.Ast.ANTLR.Tree;
@@ -78,24 +77,6 @@ namespace NHibernate.Impl
 		public override Task<IEnumerable<T>> EnumerableAsync<T>(CancellationToken cancellationToken = default(CancellationToken))
 		{
 			throw new NotImplementedException();
-		}
-
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		protected internal override Task<IEnumerable<ITranslator>> GetTranslatorsAsync(ISessionImplementor session, QueryParameters queryParameters, CancellationToken cancellationToken)
-		{
-			if (cancellationToken.IsCancellationRequested)
-			{
-				return Task.FromCanceled<IEnumerable<ITranslator>>(cancellationToken);
-			}
-			try
-			{
-				return Task.FromResult<IEnumerable<ITranslator>>(GetTranslators(session, queryParameters));
-			}
-			catch (Exception ex)
-			{
-				return Task.FromException<IEnumerable<ITranslator>>(ex);
-			}
 		}
 	}
 }
