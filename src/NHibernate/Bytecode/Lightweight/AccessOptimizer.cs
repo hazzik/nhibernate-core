@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using System.Security;
-using NHibernate.Properties;
-
 namespace NHibernate.Bytecode.Lightweight
 {
 	public class AccessOptimizer : IAccessOptimizer
@@ -15,23 +10,6 @@ namespace NHibernate.Bytecode.Lightweight
 		private readonly SetPropertyValueInvoker[] _setters;
 		private readonly GetPropertyValueInvoker _specializedGetter;
 		private readonly SetPropertyValueInvoker _specializedSetter;
-
-		// Since 5.3
-		[Obsolete("This constructor has no usages and will be removed in a future version")]
-		public AccessOptimizer(
-			GetPropertyValuesInvoker getDelegate,
-			SetPropertyValuesInvoker setDelegate,
-			IGetter[] getters,
-			ISetter[] setters)
-			: this(
-				getDelegate,
-				setDelegate,
-				getters.Select(o => (GetPropertyValueInvoker) o.Get).ToArray(),
-				setters.Select(o => (SetPropertyValueInvoker) o.Set).ToArray(),
-				null,
-				null)
-		{
-		}
 
 		public AccessOptimizer(GetPropertyValuesInvoker getDelegate,
 								SetPropertyValuesInvoker setDelegate,
