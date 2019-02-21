@@ -86,11 +86,6 @@ namespace NHibernate.Mapping
 		}
 
 		//Since v5.2
-		[Obsolete("Please use overload without dialect parameter.")]
-		public void CreatePrimaryKey(Dialect.Dialect dialect)
-		{
-			CreatePrimaryKey();
-		}
 
 		public void CreatePrimaryKey()
 		{
