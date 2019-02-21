@@ -285,10 +285,7 @@ namespace NHibernate.Impl
 		//Since 5.2
 		[Obsolete("Replaced by FutureBatch")]
 		public abstract FutureCriteriaBatch FutureCriteriaBatch { get; protected internal set; }
-		//Since 5.2
-		[Obsolete("Replaced by FutureBatch")]
-		public abstract FutureQueryBatch FutureQueryBatch { get; protected internal set; }
-	
+
 		public virtual IQueryBatch FutureBatch
 			=>_futureMultiBatch ?? (_futureMultiBatch = new QueryBatch(this, true));
 

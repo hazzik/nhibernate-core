@@ -54,21 +54,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2959
 			}
 		}
 
-		[Test, Obsolete]
-		public void CanUsePolymorphicQueryInMultiQuery()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var results = session.CreateMultiQuery()
-					.Add(session.CreateQuery("from " + typeof(BaseEntity).FullName))
-					.List();
-
-				Assert.That(results, Has.Count.EqualTo(1));
-				Assert.That(results[0], Has.Count.EqualTo(2));
-			}
-		}
-
 		[Test]
 		public void CanUsePolymorphicCriteriaInQueryBatch()
 		{

@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 using NHibernate.Multi;
 
@@ -64,27 +63,6 @@ namespace NHibernate.Test.NHSpecificTest.NH1253
 				q.SetParameterList("param11", new string[] {"One", "Two"});
 				q.SetParameterList("param1", new string[] {"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"});
 				var cars = q.List();
-
-				tx.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public void MultiQuerySingleInList()
-		{
-			var driver = Sfi.ConnectionProvider.Driver;
-			if (!driver.SupportsMultipleQueries)
-				Assert.Ignore("Driver {0} does not support multi-queries", driver.GetType().FullName);
-
-			using (var s = OpenSession())
-			using (var tx = s.BeginTransaction())
-			{
-				var results = s.CreateMultiQuery()
-					.Add("from Car c where c.Make in (:param1) or c.Model in (:param11)")
-					.Add("from Car c where c.Make in (:param1) or c.Model in (:param11)")
-					.SetParameterList("param11", new string[] {"Model1", "Model2"})
-					.SetParameterList("param1", new string[] {"Make1", "Make2"})
-					.List();
 
 				tx.Commit();
 			}

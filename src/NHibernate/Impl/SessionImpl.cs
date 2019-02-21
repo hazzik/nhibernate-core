@@ -45,10 +45,6 @@ namespace NHibernate.Impl
 		[Obsolete()]
 		[NonSerialized]
 		private FutureCriteriaBatch futureCriteriaBatch;
-		//Since 5.2
-		[Obsolete()]
-		[NonSerialized]
-		private FutureQueryBatch futureQueryBatch;
 
 		[NonSerialized]
 		private readonly EventListeners listeners;
@@ -231,20 +227,6 @@ namespace NHibernate.Impl
 		}
 
 		//Since 5.2
-		[Obsolete("Replaced by QueryBatch")]
-		public override FutureQueryBatch FutureQueryBatch
-		{
-			get
-			{
-				if (futureQueryBatch == null)
-					futureQueryBatch = new FutureQueryBatch(this);
-				return futureQueryBatch;
-			}
-			protected internal set
-			{
-				futureQueryBatch = value;
-			}
-		}
 
 		public ConnectionReleaseMode ConnectionReleaseMode
 		{
@@ -1963,16 +1945,6 @@ namespace NHibernate.Impl
 			string filterName = filterParameterName.Substring(0, dot);
 			string parameterName = filterParameterName.Substring(dot + 1);
 			return new[] { filterName, parameterName };
-		}
-
-		// Since v5.2
-		[Obsolete("Use ISession.CreateQueryBatch instead.")]
-		public IMultiQuery CreateMultiQuery()
-		{
-			using (BeginProcess())
-			{
-				return new MultiQueryImpl(this);
-			}
 		}
 
 		// Since v5.2

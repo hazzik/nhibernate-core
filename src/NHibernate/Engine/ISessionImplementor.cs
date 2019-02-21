@@ -384,8 +384,6 @@ namespace NHibernate.Engine
 		FutureCriteriaBatch FutureCriteriaBatch { get; }
 
 		//Since 5.2
-		[Obsolete("Replaced by FutureBatch")]
-		FutureQueryBatch FutureQueryBatch { get; }
 
 		Guid SessionId { get; }
 

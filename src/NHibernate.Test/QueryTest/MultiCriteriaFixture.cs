@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using NHibernate.Cache;
 using NHibernate.Cfg;
 using NHibernate.Criterion;
+using NHibernate.Engine;
 using NHibernate.Test.SecondLevelCacheTests;
 using NUnit.Framework;
 using Environment = NHibernate.Cfg.Environment;
@@ -22,7 +25,7 @@ namespace NHibernate.Test.QueryTest
 			get { return new[] { "SecondLevelCacheTest.Item.hbm.xml" }; }
 		}
 
-		protected override bool AppliesTo(Engine.ISessionFactoryImplementor factory)
+		protected override bool AppliesTo(ISessionFactoryImplementor factory)
 		{
 			return factory.ConnectionProvider.Driver.SupportsMultipleQueries;
 		}
@@ -122,7 +125,7 @@ namespace NHibernate.Test.QueryTest
 		[Test]
 		public void CanUseSecondLevelCacheWithPositionalParameters()
 		{
-			var cacheHashtable = MultipleQueriesFixture.GetHashTableUsedAsQueryCache(Sfi);
+			var cacheHashtable = GetHashTableUsedAsQueryCache(Sfi);
 			cacheHashtable.Clear();
 
 			CreateItems();
@@ -139,8 +142,8 @@ namespace NHibernate.Test.QueryTest
 			//set the query in the cache
 			DoMutiQueryAndAssert();
 
-			var cacheHashtable = MultipleQueriesFixture.GetHashTableUsedAsQueryCache(Sfi);
-			var cachedListEntry = (IList)new ArrayList(cacheHashtable.Values)[0];
+			var cacheHashtable = GetHashTableUsedAsQueryCache(Sfi);
+			var cachedListEntry = (IList)new ArrayList((ICollection) cacheHashtable.Values)[0];
 			var cachedQuery = (IList)cachedListEntry[1];
 
 			var firstQueryResults = (IList)cachedQuery[0];
@@ -546,6 +549,20 @@ namespace NHibernate.Test.QueryTest
 				Assert.That(count, Is.EqualTo(0), "Session wasn't auto flushed.");
 
 			}
+		}
+
+		/// <summary>
+		/// Get the inner Hashtable from the IQueryCache.Cache
+		/// </summary>
+		/// <returns></returns>
+		public static Hashtable GetHashTableUsedAsQueryCache(ISessionFactoryImplementor factory)
+		{
+			Hashtable hashTable = null;
+			var cache = (HashtableCache)factory.GetQueryCache(null).Cache;
+			var fieldInfo = typeof(HashtableCache).GetField("hashtable", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (fieldInfo != null)
+				hashTable = (Hashtable)fieldInfo.GetValue(cache);
+			return hashTable;
 		}
 	}
 }

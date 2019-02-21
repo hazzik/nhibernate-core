@@ -66,21 +66,6 @@ namespace NHibernate.Test.NHSpecificTest.NH2959
 			}
 		}
 
-		[Test, Obsolete]
-		public async Task CanUsePolymorphicQueryInMultiQueryAsync()
-		{
-			using (ISession session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var results = await (session.CreateMultiQuery()
-					.Add(session.CreateQuery("from " + typeof(BaseEntity).FullName))
-					.ListAsync());
-
-				Assert.That(results, Has.Count.EqualTo(1));
-				Assert.That(results[0], Has.Count.EqualTo(2));
-			}
-		}
-
 		[Test]
 		public async Task CanUsePolymorphicCriteriaInQueryBatchAsync()
 		{

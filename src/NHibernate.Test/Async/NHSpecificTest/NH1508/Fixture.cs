@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 
-using System;
 using NUnit.Framework;
 using NHibernate.Multi;
 
@@ -54,20 +53,6 @@ namespace NHibernate.Test.NHSpecificTest.NH1508
 				session.Delete("from Person");
 				session.Delete("from Document");
 				tx.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public async Task DoesntThrowExceptionWhenHqlQueryIsGivenAsync()
-		{
-			using (var session = OpenSession())
-			using (session.BeginTransaction())
-			{
-				var sqlQuery = session.CreateQuery("from Document");
-				var q = session
-					.CreateMultiQuery()
-					.Add(sqlQuery);
-				await (q.ListAsync());
 			}
 		}
 

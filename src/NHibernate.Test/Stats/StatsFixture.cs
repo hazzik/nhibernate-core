@@ -243,12 +243,6 @@ namespace NHibernate.Test.Stats
 			if (driver.SupportsMultipleQueries)
 			{
 #pragma warning disable 618
-				using (var s = OpenSession())
-				{
-					var r = s.CreateMultiQuery().Add("from Country").Add("from Continent").List();
-				}
-				Assert.AreEqual(1, stats.QueryExecutionCount);
-
 				stats.Clear();
 				using (var s = OpenSession())
 				{

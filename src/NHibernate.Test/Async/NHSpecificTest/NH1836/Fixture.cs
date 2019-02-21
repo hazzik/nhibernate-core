@@ -8,8 +8,6 @@
 //------------------------------------------------------------------------------
 
 
-using System;
-using System.Collections;
 using System.Linq;
 using NHibernate.Multi;
 using NHibernate.Transform;
@@ -36,24 +34,6 @@ namespace NHibernate.Test.NHSpecificTest.NH1836
 			{
 				s.Save(new Entity {Id = 1});
 				t.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public void AliasToBeanTransformerShouldApplyCorrectlyToMultiQueryAsync()
-		{
-			using (var s = OpenSession())
-			using (var t = s.BeginTransaction())
-			{
-				IMultiQuery multiQuery = s.CreateMultiQuery()
-					.Add(s.CreateQuery("select entity.Id as EntityId from Entity entity")
-						.SetResultTransformer(Transformers.AliasToBean(typeof(EntityDTO)))
-					);
-
-				IList results = null;
-				Assert.That(async () => results = await (multiQuery.ListAsync()), Throws.Nothing);
-				var elementOfFirstResult = ((IList)results[0])[0];
-				Assert.That(elementOfFirstResult, Is.TypeOf<EntityDTO>().And.Property("EntityId").EqualTo(1));
 			}
 		}
 

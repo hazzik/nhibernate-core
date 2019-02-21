@@ -50,23 +50,6 @@ namespace NHibernate.Test.NHSpecificTest.SqlConverterAndMultiQuery
 			}
 		}
 
-		[Test, Obsolete]
-		public void MultiHqlShouldThrowUserExceptionAsync()
-		{
-			var driver = Sfi.ConnectionProvider.Driver;
-			if (!driver.SupportsMultipleQueries)
-				Assert.Ignore("Driver {0} does not support multi-queries", driver.GetType().FullName);
-
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var multi = s.CreateMultiQuery();
-				multi.Add(hqlQuery);
-				s.Connection.Close();
-				Assert.ThrowsAsync<UnitTestException>(() => multi.ListAsync());
-			}
-		}
-
 		[Test]
 		public void QueryBatchShouldThrowUserExceptionAsync()
 		{

@@ -8,8 +8,6 @@
 //------------------------------------------------------------------------------
 
 
-using System;
-using System.Collections;
 using NHibernate.Multi;
 using NUnit.Framework;
 
@@ -36,52 +34,6 @@ namespace NHibernate.Test.NHSpecificTest.NH1869
 				session.Delete("from Keyword");
 
 				transaction.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public async Task TestAsync()
-		{
-			using (var session = Sfi.OpenSession())
-			using (var transaction = session.BeginTransaction())
-			{
-				_keyword = new Keyword();
-				await (session.SaveAsync(_keyword));
-
-				var nodeKeyword = new NodeKeyword();
-				nodeKeyword.NodeId = 1;
-				nodeKeyword.Keyword = _keyword;
-				await (session.SaveAsync(nodeKeyword));
-
-				await (transaction.CommitAsync());
-			}
-
-			using (var session = Sfi.OpenSession())
-			{
-				//If querying twice the test will pass
-				//GetResult(session);
-				var result = await (GetResultAsync(session));
-				Assert.That(result, Has.Count.EqualTo(2));
-				Assert.That(result[0], Has.Count.EqualTo(1));
-				Assert.That(result[1], Has.Count.EqualTo(1));
-			}
-		}
-
-		[Obsolete]
-		private Task<IList> GetResultAsync(ISession session, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			try
-			{
-				var query1 = session.CreateQuery("from NodeKeyword nk");
-				var query2 = session.CreateQuery("from NodeKeyword nk");
-
-				var multi = session.CreateMultiQuery();
-				multi.Add(query1).Add(query2);
-				return multi.ListAsync(cancellationToken);
-			}
-			catch (Exception ex)
-			{
-				return Task.FromException<IList>(ex);
 			}
 		}
 

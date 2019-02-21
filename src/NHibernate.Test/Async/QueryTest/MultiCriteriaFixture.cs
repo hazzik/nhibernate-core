@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NHibernate.Cfg;
 using NHibernate.Criterion;
+using NHibernate.Engine;
 using NHibernate.Test.SecondLevelCacheTests;
 using NUnit.Framework;
 using Environment = NHibernate.Cfg.Environment;
@@ -34,7 +35,7 @@ namespace NHibernate.Test.QueryTest
 			get { return new[] { "SecondLevelCacheTest.Item.hbm.xml" }; }
 		}
 
-		protected override bool AppliesTo(Engine.ISessionFactoryImplementor factory)
+		protected override bool AppliesTo(ISessionFactoryImplementor factory)
 		{
 			return factory.ConnectionProvider.Driver.SupportsMultipleQueries;
 		}
@@ -134,7 +135,7 @@ namespace NHibernate.Test.QueryTest
 		[Test]
 		public async Task CanUseSecondLevelCacheWithPositionalParametersAsync()
 		{
-			var cacheHashtable = MultipleQueriesFixtureAsync.GetHashTableUsedAsQueryCache(Sfi);
+			var cacheHashtable = MultiCriteriaFixture.GetHashTableUsedAsQueryCache(Sfi);
 			cacheHashtable.Clear();
 
 			await (CreateItemsAsync());
@@ -151,8 +152,8 @@ namespace NHibernate.Test.QueryTest
 			//set the query in the cache
 			await (DoMutiQueryAndAssertAsync());
 
-			var cacheHashtable = MultipleQueriesFixtureAsync.GetHashTableUsedAsQueryCache(Sfi);
-			var cachedListEntry = (IList)new ArrayList(cacheHashtable.Values)[0];
+			var cacheHashtable = MultiCriteriaFixture.GetHashTableUsedAsQueryCache(Sfi);
+			var cachedListEntry = (IList)new ArrayList((ICollection) cacheHashtable.Values)[0];
 			var cachedQuery = (IList)cachedListEntry[1];
 
 			var firstQueryResults = (IList)cachedQuery[0];
