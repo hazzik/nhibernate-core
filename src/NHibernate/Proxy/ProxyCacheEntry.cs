@@ -70,15 +70,3 @@ namespace NHibernate.Proxy
 		public override int GetHashCode() => _hashCode;
 	}
 }
-
-namespace NHibernate.Proxy.DynamicProxy
-{
-	// Since v5.2
-	[Obsolete("Use NHibernate.Proxy.ProxyCacheEntry instead")]
-	public class ProxyCacheEntry : NHibernate.Proxy.ProxyCacheEntry
-	{
-		public ProxyCacheEntry(System.Type baseType, System.Type[] interfaces) : base(baseType, interfaces)
-		{
-		}
-	}
-}
