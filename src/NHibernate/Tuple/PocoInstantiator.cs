@@ -3,8 +3,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 
 using NHibernate.Bytecode;
-using NHibernate.Mapping;
-using NHibernate.Proxy;
 using NHibernate.Util;
 
 namespace NHibernate.Tuple
@@ -20,10 +18,6 @@ namespace NHibernate.Tuple
 		[NonSerialized]
 		private IInstantiationOptimizer optimizer;
 
-		private readonly IProxyFactory proxyFactory;  // 6.0 TODO: remove
-
-		private readonly bool generateFieldInterceptionProxy; // 6.0 TODO: remove
-
 		private readonly bool embeddedIdentifier;
 
 		private readonly bool _isAbstract;
@@ -31,20 +25,11 @@ namespace NHibernate.Tuple
 		[NonSerialized]
 		private ConstructorInfo constructor;
 
-		private readonly System.Type proxyInterface; // 6.0 TODO: remove
-
-		// Since 5.3
-		[Obsolete("This constructor has no more usage in NHibernate and will be removed in a future version.")]
-		public PocoInstantiator()
-		{
-		}
-
 		public PocoInstantiator(Mapping.Component component, IInstantiationOptimizer optimizer)
 		{
 			mappedClass = component.ComponentClass;
 			this.optimizer = optimizer;
 
-			proxyInterface = null;
 			embeddedIdentifier = false;
 
 			try
@@ -59,14 +44,6 @@ namespace NHibernate.Tuple
 		}
 
 		// Since 5.3
-		[Obsolete("Use PocoEntityInstantiator class instead.")]
-		public PocoInstantiator(PersistentClass persistentClass, IInstantiationOptimizer optimizer, IProxyFactory proxyFactory, bool generateFieldInterceptionProxy)
-			: this(persistentClass.MappedClass, optimizer, persistentClass.HasEmbeddedIdentifier)
-		{
-			proxyInterface = persistentClass.ProxyInterface;
-			this.proxyFactory = proxyFactory;
-			this.generateFieldInterceptionProxy = generateFieldInterceptionProxy;
-		}
 
 		public PocoInstantiator(System.Type mappedClass, IInstantiationOptimizer optimizer, bool embeddedIdentifier)
 		{
@@ -100,11 +77,7 @@ namespace NHibernate.Tuple
 			{
 				throw new InstantiationException("Cannot instantiate abstract class or interface: ", mappedClass);
 			}
-			// 6.0 TODO: Remove if statement
-			if (generateFieldInterceptionProxy)
-			{
-				return proxyFactory.GetFieldInterceptionProxy(CreateInstance);
-			}
+
 			return CreateInstance();
 		}
 
@@ -134,8 +107,7 @@ namespace NHibernate.Tuple
 
 		public virtual bool IsInstance(object obj)
 		{
-			// 6.0 TODO: Remove the proxyInterface check
-			return mappedClass.IsInstanceOfType(obj) || (proxyInterface != null && proxyInterface.IsInstanceOfType(obj)); //this one needed only for guessEntityMode()
+			return mappedClass.IsInstanceOfType(obj);
 		}
 
 		#endregion
