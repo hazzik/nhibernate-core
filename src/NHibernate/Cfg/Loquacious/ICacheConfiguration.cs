@@ -1,6 +1,4 @@
-using System;
 using NHibernate.Cache;
-using NHibernate.Util;
 
 namespace NHibernate.Cfg.Loquacious
 {
@@ -20,18 +18,6 @@ namespace NHibernate.Cfg.Loquacious
 		string RegionsPrefix { set; }
 		int DefaultExpiration { set; }
 		void Provider<TProvider>() where TProvider : ICacheProvider;
-		[Obsolete("This method is invalid and should not be used. Use the QueryCacheFactory extension method instead.", true)]
-		void QueryCache<TFactory>() where TFactory : IQueryCache;
-	}
-
-	// 6.0 TODO: merge into ICacheConfigurationProperties
-	public static class CacheConfigurationPropertiesExtensions
-	{
-		public static void QueryCacheFactory<TFactory>(this ICacheConfigurationProperties config) where TFactory : IQueryCacheFactory
-		{
-			ReflectHelper
-				.CastOrThrow<CacheConfigurationProperties>(config, "Setting the query cache factory with Loquacious")
-				.QueryCacheFactory<TFactory>();
-		}
+		void QueryCacheFactory<TFactory>() where TFactory : IQueryCacheFactory;
 	}
 }

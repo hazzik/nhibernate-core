@@ -12,8 +12,6 @@ namespace NHibernate.Cfg.Loquacious
 			this.cfg = cfg;
 		}
 
-		#region Implementation of ICacheConfigurationProperties
-
 		public bool UseMinimalPuts
 		{
 			set { cfg.SetProperty(Environment.UseMinimalPuts, value.ToString().ToLowerInvariant()); }
@@ -40,12 +38,6 @@ namespace NHibernate.Cfg.Loquacious
 			cfg.SetProperty(Environment.CacheProvider, typeof(TProvider).AssemblyQualifiedName);
 		}
 
-		[Obsolete("This method is invalid and should not be used. Use QueryCacheFactory method instead.", true)]
-		public void QueryCache<TFactory>() where TFactory : IQueryCache
-		{
-			throw new InvalidOperationException("This method is invalid and should not be used. Use QueryCacheFactory method instead.");
-		}
-
 		public void QueryCacheFactory<TFactory>() where TFactory : IQueryCacheFactory
 		{
 			UseSecondLevelCache = true;
@@ -57,7 +49,6 @@ namespace NHibernate.Cfg.Loquacious
 		{
 			set { cfg.SetProperty(Environment.UseSecondLevelCache, value.ToString().ToLowerInvariant()); }
 		}
-		#endregion
 	}
 
 	internal class CacheConfiguration : ICacheConfiguration
