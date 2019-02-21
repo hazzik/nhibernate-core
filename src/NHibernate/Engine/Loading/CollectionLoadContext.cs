@@ -145,19 +145,6 @@ namespace NHibernate.Engine.Loading
 		/// complete.
 		/// </summary>
 		/// <param name="persister">The persister for which to complete loading.</param>
-		// Since v5.2
-		[Obsolete("Please use overload with skipCache parameter instead.")]
-		public void EndLoadingCollections(ICollectionPersister persister)
-		{
-			EndLoadingCollections(persister, false);
-		}
-
-		/// <summary>
-		/// Finish the process of collection-loading for this bound result set. Mainly this
-		/// involves cleaning up resources and notifying the collections that loading is
-		/// complete.
-		/// </summary>
-		/// <param name="persister">The persister for which to complete loading.</param>
 		/// <param name="skipCache">Indicates if collection must not be put in cache.</param>
 		public void EndLoadingCollections(ICollectionPersister persister, bool skipCache)
 		{
