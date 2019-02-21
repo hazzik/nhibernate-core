@@ -268,9 +268,6 @@ namespace NHibernate.Impl
 		/// <inheritdoc />
 		public virtual DbConnection Connection => ConnectionManager.GetConnection();
 
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		public abstract IQueryTranslator[] GetQueries(IQueryExpression query, bool scalar);
 		public abstract EventListeners Listeners { get; }
 		public abstract bool IsEventSource { get; }
 		public abstract object GetEntityUsingInterceptor(EntityKey key);

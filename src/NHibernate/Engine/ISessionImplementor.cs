@@ -7,7 +7,6 @@ using NHibernate.Cache;
 using NHibernate.Collection;
 using NHibernate.Engine.Query.Sql;
 using NHibernate.Event;
-using NHibernate.Hql;
 using NHibernate.Impl;
 using NHibernate.Loader.Custom;
 using NHibernate.Multi;
@@ -297,10 +296,6 @@ namespace NHibernate.Engine
 
 		IQuery GetNamedSQLQuery(string name);
 		
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		IQueryTranslator[] GetQueries(IQueryExpression query, bool scalar); // NH specific for MultiQuery
-
 		IInterceptor Interceptor { get; }
 
 		/// <summary> Retrieves the configured event listeners from this event source. </summary>

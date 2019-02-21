@@ -9,7 +9,6 @@ using NHibernate.Engine;
 using NHibernate.Engine.Query;
 using NHibernate.Engine.Query.Sql;
 using NHibernate.Event;
-using NHibernate.Hql;
 using NHibernate.Id;
 using NHibernate.Loader.Criteria;
 using NHibernate.Loader.Custom;
@@ -285,18 +284,6 @@ namespace NHibernate.Impl
 		public override IDictionary<string, IFilter> EnabledFilters
 		{
 			get { return CollectionHelper.EmptyDictionary<string, IFilter>(); }
-		}
-
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		public override IQueryTranslator[] GetQueries(IQueryExpression query, bool scalar)
-		{
-			using (BeginContext())
-			{
-				// take the union of the query spaces (ie the queried tables)
-				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(query, scalar, EnabledFilters);
-				return plan.Translators;
-			}
 		}
 
 		public override IInterceptor Interceptor

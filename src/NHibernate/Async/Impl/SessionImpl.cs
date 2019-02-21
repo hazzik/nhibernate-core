@@ -287,17 +287,6 @@ namespace NHibernate.Impl
 		}
 
 		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		public override async Task<IQueryTranslator[]> GetQueriesAsync(IQueryExpression query, bool scalar, CancellationToken cancellationToken)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-			using (BeginProcess())
-			{
-				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(query, scalar, enabledFilters);
-				await (AutoFlushIfRequiredAsync(plan.QuerySpaces, cancellationToken)).ConfigureAwait(false);
-				return plan.Translators;
-			}
-		}
 
 		public override async Task<IEnumerable<T>> EnumerableAsync<T>(IQueryExpression queryExpression, QueryParameters queryParameters, CancellationToken cancellationToken)
 		{

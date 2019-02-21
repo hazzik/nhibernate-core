@@ -531,16 +531,6 @@ namespace NHibernate.Impl
 		}
 
 		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		public override IQueryTranslator[] GetQueries(IQueryExpression query, bool scalar)
-		{
-			using (BeginProcess())
-			{
-				var plan = Factory.QueryPlanCache.GetHQLQueryPlan(query, scalar, enabledFilters);
-				AutoFlushIfRequired(plan.QuerySpaces);
-				return plan.Translators;
-			}
-		}
 
 		public override IEnumerable<T> Enumerable<T>(IQueryExpression queryExpression, QueryParameters queryParameters)
 		{

@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,7 +16,6 @@ using NHibernate.Cache;
 using NHibernate.Collection;
 using NHibernate.Engine.Query.Sql;
 using NHibernate.Event;
-using NHibernate.Hql;
 using NHibernate.Impl;
 using NHibernate.Loader.Custom;
 using NHibernate.Multi;
@@ -178,10 +176,6 @@ namespace NHibernate.Engine
 		Task ListCustomQueryAsync(ICustomQuery customQuery, QueryParameters queryParameters, IList results, CancellationToken cancellationToken);
 
 		Task<IList<T>> ListCustomQueryAsync<T>(ICustomQuery customQuery, QueryParameters queryParameters, CancellationToken cancellationToken);
-		
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		Task<IQueryTranslator[]> GetQueriesAsync(IQueryExpression query, bool scalar, CancellationToken cancellationToken); // NH specific for MultiQuery
 
 		/// <summary> 
 		/// Get the entity instance associated with the given <tt>Key</tt>,

@@ -19,7 +19,6 @@ using NHibernate.Engine;
 using NHibernate.Engine.Query;
 using NHibernate.Engine.Query.Sql;
 using NHibernate.Event;
-using NHibernate.Hql;
 using NHibernate.Id;
 using NHibernate.Loader.Criteria;
 using NHibernate.Loader.Custom;
@@ -260,24 +259,6 @@ namespace NHibernate.Impl
 					await (AfterOperationAsync(success, cancellationToken)).ConfigureAwait(false);
 				}
 				temporaryPersistenceContext.Clear();
-			}
-		}
-
-		// Since v5.2
-		[Obsolete("This method has no usages and will be removed in a future version")]
-		public override Task<IQueryTranslator[]> GetQueriesAsync(IQueryExpression query, bool scalar, CancellationToken cancellationToken)
-		{
-			if (cancellationToken.IsCancellationRequested)
-			{
-				return Task.FromCanceled<IQueryTranslator[]>(cancellationToken);
-			}
-			try
-			{
-				return Task.FromResult<IQueryTranslator[]>(GetQueries(query, scalar));
-			}
-			catch (Exception ex)
-			{
-				return Task.FromException<IQueryTranslator[]>(ex);
 			}
 		}
 
