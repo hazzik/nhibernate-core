@@ -15,16 +15,6 @@ namespace NHibernate.Test.CfgTest
 			{
 				throw new NotImplementedException();
 			}
-
-			public object CreateInstance(System.Type type, bool nonPublic)
-			{
-				throw new NotImplementedException();
-			}
-
-			public object CreateInstance(System.Type type, params object[] ctorArgs)
-			{
-				throw new NotImplementedException();
-			}
 		}
 		private class InvalidObjectsFactory
 		{
@@ -60,7 +50,6 @@ namespace NHibernate.Test.CfgTest
 		{
 			var properties = new Dictionary<string, string> { { Environment.PropertyObjectsFactory, typeof(InvalidNoCtorObjectsFactory).AssemblyQualifiedName } };
 			Assert.That(() => Environment.BuildObjectsFactory(properties), Throws.TypeOf<HibernateObjectsFactoryException>()
-																				   .And.InnerException.Message.Contains("constructor was not found"));
 		}
 	}
 }
