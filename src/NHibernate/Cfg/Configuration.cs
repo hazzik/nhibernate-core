@@ -554,7 +554,6 @@ namespace NHibernate.Cfg
 				var dialect = new Lazy<Dialect.Dialect>(() => Dialect.Dialect.GetDialect(properties));
 				OnBeforeBindMapping(new BindMappingEventArgs(mappingDocument, documentFileName));
 				var mappings = CreateMappings();
-				mappings.LazyDialect = dialect;
 				new MappingRootBinder(mappings).Bind(mappingDocument);
 				OnAfterBindMapping(new BindMappingEventArgs(mappingDocument, documentFileName));
 			}
@@ -588,19 +587,6 @@ namespace NHibernate.Cfg
 			{
 				handler(this, bindMappingEventArgs);
 			}
-		}
-
-		/// <summary>
-		/// Create a new <see cref="Mappings" /> to add classes and collection
-		/// mappings to.
-		/// </summary>
-		//Since v5.2
-		[Obsolete("Please use overload without a dialect parameter.")]
-		public Mappings CreateMappings(Dialect.Dialect dialect)
-		{
-			var mappings = CreateMappings();
-			mappings.LazyDialect = new Lazy<Dialect.Dialect>(() => dialect);
-			return mappings;
 		}
 
 		public Mappings CreateMappings()
