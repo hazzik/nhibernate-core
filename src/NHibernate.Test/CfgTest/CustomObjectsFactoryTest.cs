@@ -49,7 +49,7 @@ namespace NHibernate.Test.CfgTest
 		public void WhenNoDefaultCtorThenThrow()
 		{
 			var properties = new Dictionary<string, string> { { Environment.PropertyObjectsFactory, typeof(InvalidNoCtorObjectsFactory).AssemblyQualifiedName } };
-			Assert.That(() => Environment.BuildObjectsFactory(properties), Throws.TypeOf<HibernateObjectsFactoryException>()
+			Assert.That(() => Environment.BuildObjectsFactory(properties), Throws.TypeOf<HibernateObjectsFactoryException>());
 		}
 	}
 }
