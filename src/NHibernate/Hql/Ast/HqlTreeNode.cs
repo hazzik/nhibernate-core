@@ -888,7 +888,7 @@ namespace NHibernate.Hql.Ast
 	public class HqlInner : HqlTreeNode
 	{
 		public HqlInner(IASTFactory factory)
-			: base(HqlSqlWalker.LEFT, "inner", factory)
+			: base(HqlSqlWalker.INNER, "inner", factory)
 		{
 		}
 	}
