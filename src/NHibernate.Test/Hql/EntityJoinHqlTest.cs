@@ -121,7 +121,7 @@ namespace NHibernate.Test.Hql
 			}
 		}
 
-		[Test, Ignore("Failing for unrelated reasons")]
+		[Test]
 		public void CrossJoinAndWithClause()
 		{
 			//This is about complex theta style join fix that was implemented in hibernate along with entity join functionality
