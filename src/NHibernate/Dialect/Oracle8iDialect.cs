@@ -34,6 +34,9 @@ namespace NHibernate.Dialect
 			get { return "add"; }
 		}
 
+		/// <inheritdoc />
+		public override string CrossJoinSeparator => ", ";
+
 		public override string CascadeConstraintsString
 		{
 			get { return " cascade constraints"; }

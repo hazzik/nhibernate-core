@@ -20,6 +20,8 @@ namespace NHibernate.Dialect
 			}
 		}
 
+		public override string CrossJoinSeparator => " cross join ";
+
 		// Current_timestamp is a timestamp with time zone, so it can always be converted back to UTC.
 		/// <inheritdoc />
 		public override string CurrentUtcTimestampSQLFunctionName => "SYS_EXTRACT_UTC(current_timestamp)";

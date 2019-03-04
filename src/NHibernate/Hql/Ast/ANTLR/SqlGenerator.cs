@@ -213,10 +213,10 @@ namespace NHibernate.Hql.Ast.ANTLR
 			else if (right.RealOrigin == left || (right.RealOrigin != null && right.RealOrigin == left.RealOrigin))
 			{
 				// right represents a joins originating from left; or
-				// both right and left reprersent joins originating from the same FromElement
+				// both right and left represent joins originating from the same FromElement
 				if (right.JoinSequence != null && right.JoinSequence.IsThetaStyle)
 				{
-					Out(", ");
+					WriteCrossJoinSeparator();
 				}
 				else
 				{
@@ -226,8 +226,13 @@ namespace NHibernate.Hql.Ast.ANTLR
 			else
 			{
 				// these are just two unrelated table references
-				Out(", ");
+				WriteCrossJoinSeparator();
 			}
+		}
+
+		private void WriteCrossJoinSeparator()
+		{
+			Out(sessionFactory.Dialect.CrossJoinSeparator);
 		}
 
 		protected virtual void NestedFromFragment(IASTNode d, IASTNode parent)
@@ -246,7 +251,7 @@ namespace NHibernate.Hql.Ast.ANTLR
 						// right represents a joins originating from left...
 						if (right.JoinSequence != null && right.JoinSequence.IsThetaStyle)
 						{
-							Out(", ");
+							WriteCrossJoinSeparator();
 						}
 						else
 						{
@@ -257,7 +262,7 @@ namespace NHibernate.Hql.Ast.ANTLR
 					{
 						// not so sure this is even valid subtree.  but if it was, it'd
 						// represent two unrelated table references...
-						Out(", ");
+						WriteCrossJoinSeparator();
 					}
 				}
 

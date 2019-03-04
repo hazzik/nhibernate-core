@@ -2635,5 +2635,13 @@ namespace NHibernate.Dialect
 			// may override to return whatever is most appropriate for that vendor.
 			return new SQLStateConverter(ViolatedConstraintNameExtracter);
 		}
+
+		/// <summary>
+		/// Get the separator to use for definining cross joins when translating HQL queries.
+		/// <para>Typically this will be either [<tt> cross join </tt>] or [<tt>, </tt>]</para>
+		/// <para>Note that the spaces are important!</para>
+		/// </summary>
+		/// <remarks></remarks>
+		public virtual string CrossJoinSeparator => " cross join ";
 	}
 }

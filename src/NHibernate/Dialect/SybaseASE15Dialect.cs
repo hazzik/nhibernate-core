@@ -123,7 +123,9 @@ namespace NHibernate.Dialect
 		{
 			get { return " null"; }
 		}
-		
+
+		public override string CrossJoinSeparator => ", ";
+
 		public override bool QualifyIndexName
 		{
 			get { return false; }
