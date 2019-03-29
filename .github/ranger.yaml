@@ -4,6 +4,6 @@
         action: close
         # You can specify times in human readable form
         # using seconds, minutes, hours, days, weeks and years
-        #delay: 30 minutes
+        delay: 15s
         comment: "For new feature requests, please visit [our forum](https://forum.dawnlabs.io). Closing in $DELAY..."
       invalid: close # use defaults for comment and delay time
