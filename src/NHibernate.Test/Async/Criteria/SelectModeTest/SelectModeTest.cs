@@ -144,7 +144,7 @@ namespace NHibernate.Test.Criteria.SelectModeTest
 			using (var session = OpenSession())
 			{
 				var root = await (session.QueryOver<EntityComplex>()
-								.Fetch(SelectMode.FetchLazyProperties, ec => ec)
+								.Fetch(SelectMode.FetchAllLazyProperties, ec => ec)
 								.Where(ec => ec.LazyProp != null)
 								.Take(1)
 								.SingleOrDefaultAsync());
@@ -187,7 +187,7 @@ namespace NHibernate.Test.Criteria.SelectModeTest
 			using (var session = OpenSession())
 			{
 				var root = await (session.QueryOver<EntityComplex>()
-								.Fetch(SelectMode.FetchProperty, ec => ec.LazyProp, ec => ec.LazyProp2, ec => ec.SameTypeChild.LazyProp2)
+								.Fetch(SelectMode.FetchLazyPropertyGroup, ec => ec.LazyProp, ec => ec.LazyProp2, ec => ec.SameTypeChild.LazyProp2)
 								.Where(ec => ec.Id == _parentEntityComplexId)
 								.SingleOrDefaultAsync());
 
@@ -315,7 +315,7 @@ namespace NHibernate.Test.Criteria.SelectModeTest
 				EntitySimpleChild rootChild = null;
 				rootChild = await (session.QueryOver(() => rootChild)
 							.JoinEntityQueryOver(() => parentJoin, Restrictions.Where(() => rootChild.ParentId == parentJoin.Id))
-							.Fetch(SelectMode.FetchLazyProperties, ec => ec)
+							.Fetch(SelectMode.FetchAllLazyProperties, ec => ec)
 							.Take(1)
 							.SingleOrDefaultAsync());
 				parentJoin = await (session.LoadAsync<EntityComplex>(rootChild.ParentId));

@@ -1081,7 +1081,7 @@ namespace NHibernate.Loader
 		{
 			persisters[i] = persister;
 			aliases[i] = oj.RHSAlias;
-			EagerPropertyFetches[i] = oj.SelectMode == SelectMode.FetchLazyProperties;
+			EagerPropertyFetches[i] = oj.SelectMode == SelectMode.FetchAllLazyProperties;
 			ChildFetchEntities[i] = oj.SelectMode == SelectMode.ChildFetch;
 			EntityFetchLazyProperties[i] = oj.EntityFetchLazyProperties;
 		}
@@ -1149,7 +1149,7 @@ namespace NHibernate.Loader
 						join.ShouldFetchCollectionPersister());
 #pragma warning restore 618
 
-				case SelectMode.FetchLazyProperties:
+				case SelectMode.FetchAllLazyProperties:
 #pragma warning disable 618
 					return ReflectHelper.CastOrThrow<ISupportSelectModeJoinable>(join.Joinable, "fetch lazy properties")
 						.SelectFragment(
@@ -1162,7 +1162,7 @@ namespace NHibernate.Loader
 							true);
 #pragma warning restore 618
 
-				case SelectMode.FetchProperty:
+				case SelectMode.FetchLazyPropertyGroup:
 					return ReflectHelper.CastOrThrow<ISupportLazyPropsJoinable>(join.Joinable, "fetch lazy property")
 										.SelectFragment(
 											next?.Joinable,

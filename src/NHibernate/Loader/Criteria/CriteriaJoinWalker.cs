@@ -204,8 +204,8 @@ namespace NHibernate.Loader.Criteria
 					return base.GetJoinType(type, config, path, pathAlias, lhsTable, lhsColumns, nullable, currentDepth, cascadeStyle);
 
 				case SelectMode.Fetch:
-				case SelectMode.FetchLazyProperties:
-				case SelectMode.FetchProperty:
+				case SelectMode.FetchAllLazyProperties:
+				case SelectMode.FetchLazyPropertyGroup:
 				case SelectMode.ChildFetch:
 				case SelectMode.JoinOnly:
 					IsDuplicateAssociation(lhsTable, lhsColumns, type); //deliberately ignore return value!

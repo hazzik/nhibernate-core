@@ -1,3 +1,5 @@
+using System;
+
 namespace NHibernate
 {
 	/// <summary>
@@ -18,6 +20,7 @@ namespace NHibernate
 		/// <summary>
 		/// Fetch the entity and its lazy properties.
 		/// </summary>
+		[Obsolete("Please use FetchAllLazyProperties")]
 		FetchLazyProperties,
 
 		/// <summary>
@@ -41,6 +44,13 @@ namespace NHibernate
 		/// Fetch lazy property group
 		/// Note: To fetch single property it must be mapped with unique fetch group (lazy-group)
 		/// </summary>
-		FetchProperty,
+		FetchLazyPropertyGroup,
+	
+		/// <summary>
+		/// Fetch the entity and its lazy properties.
+		/// </summary>
+#pragma warning disable 618
+		FetchAllLazyProperties = FetchLazyProperties,
+#pragma warning restore 618
 	}
 }

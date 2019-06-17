@@ -186,7 +186,7 @@ namespace NHibernate.Loader
 					return JoinType == JoinType.LeftOuterJoin;
 
 				case SelectMode.Fetch:
-				case SelectMode.FetchLazyProperties:
+				case SelectMode.FetchAllLazyProperties:
 					return true;
 
 				case SelectMode.ChildFetch:
