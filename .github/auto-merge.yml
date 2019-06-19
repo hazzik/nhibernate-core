@@ -1,6 +1,5 @@
 minApprovals:
   MEMBER: 1
-  COLLABORATOR: 2
 maxRequestedChanges:
   COLLABORATOR: 0
 updateBranch: true
