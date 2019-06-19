@@ -7,3 +7,4 @@ updateBranch: true
 deleteBranchAfterMerge: true
 mergeMethod: squash
 blockingTitleRegex: '\bwip\b'
+reportStatus: true
