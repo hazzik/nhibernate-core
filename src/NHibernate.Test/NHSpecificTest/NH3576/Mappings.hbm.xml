@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.NH3576" 
+                   default-lazy="false">
+ 
+  <class name="Pricelist" table="Pricelists" lazy="false">
+
+    <id name="Id" access="property" type="Int64">
+      <column name="ID" />
+      <generator class="native"/>
+    </id>
+
+    <many-to-one name="Tenant" access="property" class="Tenant">
+      <column name="TENANT_ID" not-null="true" />
+    </many-to-one>
+
+    <many-to-one name="BasedOn" access="property" class="Pricelist">
+      <column name="BASED_ON" />
+    </many-to-one>
+
+    <property name="Name" access="property" type="String">
+      <column name="NAME" length="100" not-null="true" />
+    </property>
+
+    <property name="Precision" access="property" type="Int32">
+      <column name="PRECISION" length="2" />
+    </property>
+
+    <property name="IsActive" access="property" type="Boolean">
+      <column name="IS_ACTIVE" />
+    </property>
+
+    <filter name="tenant" condition="TENANT_ID = :id" />
+  </class>
+
+  <class name="Tenant" table="Tenants" lazy="false">
+
+    <id name="Id" access="property" type="Int64">
+      <column name="ID" />
+      <generator class="native"/>
+    </id>
+
+    <property name="Name" access="property" type="String">
+      <column name="NAME" length="50" unique="true" />
+    </property>
+
+    <property name="BaseUrl" access="property" type="String">
+      <column name="BASE_URL" length="100" unique="true" />
+    </property>
+
+    <property name="Title" access="property" type="String">
+      <column name="TITLE" length="255"/>
+    </property>
+
+    <property name="Theme" access="property" type="String">
+      <column name="THEME" length="50"/>
+    </property>
+
+    <filter name="tenant" condition="ID = :id" />
+  </class>
+
+  <filter-def name="tenant">
+    <filter-param name="id" type="Int64" />
+  </filter-def>
+  
+</hibernate-mapping>
