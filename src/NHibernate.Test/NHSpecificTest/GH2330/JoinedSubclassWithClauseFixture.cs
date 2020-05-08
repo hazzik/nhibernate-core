@@ -87,7 +87,33 @@ namespace NHibernate.Test.NHSpecificTest.GH2330
 					.List<UserEntityVisit>()
 					.Select(x => x.Id);
 
-				Assert.That(results, Is.EquivalentTo(new[] {_visit1Id, _visit2Id,}));
+					Assert.That(results, Is.EquivalentTo(new[] {_visit1Id, _visit2Id,}));
+			}
+		}
+
+		[Test]
+		public void SelectRegression()
+		{
+			using (var session = OpenSession())
+			using (session.BeginTransaction())
+			{
+				var result = session
+					.CreateCriteria<UserEntityVisit>()
+					.CreateCriteria(
+						$"{nameof(UserEntityVisit.PersonBase)}",
+						"f",
+						SqlCommand.JoinType.LeftOuterJoin
+						//, Restrictions.Eq("Deleted", false)
+					)
+					.SetProjection(
+						Projections.ProjectionList()
+							.Add(Projections.Property("f.FamilyName"))
+							.Add(Projections.Property("f.Deleted"))
+							.Add(Projections.Property("f.Login")))
+					.List();
+
+				var expected = new object[] {"grohl", false, "dave"};
+				Assert.That(result, Is.EquivalentTo(new[] {expected, expected}));
 			}
 		}
 

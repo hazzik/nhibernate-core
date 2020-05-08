@@ -9,14 +9,12 @@ namespace NHibernate.Test.NHSpecificTest.GH2330
 		public virtual string FamilyName { get; set; }
 	}
 
-	[Serializable]
 	public class PersonBase : Node
 	{
 		public virtual string Login { get; set; }
 		public override bool Deleted { get; set; }
 	}
 
-	[Serializable]
 	public class UserEntityVisit
 	{
 		public virtual int Id { get; set; }
