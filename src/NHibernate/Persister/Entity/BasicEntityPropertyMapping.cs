@@ -28,7 +28,7 @@ namespace NHibernate.Persister.Entity
 
 		public override string[] ToColumns(string alias, string propertyName)
 		{
-			var tableNumber = persister.GetSubclassPropertyTableNumber(persister.GetPropertyIndex(propertyName));
+			var tableNumber = persister.GetSubclassPropertyTableNumber(propertyName);
 			return base.ToColumns(
 				persister.GenerateTableAlias(alias, tableNumber),
 				propertyName);

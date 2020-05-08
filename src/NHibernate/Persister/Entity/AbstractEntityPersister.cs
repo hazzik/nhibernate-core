@@ -1118,7 +1118,7 @@ namespace NHibernate.Persister.Entity
 			return false;
 		}
 
-		protected internal abstract int GetSubclassPropertyTableNumber(int i);
+		protected abstract int GetSubclassPropertyTableNumber(int i);
 
 		internal int GetSubclassPropertyTableNumber(string propertyName, string entityName)
 		{
@@ -2110,8 +2110,9 @@ namespace NHibernate.Persister.Entity
 					return getSubclassColumnTableNumberClosure()[idx];
 				}
 			}*/
-			int index = Array.IndexOf(SubclassPropertyNameClosure, rootPropertyName); //TODO: optimize this better!
-			return index == -1 ? 0 : GetSubclassPropertyTableNumber(index);
+
+			var index = this.EntityMetamodel.GetPropertyIndexOrNull(rootPropertyName);
+			return index != null ? GetSubclassPropertyTableNumber(index.Value) : 0;
 		}
 
 		public virtual Declarer GetSubclassPropertyDeclarer(string propertyPath)

@@ -675,7 +675,7 @@ possible solutions:
 				select.AddColumn(name, DiscriminatorColumnName, DiscriminatorAlias);
 		}
 
-		protected internal override int GetSubclassPropertyTableNumber(int i)
+		protected override int GetSubclassPropertyTableNumber(int i)
 		{
 			return subclassPropertyTableNumberClosure[i];
 		}
