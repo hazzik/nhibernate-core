@@ -53,6 +53,27 @@ namespace NHibernate.Test.Linq
 			}
 		}
 
+		[Test]
+		public void StartsWithEscapeCharacter()
+		{
+			using (var tx = session.BeginTransaction())
+			{
+				var employeeName = @"%_\Name";
+
+				session.Save(new Employee { FirstName = employeeName, LastName = "LastName" });
+				session.Flush();
+
+				var query = 
+					(from e in db.Employees
+		             where e.FirstName.StartsWith(@"%_\")
+		             select e).ToList();
+
+				Assert.That(query.Count, Is.EqualTo(1));
+				Assert.That(query[0].FirstName, Is.EqualTo(employeeName));
+				tx.Rollback();
+			}
+		}
+
 		private static class SqlMethods
 		{
 			public static bool Like(string expression, string pattern)
