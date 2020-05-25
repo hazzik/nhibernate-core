@@ -20,8 +20,8 @@ namespace NHibernate.Action
 {
 	using System.Threading.Tasks;
 	using System.Threading;
-	public abstract partial class EntityAction : 
-		IAsyncExecutable,
+	public abstract partial class EntityAction :
+		IExecutable,
 		IBeforeTransactionCompletionProcess,
 		IAfterTransactionCompletionProcess,
 		IComparable<EntityAction>, 

@@ -14,7 +14,7 @@ namespace NHibernate.Action
 	/// Implementation of BulkOperationCleanupAction.
 	/// </summary>
 	[Serializable]
-	public partial class BulkOperationCleanupAction : IAsyncExecutable, IAfterTransactionCompletionProcess
+	public partial class BulkOperationCleanupAction : IExecutable, IAfterTransactionCompletionProcess 
 	{
 		private readonly ISessionImplementor session;
 		private readonly HashSet<string> affectedEntityNames = new HashSet<string>();
@@ -109,19 +109,13 @@ namespace NHibernate.Action
 		}
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public BeforeTransactionCompletionProcessDelegate BeforeTransactionCompletionProcess =>
-			null;
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public AfterTransactionCompletionProcessDelegate AfterTransactionCompletionProcess =>
-			ExecuteAfterTransactionCompletion;
 
-		IBeforeTransactionCompletionProcess IAsyncExecutable.BeforeTransactionCompletionProcess =>
+		IBeforeTransactionCompletionProcess IExecutable.BeforeTransactionCompletionProcess =>
 			null;
 
-		IAfterTransactionCompletionProcess IAsyncExecutable.AfterTransactionCompletionProcess => 
+		IAfterTransactionCompletionProcess IExecutable.AfterTransactionCompletionProcess => 
 			this;
 
 		public void ExecuteAfterTransactionCompletion(bool success)

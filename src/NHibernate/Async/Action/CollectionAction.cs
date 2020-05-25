@@ -22,7 +22,7 @@ namespace NHibernate.Action
 {
 	using System.Threading.Tasks;
 	using System.Threading;
-	public abstract partial class CollectionAction : IAsyncExecutable, IComparable<CollectionAction>, IDeserializationCallback, IAfterTransactionCompletionProcess
+	public abstract partial class CollectionAction : IExecutable, IComparable<CollectionAction>, IDeserializationCallback, IAfterTransactionCompletionProcess
 	{
 
 		protected async Task<object> GetKeyAsync(CancellationToken cancellationToken)
@@ -67,6 +67,10 @@ namespace NHibernate.Action
 		/// <summary>Execute this action</summary>
 		/// <param name="cancellationToken">A cancellation token that can be used to cancel the work</param>
 		public abstract Task ExecuteAsync(CancellationToken cancellationToken);
+
+		//Since v5.2
+
+		//Since v5.2
 
 		public virtual Task ExecuteAfterTransactionCompletionAsync(bool success, CancellationToken cancellationToken)
 		{

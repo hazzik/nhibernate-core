@@ -8,14 +8,10 @@
 //------------------------------------------------------------------------------
 
 
-using System;
-using NHibernate.Engine;
-
 namespace NHibernate.Action
 {
 	using System.Threading.Tasks;
 	using System.Threading;
-	
 	public partial interface IExecutable
 	{
 

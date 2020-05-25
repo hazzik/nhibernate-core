@@ -14,7 +14,7 @@ namespace NHibernate.Action
 	/// Any action relating to insert/update/delete of a collection
 	/// </summary>
 	[Serializable]
-	public abstract partial class CollectionAction : IAsyncExecutable, IComparable<CollectionAction>, IDeserializationCallback, IAfterTransactionCompletionProcess
+	public abstract partial class CollectionAction : IExecutable, IComparable<CollectionAction>, IDeserializationCallback, IAfterTransactionCompletionProcess
 	{
 		private readonly object key;
 		[NonSerialized] private ICollectionPersister persister;
@@ -106,21 +106,15 @@ namespace NHibernate.Action
 		/// <summary>Execute this action</summary>
 		public abstract void Execute();
 
-		IBeforeTransactionCompletionProcess IAsyncExecutable.BeforeTransactionCompletionProcess => 
+		IBeforeTransactionCompletionProcess IExecutable.BeforeTransactionCompletionProcess => 
 			null;
 
-		IAfterTransactionCompletionProcess IAsyncExecutable.AfterTransactionCompletionProcess =>
+		IAfterTransactionCompletionProcess IExecutable.AfterTransactionCompletionProcess =>
 			persister.HasCache ? this : null;
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public virtual BeforeTransactionCompletionProcessDelegate BeforeTransactionCompletionProcess => 
-			null;
 
 		//Since v5.2
-		[Obsolete("This property is not used and will be removed in a future version.")]
-		public virtual AfterTransactionCompletionProcessDelegate AfterTransactionCompletionProcess =>
-			persister.HasCache ? ExecuteAfterTransactionCompletion : default(AfterTransactionCompletionProcessDelegate);
 
 		public virtual void ExecuteAfterTransactionCompletion(bool success)
 		{
