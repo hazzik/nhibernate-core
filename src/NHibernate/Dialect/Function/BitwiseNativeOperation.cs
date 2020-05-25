@@ -1,32 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using NHibernate.Engine;
 using NHibernate.SqlCommand;
 using NHibernate.Type;
-
-// 6.0 TODO: remove NHibernate.Dialect.BitwiseNativeOperation,
-// and remove "Function." prefix where the non obsolete one is used.
-namespace NHibernate.Dialect
-{
-	/// <inheritdoc />
-	[Serializable]
-	// Since 5.2
-	[Obsolete("Use NHibernate.Dialect.Function.BitwiseNativeOperation instead")]
-	public class BitwiseNativeOperation : Function.BitwiseNativeOperation
-	{
-		/// <inheritdoc />
-		public BitwiseNativeOperation(string sqlOpToken) : base(sqlOpToken)
-		{
-		}
-
-		/// <inheritdoc />
-		public BitwiseNativeOperation(string sqlOpToken, bool isNot) : base(sqlOpToken, isNot)
-		{
-		}
-	}
-}
 
 namespace NHibernate.Dialect.Function
 {
