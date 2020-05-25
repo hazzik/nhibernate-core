@@ -6,10 +6,6 @@ namespace NHibernate.Dialect.Schema
 {
 	public class MsSqlCeDataBaseSchema: AbstractDataBaseSchema
 	{
-		// Since v5.2
-		[Obsolete("Use overload with dialect argument.")]
-		public MsSqlCeDataBaseSchema(DbConnection connection) : this(connection, Dialect.GetDialect()) {}
-
 		public MsSqlCeDataBaseSchema(DbConnection connection, Dialect dialect) : base(connection, dialect)
 		{
 			UseDialectQualifyInsteadOfTableName = dialect is MsSqlCeDialect;
