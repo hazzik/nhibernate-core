@@ -10,7 +10,6 @@ using NHibernate.Mapping;
 using NHibernate.SqlCommand;
 using NHibernate.SqlCommand.Parser;
 using NHibernate.Type;
-using NHibernate.Util;
 using Environment = NHibernate.Cfg.Environment;
 
 namespace NHibernate.Dialect
