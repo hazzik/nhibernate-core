@@ -15,16 +15,6 @@ namespace NHibernate.Test.CfgTest
 			{
 				throw new NotImplementedException();
 			}
-
-			public object CreateInstance(System.Type type, bool nonPublic)
-			{
-				throw new NotImplementedException();
-			}
-
-			public object CreateInstance(System.Type type, params object[] ctorArgs)
-			{
-				throw new NotImplementedException();
-			}
 		}
 		private class InvalidObjectsFactory
 		{

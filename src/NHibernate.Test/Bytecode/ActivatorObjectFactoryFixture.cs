@@ -42,36 +42,5 @@ namespace NHibernate.Test.Bytecode
 			Assert.That(instance, Is.Not.Null);
 			Assert.That(instance, Is.InstanceOf<PublicParameterLessCtor>());
 		}
-
-		[Test, Obsolete]
-		public void CreateInstanceWithNoPublicCtor()
-		{
-			IObjectsFactory of = GetObjectsFactory();
-			Assert.Throws<ArgumentNullException>(() => of.CreateInstance(null, false));
-			var instance = of.CreateInstance(typeof(WithOutPublicParameterLessCtor), true);
-			Assert.That(instance, Is.Not.Null);
-			Assert.That(instance, Is.InstanceOf<WithOutPublicParameterLessCtor>());
-		}
-
-		[Test, Obsolete]
-		public void CreateInstanceOfValueType()
-		{
-			IObjectsFactory of = GetObjectsFactory();
-			var instance = of.CreateInstance(typeof(ValueType), true);
-			Assert.That(instance, Is.Not.Null);
-			Assert.That(instance, Is.InstanceOf<ValueType>());
-		}
-
-		[Test, Obsolete]
-		public void CreateInstanceWithArguments()
-		{
-			IObjectsFactory of = GetObjectsFactory();
-			Assert.Throws<ArgumentNullException>(() => of.CreateInstance(null, new[] {1}));
-			var value = "a value";
-			var instance = of.CreateInstance(typeof(WithOutPublicParameterLessCtor), new[]{value});
-			Assert.That(instance, Is.Not.Null);
-			Assert.That(instance, Is.InstanceOf<WithOutPublicParameterLessCtor>());
-			Assert.That(((WithOutPublicParameterLessCtor)instance).Something, Is.EqualTo(value));
-		}
 	}
 }
