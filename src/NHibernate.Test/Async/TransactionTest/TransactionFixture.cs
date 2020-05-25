@@ -285,53 +285,5 @@ namespace NHibernate.Test.TransactionTest
 				Assert.That(s.GetCurrentTransaction(), Is.Null);
 			}
 		}
-
-		[Test, Obsolete]
-		public async Task CanCommitFromSessionObsoleteTransactionAsync()
-		{
-			int id;
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var person = new Person();
-				await (s.SaveAsync(person));
-				id = person.Id;
-
-				await (s.Transaction.CommitAsync());
-			}
-
-			using (var s = OpenSession())
-			using (var t = s.BeginTransaction())
-			{
-				var person = await (s.GetAsync<Person>(id));
-				Assert.That(person, Is.Not.Null);
-				await (t.CommitAsync());
-			}
-		}
-
-		[Test, Obsolete]
-		public async Task CanRollbackFromSessionObsoleteTransactionAsync()
-		{
-			int id;
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var person = new Person();
-				await (s.SaveAsync(person));
-				id = person.Id;
-
-				await (s.Transaction.RollbackAsync());
-
-				// Need to check before leaving the current using, otherwise the rollback could be the result of the
-				// disposing.
-				using (var s2 = OpenSession())
-				using (var t2 = s2.BeginTransaction())
-				{
-					person = await (s2.GetAsync<Person>(id));
-					Assert.That(person, Is.Null);
-					await (t2.CommitAsync());
-				}
-			}
-		}
 	}
 }

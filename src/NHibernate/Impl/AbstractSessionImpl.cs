@@ -37,11 +37,6 @@ namespace NHibernate.Impl
 
 		private bool closed;
 
-		/// <summary>Get the current NHibernate transaction.</summary>
-		// Since v5.3
-		[Obsolete("Use GetCurrentTransaction extension method instead, and check for null.")]
-		public ITransaction Transaction => ConnectionManager.Transaction;
-
 		protected bool IsTransactionCoordinatorShared { get; }
 
 		public ITransactionContext TransactionContext

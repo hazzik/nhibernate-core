@@ -287,53 +287,5 @@ namespace NHibernate.Test.TransactionTest
 				Assert.That(s.GetCurrentTransaction(), Is.Null);
 			}
 		}
-
-		[Test, Obsolete]
-		public void CanCommitFromSessionObsoleteTransaction()
-		{
-			int id;
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var person = new Person();
-				s.Save(person);
-				id = person.Id;
-
-				s.Transaction.Commit();
-			}
-
-			using (var s = OpenSession())
-			using (var t = s.BeginTransaction())
-			{
-				var person = s.Get<Person>(id);
-				Assert.That(person, Is.Not.Null);
-				t.Commit();
-			}
-		}
-
-		[Test, Obsolete]
-		public void CanRollbackFromSessionObsoleteTransaction()
-		{
-			int id;
-			using (var s = OpenSession())
-			using (s.BeginTransaction())
-			{
-				var person = new Person();
-				s.Save(person);
-				id = person.Id;
-
-				s.Transaction.Rollback();
-
-				// Need to check before leaving the current using, otherwise the rollback could be the result of the
-				// disposing.
-				using (var s2 = OpenSession())
-				using (var t2 = s2.BeginTransaction())
-				{
-					person = s2.Get<Person>(id);
-					Assert.That(person, Is.Null);
-					t2.Commit();
-				}
-			}
-		}
 	}
 }

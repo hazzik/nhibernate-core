@@ -11,22 +11,6 @@ namespace NHibernate.Test.TransactionTest
 	{
 		protected override string[] Mappings => Array.Empty<string>();
 
-		[Test, Obsolete]
-		public void NoTransaction()
-		{
-			var interceptor = new RecordingInterceptor();
-			var synchronisation = new Synchronization();
-			using (var session = Sfi.WithOptions().Interceptor(interceptor).OpenSession())
-			{
-				session.Transaction.RegisterSynchronization(synchronisation);
-				Assert.That(interceptor.afterTransactionBeginCalled, Is.EqualTo(0), "interceptor begin");
-				Assert.That(interceptor.beforeTransactionCompletionCalled, Is.EqualTo(0), "interceptor before");
-				Assert.That(interceptor.afterTransactionCompletionCalled, Is.EqualTo(0), "interceptor after");
-			}
-			Assert.That(synchronisation.BeforeExecutions, Is.EqualTo(0), "sync before");
-			Assert.That(synchronisation.AfterExecutions, Is.EqualTo(0), "sync after");
-		}
-
 		[Test]
 		public void AfterBegin()
 		{

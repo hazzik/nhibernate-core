@@ -406,17 +406,6 @@ namespace NHibernate.AdoNet
 			}
 		}
 
-		// Since v5.3
-		[Obsolete("Use CurrentTransaction instead, and check for null.")]
-		public ITransaction Transaction
-		{
-			get
-			{
-				EnsureTransactionIsCreated();
-				return _transaction;
-			}
-		}
-
 		/// <summary>
 		/// The current transaction if any is ongoing, else <see langword="null" />.
 		/// </summary>

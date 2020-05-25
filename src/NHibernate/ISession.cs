@@ -820,13 +820,6 @@ namespace NHibernate
 		ITransaction BeginTransaction(IsolationLevel isolationLevel);
 
 		/// <summary>
-		/// Get the current Unit of Work and return the associated <c>ITransaction</c> object.
-		/// </summary>
-		// Since v5.3
-		[Obsolete("Use GetCurrentTransaction extension method instead, and check for null.")]
-		ITransaction Transaction { get; }
-
-		/// <summary>
 		/// Join the <see cref="System.Transactions.Transaction.Current"/> system transaction.
 		/// </summary>
 		/// <remarks>
