@@ -6,10 +6,6 @@ namespace NHibernate.Dialect.Schema
 {
 	public class SQLiteDataBaseMetaData : AbstractDataBaseSchema
 	{
-		// Since v5.2
-		[Obsolete("Use overload with dialect argument.")]
-		public SQLiteDataBaseMetaData(DbConnection connection) : this(connection, Dialect.GetDialect()) {}
-
 		public SQLiteDataBaseMetaData(DbConnection connection, Dialect dialect) : base(connection, dialect)
 		{
 			UseDialectQualifyInsteadOfTableName = dialect is SQLiteDialect;
