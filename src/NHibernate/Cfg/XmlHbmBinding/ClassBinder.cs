@@ -11,26 +11,6 @@ namespace NHibernate.Cfg.XmlHbmBinding
 {
 	public abstract class ClassBinder : Binder
 	{
-		//Since v5.2
-		[Obsolete("This field will be removed in a future version.")]
-		protected readonly Dialect.Dialect dialect;
-
-		//Since v5.2
-		[Obsolete("Please use constructor without a dialect parameter.")]
-		protected ClassBinder(Mappings mappings, Dialect.Dialect dialect)
-			: this(mappings)
-		{
-			this.dialect = dialect;
-		}
-
-		//Since v5.2
-		[Obsolete("Please use constructor that accepts mappings parameter instead.")]
-		protected ClassBinder(ClassBinder parent)
-			: this(parent.Mappings)
-		{
-			dialect = parent.dialect;
-		}
-
 		protected ClassBinder(Mappings mappings)
 			: base(mappings)
 		{

@@ -1,4 +1,3 @@
-using System;
 using NHibernate.Cfg.MappingSchema;
 using NHibernate.Mapping;
 using NHibernate.Persister.Entity;
@@ -10,20 +9,6 @@ namespace NHibernate.Cfg.XmlHbmBinding
 	{
 		public JoinedSubclassBinder(Mappings mappings)
 			: base(mappings)
-		{
-		}
-		
-		//Since v5.2
-		[Obsolete("Please use constructor without a dialect parameter.")]
-		public JoinedSubclassBinder(Mappings mappings, Dialect.Dialect dialect)
-			: base(mappings, dialect)
-		{
-		}
-
-		//Since v5.2
-		[Obsolete("Please use constructor that accepts mappings parameter instead.")]
-		public JoinedSubclassBinder(ClassBinder parent)
-			: base(parent)
 		{
 		}
 

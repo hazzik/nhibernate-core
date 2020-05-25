@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using NHibernate.Cfg.MappingSchema;
 using NHibernate.Mapping;
@@ -9,9 +8,7 @@ namespace NHibernate.Cfg.XmlHbmBinding
 	public class ClassCompositeIdBinder : ClassBinder
 	{
 		private Component compositeId;
-		//Since v5.2
-		[Obsolete("Please use constructor that accepts mappings parameter instead.")]
-		public ClassCompositeIdBinder(ClassBinder parent) : base(parent) {}
+
 		public ClassCompositeIdBinder(Mappings mappings) : base(mappings) {}
 
 		public void BindCompositeId(HbmCompositeId idSchema, PersistentClass rootClass)

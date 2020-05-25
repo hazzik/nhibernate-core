@@ -13,13 +13,6 @@ namespace NHibernate.Cfg.XmlHbmBinding
 		{
 		}
 
-		//Since v5.2
-		[Obsolete("Please use constructor without a dialect parameter.")]
-		public RootClassBinder(Mappings mappings, Dialect.Dialect dialect)
-			: base(mappings, dialect)
-		{
-		}
-
 		public void Bind(HbmClass classSchema, IDictionary<string, MetaAttribute> inheritedMetas)
 		{
 			var rootClass = new RootClass();

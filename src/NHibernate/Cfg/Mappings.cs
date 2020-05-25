@@ -88,62 +88,6 @@ namespace NHibernate.Cfg
 		/// </summary>
 		protected internal IDictionary<string, TableDescription> tableNameBinding;
 
-		//6.0 TODO: Remove
-		internal Lazy<Dialect.Dialect> LazyDialect;
-
-		//Since v5.2
-		[Obsolete("Please use constructor without a dialect parameter.")]
-		protected internal Mappings(
-			IDictionary<string, PersistentClass> classes,
-			IDictionary<string, Mapping.Collection> collections,
-			IDictionary<string, Table> tables,
-			IDictionary<string, NamedQueryDefinition> queries,
-			IDictionary<string, NamedSQLQueryDefinition> sqlqueries,
-			IDictionary<string, ResultSetMappingDefinition> resultSetMappings,
-			IDictionary<string, string> imports,
-			IList<SecondPassCommand> secondPasses,
-			Queue<FilterSecondPassArgs> filtersSecondPasses,
-			IList<PropertyReference> propertyReferences,
-			INamingStrategy namingStrategy,
-			IDictionary<string, TypeDef> typeDefs,
-			IDictionary<string, FilterDefinition> filterDefinitions,
-			ISet<ExtendsQueueEntry> extendsQueue,
-			IList<IAuxiliaryDatabaseObject> auxiliaryDatabaseObjects,
-			IDictionary<string, TableDescription> tableNameBinding,
-			IDictionary<Table, ColumnNames> columnNameBindingPerTable,
-			string defaultAssembly,
-			string defaultNamespace,
-			string defaultCatalog,
-			string defaultSchema,
-			string preferPooledValuesLo,
-			Dialect.Dialect dialect) :
-			this(
-				classes,
-				collections,
-				tables,
-				queries,
-				sqlqueries,
-				resultSetMappings,
-				imports,
-				secondPasses,
-				filtersSecondPasses,
-				propertyReferences,
-				namingStrategy,
-				typeDefs,
-				filterDefinitions,
-				extendsQueue,
-				auxiliaryDatabaseObjects,
-				tableNameBinding,
-				columnNameBindingPerTable,
-				defaultAssembly,
-				defaultNamespace,
-				defaultCatalog,
-				defaultSchema,
-				preferPooledValuesLo)
-		{
-			LazyDialect = new Lazy<Dialect.Dialect>(() => dialect);
-		}
-
 		protected internal Mappings(
 			IDictionary<string, PersistentClass> classes,
 			IDictionary<string, Mapping.Collection> collections,
@@ -235,10 +179,6 @@ namespace NHibernate.Cfg
 			classes.TryGetValue(className, out result);
 			return result;
 		}
-
-		//Since v5.2
-		[Obsolete("This property will be removed in a future version.")]
-		public Dialect.Dialect Dialect => LazyDialect.Value;
 
 		/// <summary>
 		/// 

@@ -154,7 +154,6 @@ namespace NHibernate.Cfg
 			}
 
 			var mappings = CreateMappings();
-			mappings.LazyDialect = new Lazy<Dialect.Dialect>(() => Dialect.Dialect.GetDialect(Properties));
 			mappings.AddTypeDef(tdConfiguration.Alias, typeof(TDef).AssemblyQualifiedName, tdConfiguration.Properties.ToTypeParameters());
 			return this;
 		}
