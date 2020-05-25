@@ -178,17 +178,7 @@ namespace NHibernate.Dialect
 		//}
 
 		/// <inheritdoc />
-		// Since v5.1
-		[Obsolete("Use UsesColumnsWithForUpdateOf instead")]
-		public override bool ForUpdateOfColumns
-		{
-			get { return true; }
-		}
-
-		/* 6.0 TODO: uncomment once ForUpdateOfColumns is removed.
-		/// <inheritdoc />
 		public override bool UsesColumnsWithForUpdateOf => true;
-		*/
 
 		/// <summary> 
 		/// Does this dialect support <tt>FOR UPDATE</tt> in conjunction with outer joined rows?

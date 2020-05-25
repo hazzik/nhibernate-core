@@ -649,26 +649,6 @@ namespace NHibernate.Dialect
 		}
 
 		/// <summary>
-		/// SQL Anywhere does support <tt>FOR UPDATE OF</tt> syntax. However,
-		/// in SQL Anywhere one cannot specify both <tt>FOR UPDATE OF</tt> syntax
-		/// and <tt>FOR UPDATE BY LOCK</tt> in the same statement. To achieve INTENT
-		/// locking when using <tt>FOR UPDATE OF</tt> syntax one must use a table hint
-		/// in the query's FROM clause, ie.
-		///
-		/// SELECT * FROM FOO WITH( UPDLOCK ) FOR UPDATE OF ( column-list ).
-		///
-		/// In this dialect, we avoid this issue by supporting only
-		/// <tt>FOR UPDATE BY LOCK</tt>.
-		/// </summary>
-		// Since v5.1
-		[Obsolete("Use UsesColumnsWithForUpdateOf instead")]
-		public override bool ForUpdateOfColumns
-		{
-			get { return false; }
-		}
-
-		/* 6.0 TODO: uncomment once ForUpdateOfColumns is removed.
-		/// <summary>
 		/// SQL Anywhere does support <c>FOR UPDATE OF</c> syntax. However,
 		/// in SQL Anywhere one cannot specify both <c>FOR UPDATE OF</c> syntax
 		/// and <c>FOR UPDATE BY LOCK</c> in the same statement. To achieve INTENT
@@ -681,7 +661,6 @@ namespace NHibernate.Dialect
 		/// <c>FOR UPDATE BY LOCK</c>.
 		/// </summary>
 		public override bool UsesColumnsWithForUpdateOf => false;
-		*/
 
 		/// <summary>
 		/// SQL Anywhere supports <tt>FOR UPDATE</tt> over cursors containing
