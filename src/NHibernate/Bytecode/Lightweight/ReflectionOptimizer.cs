@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Security;
@@ -28,15 +27,6 @@ namespace NHibernate.Bytecode.Lightweight
 		public virtual object CreateInstance()
 		{
 			return createInstanceMethod != null ? createInstanceMethod() : null;
-		}
-
-		/// <summary>
-		/// Class constructor.
-		/// </summary>
-		[Obsolete("This constructor has no usages and will be removed in a future version")]
-		public ReflectionOptimizer(System.Type mappedType, IGetter[] getters, ISetter[] setters)
-			: this(mappedType, getters, setters, null, null)
-		{
 		}
 
 		/// <summary>
