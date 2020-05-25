@@ -14,7 +14,7 @@ namespace NHibernate.Dialect.Function
 	/// with an unlimited number of arguments.
 	/// </summary>
 	[Serializable]
-	public class VarArgsSQLFunction : ISQLFunction, ISQLFunctionExtended
+	public class VarArgsSQLFunction : ISQLFunction
 	{
 		private readonly string begin;
 		private readonly string sep;
@@ -36,19 +36,10 @@ namespace NHibernate.Dialect.Function
 
 		#region ISQLFunction Members
 
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public virtual IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return (returnType == null) ? columnType : returnType;
-		}
-
 		/// <inheritdoc />
 		public virtual IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return returnType ?? argumentTypes.FirstOrDefault();
 		}
 
 		/// <inheritdoc />

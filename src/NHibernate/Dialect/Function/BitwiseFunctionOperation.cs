@@ -29,7 +29,7 @@ namespace NHibernate.Dialect.Function
 	/// Treats bitwise operations as SQL function calls.
 	/// </summary>
 	[Serializable]
-	public class BitwiseFunctionOperation : ISQLFunction, ISQLFunctionExtended
+	public class BitwiseFunctionOperation : ISQLFunction
 	{
 		// TODO 6.0: convert FunctionName to read-only auto-property
 		private readonly string _functionName;
@@ -48,19 +48,9 @@ namespace NHibernate.Dialect.Function
 		#region ISQLFunction Members
 
 		/// <inheritdoc />
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return NHibernateUtil.Int64;
-		}
-
-		/// <inheritdoc />
 		public IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return NHibernateUtil.Int64;
 		}
 
 		/// <inheritdoc />

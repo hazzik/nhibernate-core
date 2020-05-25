@@ -12,27 +12,14 @@ namespace NHibernate.Dialect.Function
 	/// Emulation of coalesce() on Oracle, using multiple nvl() calls
 	/// </summary>
 	[Serializable]
-	public class NvlFunction : ISQLFunction, ISQLFunctionExtended
+	public class NvlFunction : ISQLFunction
 	{
-		public NvlFunction()
-		{
-		}
-
 		#region ISQLFunction Members
-
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return columnType;
-		}
 
 		/// <inheritdoc />
 		public IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return argumentTypes.FirstOrDefault();
 		}
 
 		/// <inheritdoc />

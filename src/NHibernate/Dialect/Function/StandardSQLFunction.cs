@@ -18,7 +18,7 @@ namespace NHibernate.Dialect.Function
 	/// for processing of the associated function.
 	/// </remarks>
 	[Serializable]
-	public class StandardSQLFunction : ISQLFunction, ISQLFunctionExtended
+	public class StandardSQLFunction : ISQLFunction
 	{
 		private IType returnType = null;
 		protected readonly string name;
@@ -45,19 +45,10 @@ namespace NHibernate.Dialect.Function
 
 		#region ISQLFunction Members
 
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public virtual IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return returnType ?? columnType;
-		}
-
 		/// <inheritdoc />
 		public virtual IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return returnType ?? argumentTypes.FirstOrDefault();
 		}
 
 		/// <inheritdoc />

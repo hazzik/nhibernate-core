@@ -34,7 +34,7 @@ namespace NHibernate.Dialect.Function
 	/// Treats bitwise operations as native operations.
 	/// </summary>
 	[Serializable]
-	public class BitwiseNativeOperation : ISQLFunction, ISQLFunctionExtended
+	public class BitwiseNativeOperation : ISQLFunction
 	{
 		private readonly string _sqlOpToken;
 		private readonly bool _isUnary;
@@ -67,19 +67,9 @@ namespace NHibernate.Dialect.Function
 		#region ISQLFunction Members
 
 		/// <inheritdoc />
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return NHibernateUtil.Int64;
-		}
-
-		/// <inheritdoc />
 		public IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return NHibernateUtil.Int64;
 		}
 
 		/// <inheritdoc />

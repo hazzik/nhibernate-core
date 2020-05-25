@@ -65,37 +65,6 @@ namespace NHibernate.Hql.Ast.ANTLR
 		}
 
 		/// <summary>
-		/// Find the function return type given the function name and the first argument expression node.
-		/// </summary>
-		/// <param name="functionName">The function name.</param>
-		/// <param name="first">The first argument expression.</param>
-		/// <returns>the function return type given the function name and the first argument expression node.</returns>
-		// Since v5.3
-		[Obsolete("Please use overload with a IEnumerable<IASTNode> parameter instead.")]
-		public IType FindFunctionReturnType(String functionName, IASTNode first)
-		{
-			// locate the registered function by the given name
-			ISQLFunction sqlFunction = RequireSQLFunction(functionName);
-
-			// determine the type of the first argument...
-			IType argumentType = null;
-
-			if (first != null)
-			{
-				if (sqlFunction is CastFunction)
-				{
-					argumentType = TypeFactory.HeuristicType(first.NextSibling.Text);
-				}
-				else if (first is SqlNode)
-				{
-					argumentType = ((SqlNode) first).DataType;
-				}
-			}
-
-			return sqlFunction.ReturnType(argumentType, _sfi);
-		}
-
-		/// <summary>
 		/// Find the function return type given the function name and the arguments expression nodes.
 		/// </summary>
 		/// <param name="functionName">The function name.</param>
@@ -104,13 +73,6 @@ namespace NHibernate.Hql.Ast.ANTLR
 		public IType FindFunctionReturnType(string functionName, IEnumerable<IASTNode> arguments)
 		{
 			var sqlFunction = RequireSQLFunction(functionName);
-			if (!(sqlFunction is ISQLFunctionExtended extendedSqlFunction))
-			{
-#pragma warning disable 618
-				return FindFunctionReturnType(functionName, arguments.FirstOrDefault());
-#pragma warning restore 618
-			}
-
 			var argumentTypes = new List<IType>();
 			if (sqlFunction is CastFunction)
 			{
@@ -130,7 +92,7 @@ namespace NHibernate.Hql.Ast.ANTLR
 				}
 			}
 
-			return extendedSqlFunction.GetReturnType(argumentTypes, _sfi, true);
+			return sqlFunction.GetReturnType(argumentTypes, _sfi, true);
 		}
 
 		/// <summary>

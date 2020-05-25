@@ -19,7 +19,7 @@ namespace NHibernate.Dialect
 	public abstract class HanaDialectBase : Dialect
 	{
 		[Serializable]
-		private class TypeConvertingVarArgsSQLFunction : ISQLFunction, ISQLFunctionExtended
+		private class TypeConvertingVarArgsSQLFunction : ISQLFunction
 		{
 			private readonly string _begin;
 			private readonly string _sep;
@@ -35,20 +35,12 @@ namespace NHibernate.Dialect
 
 			#region ISQLFunction Members
 
-			// Since v5.3
-			[Obsolete("Use GetReturnType method instead.")]
-			public IType ReturnType(IType columnType, IMapping mapping)
-			{
-				_type = columnType.SqlTypes(mapping)[0];
-				return columnType;
-			}
-
 			/// <inheritdoc />
 			public IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 			{
-#pragma warning disable 618
-				return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+				var columnType = argumentTypes.FirstOrDefault();
+				_type = columnType.SqlTypes(mapping)[0];
+				return columnType;
 			}
 
 			/// <inheritdoc />

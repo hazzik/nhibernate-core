@@ -10,12 +10,6 @@ namespace NHibernate.Dialect.Function
 	{
 		public AvgQueryFunctionInfo() : base("avg", false) { }
 
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public override IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return GetReturnType(new[] {columnType}, mapping, true);
-		}
 
 		/// <inheritdoc />
 		public override IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)

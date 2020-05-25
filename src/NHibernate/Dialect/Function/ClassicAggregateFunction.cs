@@ -10,7 +10,7 @@ using NHibernate.Type;
 namespace NHibernate.Dialect.Function
 {
 	[Serializable]
-	public class ClassicAggregateFunction : ISQLFunction, IFunctionGrammar, ISQLFunctionExtended
+	public class ClassicAggregateFunction : ISQLFunction, IFunctionGrammar
 	{
 		private IType returnType = null;
 		private readonly string name;
@@ -41,19 +41,10 @@ namespace NHibernate.Dialect.Function
 
 		#region ISQLFunction Members
 
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public virtual IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return returnType ?? columnType;
-		}
-
 		/// <inheritdoc />
 		public virtual IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return returnType ?? argumentTypes.FirstOrDefault();
 		}
 
 		/// <inheritdoc />

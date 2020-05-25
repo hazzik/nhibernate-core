@@ -206,7 +206,7 @@ namespace NHibernate.Dialect
 		}
 
 		[Serializable]
-		private class PositionFunction : ISQLFunction, ISQLFunctionExtended
+		private class PositionFunction : ISQLFunction
 		{
 			// The cast is needed, at least in the case that ?3 is a named integer parameter, otherwise firebird will generate an error.  
 			// We have a unit test to cover this potential firebird bug.
@@ -214,13 +214,6 @@ namespace NHibernate.Dialect
 
 			private static readonly ISQLFunction LocateWith3Params = new SQLFunctionTemplate(NHibernateUtil.Int32,
 				"position(?1, ?2, cast(?3 as int))");
-
-			// Since v5.3
-			[Obsolete("Use GetReturnType method instead.")]
-			public IType ReturnType(IType columnType, IMapping mapping)
-			{
-				return NHibernateUtil.Int32;
-			}
 
 			/// <inheritdoc />
 			public IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)

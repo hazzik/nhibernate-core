@@ -14,27 +14,14 @@ namespace NHibernate.Dialect.Function
 	/// Emulation of locate() on PostgreSQL
 	/// </summary>
 	[Serializable]
-	public class PositionSubstringFunction : ISQLFunction, ISQLFunctionExtended
+	public class PositionSubstringFunction : ISQLFunction
 	{
-		public PositionSubstringFunction()
-		{
-		}
-
 		#region ISQLFunction Members
-
-		// Since v5.3
-		[Obsolete("Use GetReturnType method instead.")]
-		public IType ReturnType(IType columnType, IMapping mapping)
-		{
-			return NHibernateUtil.Int32;
-		}
 
 		/// <inheritdoc />
 		public IType GetReturnType(IEnumerable<IType> argumentTypes, IMapping mapping, bool throwOnError)
 		{
-#pragma warning disable 618
-			return ReturnType(argumentTypes.FirstOrDefault(), mapping);
-#pragma warning restore 618
+			return NHibernateUtil.Int32;
 		}
 
 		/// <inheritdoc />
