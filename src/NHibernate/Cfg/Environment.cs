@@ -110,18 +110,6 @@ namespace NHibernate.Cfg
 		/// <summary> Enable formatting of SQL logged to the console</summary>
 		public const string FormatSql = "format_sql";
 
-		// Since v5.0.1
-		[Obsolete("This setting has no usages and will be removed in a future version")]
-		public const string UseGetGeneratedKeys = "jdbc.use_get_generated_keys";
-
-		// Since v5.0.1
-		[Obsolete("This setting has no usages and will be removed in a future version")]
-		public const string StatementFetchSize = "jdbc.fetch_size";
-
-		// Since v5.0.1
-		[Obsolete("This setting has no usages and will be removed in a future version")]
-		public const string OutputStylesheet = "xml.output_stylesheet";
-
 		/// <summary>
 		/// The class name of a custom <see cref="Transaction.ITransactionFactory"/> implementation. Defaults to the
 		/// built-in <see cref="Transaction.AdoNetWithSystemTransactionFactory" />.
@@ -156,10 +144,6 @@ namespace NHibernate.Cfg
 		/// </summary>
 		public const string AutoJoinTransaction = "transaction.auto_join";
 
-		// Since v5.0.1
-		[Obsolete("This setting has no usages and will be removed in a future version")]
-		public const string TransactionManagerStrategy = "transaction.manager_lookup_class";
-
 		public const string CacheProvider = "cache.provider_class";
 		public const string UseQueryCache = "cache.use_query_cache";
 		public const string QueryCacheFactory = "cache.query_cache_factory";
@@ -189,9 +173,6 @@ namespace NHibernate.Cfg
 		/// </summary>
 		public const string QueryLinqProvider = "query.linq_provider_class";
 
-		// Since v5.0.1
-		[Obsolete("This setting has no usages and will be removed in a future version")]
-		public const string QueryImports = "query.imports";
 		public const string Hbm2ddlAuto = "hbm2ddl.auto";
 		public const string Hbm2ddlKeyWords = "hbm2ddl.keywords";
 
