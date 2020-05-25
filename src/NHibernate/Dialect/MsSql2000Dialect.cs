@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using NHibernate.Dialect.Function;
 using NHibernate.Dialect.Schema;
 using NHibernate.Engine;
-using NHibernate.Mapping;
 using NHibernate.SqlCommand;
 using NHibernate.SqlCommand.Parser;
 using NHibernate.Type;
@@ -672,15 +671,6 @@ namespace NHibernate.Dialect
 		{
 			string selectExistingObject = GetSelectExistingObject(catalog, schema, table, name);
 			return string.Format(@"if not exists ({0})", selectExistingObject);
-		}
-
-		// Since v5.1
-		[Obsolete("Please use overload with catalog and schema parameters")]
-		protected virtual string GetSelectExistingObject(string name, Table table)
-		{
-			var catalog = table.GetQuotedCatalog(this, null);
-			var schema = table.GetQuotedSchema(this, null);
-			return GetSelectExistingObject(catalog, schema, table.GetQuotedName(), name);
 		}
 
 		/// <summary>
