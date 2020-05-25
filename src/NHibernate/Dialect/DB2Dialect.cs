@@ -136,10 +136,10 @@ namespace NHibernate.Dialect
 			RegisterFunction("substring", new StandardSQLFunction("substr", NHibernateUtil.String));
 
 			// Bitwise operations
-			RegisterFunction("band", new Function.BitwiseFunctionOperation("bitand"));
-			RegisterFunction("bor", new Function.BitwiseFunctionOperation("bitor"));
-			RegisterFunction("bxor", new Function.BitwiseFunctionOperation("bitxor"));
-			RegisterFunction("bnot", new Function.BitwiseFunctionOperation("bitnot"));
+			RegisterFunction("band", new BitwiseFunctionOperation("bitand"));
+			RegisterFunction("bor", new BitwiseFunctionOperation("bitor"));
+			RegisterFunction("bxor", new BitwiseFunctionOperation("bitxor"));
+			RegisterFunction("bnot", new BitwiseFunctionOperation("bitnot"));
 
 			DefaultProperties[Environment.ConnectionDriver] = "NHibernate.Driver.DB2Driver";
 		}

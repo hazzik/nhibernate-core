@@ -1,27 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using NHibernate.Engine;
 using NHibernate.SqlCommand;
 using NHibernate.Type;
-
-// 6.0 TODO: remove NHibernate.Dialect.BitwiseFunctionOperation,
-// and remove "Function." prefix where the non obsolete one is used.
-namespace NHibernate.Dialect
-{
-	/// <inheritdoc />
-	[Serializable]
-	// Since 5.2
-	[Obsolete("Use NHibernate.Dialect.Function.BitwiseFunctionOperation instead")]
-	public class BitwiseFunctionOperation : Function.BitwiseFunctionOperation
-	{
-		/// <inheritdoc />
-		public BitwiseFunctionOperation(string functionName): base(functionName)
-		{
-		}
-	}
-}
 
 namespace NHibernate.Dialect.Function
 {
@@ -31,9 +13,6 @@ namespace NHibernate.Dialect.Function
 	[Serializable]
 	public class BitwiseFunctionOperation : ISQLFunction
 	{
-		// TODO 6.0: convert FunctionName to read-only auto-property
-		private readonly string _functionName;
-
 		/// <summary>
 		/// Creates an instance of this class using the provided function name.
 		/// </summary>
@@ -42,7 +21,7 @@ namespace NHibernate.Dialect.Function
 		/// </param>
 		public BitwiseFunctionOperation(string functionName)
 		{
-			_functionName = functionName;
+			Name = functionName;
 		}
 
 		#region ISQLFunction Members
@@ -60,7 +39,7 @@ namespace NHibernate.Dialect.Function
 		}
 
 		/// <inheritdoc />
-		public string Name => _functionName;
+		public string Name { get; }
 
 		/// <inheritdoc />
 		public bool HasArguments => true;
@@ -73,7 +52,7 @@ namespace NHibernate.Dialect.Function
 		{
 			var sqlBuffer = new SqlStringBuilder();
 
-			sqlBuffer.Add(_functionName);
+			sqlBuffer.Add(Name);
 			sqlBuffer.Add("(");
 			foreach (var arg in args)
 			{
