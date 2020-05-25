@@ -63,13 +63,6 @@ namespace NHibernate.Test.BulkManipulation
 		private readonly ConcurrentDictionary<string, Lazy<CacheBase>> _caches = new ConcurrentDictionary<string, Lazy<CacheBase>>();
 		private Action<string> _onClear;
 
-		// Since 5.2
-		[Obsolete]
-		ICache ICacheProvider.BuildCache(string regionName, IDictionary<string, string> properties)
-		{
-			return BuildCache(regionName, properties);
-		}
-
 		public CacheBase BuildCache(string regionName, IDictionary<string, string> properties)
 		{
 			return _caches.GetOrAdd(regionName, x => new Lazy<CacheBase>(() =>

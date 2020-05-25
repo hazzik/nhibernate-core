@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace NHibernate.Cache
 {
 	/// <summary>
-	/// Represents any exception from an <see cref="ICache"/>.
+	/// Represents any exception from an <see cref="CacheBase"/>.
 	/// </summary>
 	[Serializable]
 	public class CacheException : HibernateException

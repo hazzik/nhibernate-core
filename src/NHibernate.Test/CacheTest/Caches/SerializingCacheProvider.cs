@@ -9,15 +9,6 @@ namespace NHibernate.Test.CacheTest.Caches
 {
 	public class SerializingCacheProvider : ICacheProvider
 	{
-		#region ICacheProvider Members
-
-		// Since 5.2
-		[Obsolete]
-		ICache ICacheProvider.BuildCache(string regionName, IDictionary<string, string> properties)
-		{
-			return BuildCache(regionName, properties);
-		}
-
 		public CacheBase BuildCache(string regionName, IDictionary<string, string> properties)
 		{
 			if (!CacheData.TryGetValue(regionName ?? string.Empty, out var data))
@@ -58,8 +49,6 @@ namespace NHibernate.Test.CacheTest.Caches
 				}
 			}
 		}
-
-		#endregion
 
 		private readonly Dictionary<string, IDictionary> CacheData = new Dictionary<string, IDictionary>();
 		private static readonly Dictionary<string, byte[]> SerializedCacheData = new Dictionary<string, byte[]>();

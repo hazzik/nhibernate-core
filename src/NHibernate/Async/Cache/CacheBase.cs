@@ -17,11 +17,7 @@ using NHibernate.Type;
 
 namespace NHibernate.Cache
 {
-	public abstract partial class CacheBase :
-		// 6.0 TODO: remove ICache
-#pragma warning disable 618
-		ICache
-#pragma warning restore 618
+	public abstract partial class CacheBase
 	{
 
 		#region Batch operations default implementation
@@ -149,18 +145,6 @@ namespace NHibernate.Cache
 					await (UnlockAsync(keys[i], lockValues[i], cancellationToken)).ConfigureAwait(false);
 				}
 			}
-		}
-
-		#endregion
-		#region Obsolete ICache implementation
-
-		Task ICache.UnlockAsync(object key, CancellationToken cancellationToken)
-		{
-			if (cancellationToken.IsCancellationRequested)
-			{
-				return Task.FromCanceled<object>(cancellationToken);
-			}
-			return UnlockAsync(key, null, cancellationToken);
 		}
 
 		#endregion

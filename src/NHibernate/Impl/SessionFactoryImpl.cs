@@ -416,19 +416,10 @@ namespace NHibernate.Impl
 
 		private IQueryCache BuildQueryCache(string queryCacheName)
 		{
-			return
-				settings.QueryCacheFactory.GetQueryCache(
-					updateTimestampsCache,
-					properties,
-					GetCache(queryCacheName))
-				// 6.0 TODO: remove the coalesce once IQueryCacheFactory todos are done
-#pragma warning disable 618
-				?? settings.QueryCacheFactory.GetQueryCache(
-#pragma warning restore 618
-					queryCacheName,
-					updateTimestampsCache,
-					settings,
-					properties);
+			return settings.QueryCacheFactory.GetQueryCache(
+				updateTimestampsCache,
+				properties,
+				GetCache(queryCacheName));
 		}
 
 		private ICacheConcurrencyStrategy GetCacheConcurrencyStrategy(
@@ -1078,24 +1069,16 @@ namespace NHibernate.Impl
 			get { return updateTimestampsCache; }
 		}
 
-		// 6.0 TODO: type as CacheBase instead
-#pragma warning disable 618
-		public IDictionary<string, ICache> GetAllSecondLevelCacheRegions()
-#pragma warning restore 618
+		public IDictionary<string, CacheBase> GetAllSecondLevelCacheRegions()
 		{
 			return
 				_allCacheRegions
 					// ToArray creates a moment in time snapshot
 					.ToArray()
-#pragma warning disable 618
-					.ToDictionary(kv => kv.Key, kv => (ICache) kv.Value);
-#pragma warning restore 618
+					.ToDictionary(kv => kv.Key, kv => kv.Value);
 		}
 
-		// 6.0 TODO: return CacheBase instead
-#pragma warning disable 618
-		public ICache GetSecondLevelCacheRegion(string regionName)
-#pragma warning restore 618
+		public CacheBase GetSecondLevelCacheRegion(string regionName)
 		{
 			_allCacheRegions.TryGetValue(regionName, out var result);
 			return result;

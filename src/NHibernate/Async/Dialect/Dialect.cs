@@ -20,7 +20,6 @@ using NHibernate.Dialect.Lock;
 using NHibernate.Dialect.Schema;
 using NHibernate.Exceptions;
 using NHibernate.Id;
-using NHibernate.Mapping;
 using NHibernate.Persister.Entity;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;

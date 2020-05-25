@@ -298,9 +298,7 @@ namespace NHibernate.Test
 
 		SQLFunctionRegistry ISessionFactoryImplementor.SQLFunctionRegistry => ActualFactory.SQLFunctionRegistry;
 
-#pragma warning disable 618
-		IDictionary<string, ICache> ISessionFactoryImplementor.GetAllSecondLevelCacheRegions()
-#pragma warning restore 618
+		IDictionary<string, CacheBase> ISessionFactoryImplementor.GetAllSecondLevelCacheRegions()
 		{
 			return ActualFactory.GetAllSecondLevelCacheRegions();
 		}
@@ -363,7 +361,7 @@ namespace NHibernate.Test
 		}
 
 #pragma warning disable 618
-		ICache ISessionFactoryImplementor.GetSecondLevelCacheRegion(string regionName)
+		CacheBase ISessionFactoryImplementor.GetSecondLevelCacheRegion(string regionName)
 #pragma warning restore 618
 		{
 			return ActualFactory.GetSecondLevelCacheRegion(regionName);

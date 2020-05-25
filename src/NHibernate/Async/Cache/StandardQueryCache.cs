@@ -11,9 +11,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using NHibernate.Cfg;
-using NHibernate.Collection;
 using NHibernate.Engine;
 using NHibernate.Persister.Collection;
 using NHibernate.Type;
@@ -23,7 +20,7 @@ namespace NHibernate.Cache
 {
 	using System.Threading.Tasks;
 	using System.Threading;
-	public partial class StandardQueryCache : IQueryCache, IBatchableQueryCache
+	public partial class StandardQueryCache : IQueryCache
 	{
 
 		#region IQueryCache Members
@@ -38,34 +35,20 @@ namespace NHibernate.Cache
 		}
 
 		/// <inheritdoc />
-		public Task<bool> PutAsync(
+		public async Task<bool> PutAsync(
 			QueryKey key,
 			QueryParameters queryParameters,
 			ICacheAssembler[] returnTypes,
 			IList result,
 			ISessionImplementor session, CancellationToken cancellationToken)
 		{
-			if (cancellationToken.IsCancellationRequested)
-			{
-				return Task.FromCanceled<bool>(cancellationToken);
-			}
-			// 6.0 TODO: inline the call.
-#pragma warning disable 612
-			return PutAsync(key, returnTypes, result, queryParameters.NaturalKeyLookup, session, cancellationToken);
-#pragma warning restore 612
-		}
-
-		// Since 5.2
-		[Obsolete]
-		public async Task<bool> PutAsync(QueryKey key, ICacheAssembler[] returnTypes, IList result, bool isNaturalKeyLookup, ISessionImplementor session, CancellationToken cancellationToken)
-		{
 			cancellationToken.ThrowIfCancellationRequested();
-			if (isNaturalKeyLookup && result.Count == 0)
+			if (queryParameters.NaturalKeyLookup && result.Count == 0)
 				return false;
 
 			var ts = session.Factory.Settings.CacheProvider.NextTimestamp();
 
-			Log.Debug("caching query results in region: '{0}'; {1}", _regionName, key);
+			Log.Debug("caching query results in region: '{0}'; {1}", RegionName, key);
 
 			await (Cache.PutAsync(key, await (GetCacheableResultAsync(returnTypes, session, result, ts, cancellationToken)).ConfigureAwait(false), cancellationToken)).ConfigureAwait(false);
 
@@ -91,44 +74,33 @@ namespace NHibernate.Cache
 
 			try
 			{
-				// 6.0 TODO: inline the call.
-#pragma warning disable 612
-				return await (GetAsync(key, returnTypes, queryParameters.NaturalKeyLookup, spaces, session, cancellationToken)).ConfigureAwait(false);
-#pragma warning restore 612
+				if (Log.IsDebugEnabled())
+					Log.Debug("checking cached query results in region: '{0}'; {1}", RegionName, key);
+
+				var cacheable = (IList) await (Cache.GetAsync(key, cancellationToken)).ConfigureAwait(false);
+				if (cacheable == null)
+				{
+					Log.Debug("query results were not found in cache: {0}", key);
+					return null;
+				}
+
+				var timestamp = (long) cacheable[0];
+
+				if (Log.IsDebugEnabled())
+					Log.Debug("Checking query spaces for up-to-dateness [{0}]", StringHelper.CollectionToString(spaces));
+
+				if (!queryParameters.NaturalKeyLookup && !await (IsUpToDateAsync(spaces, timestamp, cancellationToken)).ConfigureAwait(false))
+				{
+					Log.Debug("cached query results were not up to date for: {0}", key);
+					return null;
+				}
+
+				return await (GetResultFromCacheableAsync(key, returnTypes, queryParameters.NaturalKeyLookup, session, cacheable, cancellationToken)).ConfigureAwait(false);
 			}
 			finally
 			{
 				persistenceContext.DefaultReadOnly = defaultReadOnlyOrig;
 			}
-		}
-
-		// Since 5.2
-		[Obsolete]
-		public async Task<IList> GetAsync(QueryKey key, ICacheAssembler[] returnTypes, bool isNaturalKeyLookup, ISet<string> spaces, ISessionImplementor session, CancellationToken cancellationToken)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-			if (Log.IsDebugEnabled())
-				Log.Debug("checking cached query results in region: '{0}'; {1}", _regionName, key);
-
-			var cacheable = (IList) await (Cache.GetAsync(key, cancellationToken)).ConfigureAwait(false);
-			if (cacheable == null)
-			{
-				Log.Debug("query results were not found in cache: {0}", key);
-				return null;
-			}
-
-			var timestamp = (long) cacheable[0];
-
-			if (Log.IsDebugEnabled())
-				Log.Debug("Checking query spaces for up-to-dateness [{0}]", StringHelper.CollectionToString(spaces));
-
-			if (!isNaturalKeyLookup && !await (IsUpToDateAsync(spaces, timestamp, cancellationToken)).ConfigureAwait(false))
-			{
-				Log.Debug("cached query results were not up to date for: {0}", key);
-				return null;
-			}
-
-			return await (GetResultFromCacheableAsync(key, returnTypes, isNaturalKeyLookup, session, cacheable, cancellationToken)).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -141,7 +113,7 @@ namespace NHibernate.Cache
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			if (Log.IsDebugEnabled())
-				Log.Debug("caching query results in region: '{0}'; {1}", _regionName, StringHelper.CollectionToString(keys));
+				Log.Debug("caching query results in region: '{0}'; {1}", RegionName, StringHelper.CollectionToString(keys));
 
 			var cached = new bool[keys.Length];
 			var ts = session.Factory.Settings.CacheProvider.NextTimestamp();
@@ -158,7 +130,7 @@ namespace NHibernate.Cache
 				cachedResults.Add(await (GetCacheableResultAsync(returnTypes[i], session, result, ts, cancellationToken)).ConfigureAwait(false));
 			}
 
-			await (_cache.PutManyAsync(cachedKeys.ToArray(), cachedResults.ToArray(), cancellationToken)).ConfigureAwait(false);
+			await (Cache.PutManyAsync(cachedKeys.ToArray(), cachedResults.ToArray(), cancellationToken)).ConfigureAwait(false);
 
 			return cached;
 		}
@@ -173,9 +145,9 @@ namespace NHibernate.Cache
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			if (Log.IsDebugEnabled())
-				Log.Debug("checking cached query results in region: '{0}'; {1}", _regionName, StringHelper.CollectionToString(keys));
+				Log.Debug("checking cached query results in region: '{0}'; {1}", RegionName, StringHelper.CollectionToString(keys));
 
-			var cacheables = await (_cache.GetManyAsync(keys, cancellationToken)).ConfigureAwait(false);
+			var cacheables = await (Cache.GetManyAsync(keys, cancellationToken)).ConfigureAwait(false);
 
 			var spacesToCheck = new List<ISet<string>>();
 			var checkedSpacesIndexes = new HashSet<int>();

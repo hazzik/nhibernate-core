@@ -40,11 +40,7 @@ namespace NHibernate.Cache
 	/// implementation supports multiple operations.
 	/// </para>
 	/// </remarks>
-	public abstract partial class CacheBase :
-		// 6.0 TODO: remove ICache
-#pragma warning disable 618
-		ICache
-#pragma warning restore 618
+	public abstract partial class CacheBase
 	{
 		/// <summary>
 		/// A reasonable "lock timeout".
@@ -368,27 +364,6 @@ namespace NHibernate.Cache
 			{
 				return Task.FromException<object>(ex);
 			}
-		}
-
-		#endregion
-
-		#region Obsolete ICache implementation
-
-		void ICache.Lock(object key)
-		{
-			Lock(key);
-		}
-
-		void ICache.Unlock(object key)
-		{
-			Unlock(key, null);
-		}
-
-		// Async Generator does not generate an explicit missing async counterpart when a method
-		// differing only by its return type already exists.
-		Task ICache.LockAsync(object key, CancellationToken cancellationToken)
-		{
-			return LockAsync(key, cancellationToken);
 		}
 
 		#endregion

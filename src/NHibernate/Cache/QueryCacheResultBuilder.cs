@@ -7,7 +7,7 @@ using NHibernate.Type;
 namespace NHibernate.Cache
 {
 	/// <summary>
-	/// A builder that builds a list from a query that can be passed to <see cref="IBatchableQueryCache"/>.
+	/// A builder that builds a list from a query that can be passed to <see cref="IQueryCache"/>.
 	/// </summary>
 	public sealed class QueryCacheResultBuilder
 	{

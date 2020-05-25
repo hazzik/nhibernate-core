@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using NHibernate.Cfg;
 
 namespace NHibernate.Cache
 {
@@ -10,16 +8,6 @@ namespace NHibernate.Cache
 	/// </summary>
 	public class StandardQueryCacheFactory : IQueryCacheFactory
 	{
-		// Since v5.3
-		[Obsolete("Please use overload with a CacheBase parameter.")]
-		public IQueryCache GetQueryCache(string regionName,
-																		 UpdateTimestampsCache updateTimestampsCache,
-																		 Settings settings,
-																		 IDictionary<string, string> props)
-		{
-			return new StandardQueryCache(settings, props, updateTimestampsCache, regionName);
-		}
-
 		/// <summary>
 		/// Build a query cache.
 		/// </summary>

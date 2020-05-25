@@ -22,7 +22,7 @@ namespace NHibernate.Cache
 	/// <seealso cref="NonstrictReadWriteCache"/> for a faster algorithm
 	/// <seealso cref="ICacheConcurrencyStrategy"/>
 	/// </remarks>
-	public partial class ReadWriteCache : IBatchableCacheConcurrencyStrategy
+	public partial class ReadWriteCache : ICacheConcurrencyStrategy
 	{
 		public interface ILockable
 		{
@@ -34,7 +34,6 @@ namespace NHibernate.Cache
 
 		private static readonly INHibernateLogger log = NHibernateLogger.For(typeof(ReadWriteCache));
 
-		private CacheBase _cache;
 		private int _nextLockId;
 		private readonly AsyncReaderWriterLock _asyncReaderWriterLock = new AsyncReaderWriterLock();
 
@@ -46,21 +45,7 @@ namespace NHibernate.Cache
 			get { return Cache.RegionName; }
 		}
 
-		// 6.0 TODO: remove
-#pragma warning disable 618
-		public ICache Cache
-#pragma warning restore 618
-		{
-			get { return _cache; }
-			set { _cache = value?.AsCacheBase(); }
-		}
-
-		// 6.0 TODO: make implicit and switch to auto-property
-		CacheBase IBatchableCacheConcurrencyStrategy.Cache
-		{
-			get => _cache;
-			set => _cache = value;
-		}
+		public CacheBase Cache { get; set; }
 
 		/// <summary>
 		/// Generate an id for a new lock. Uniqueness per cache instance is very
@@ -126,7 +111,7 @@ namespace NHibernate.Cache
 			var result = new object[keys.Length];
 			using (_asyncReaderWriterLock.ReadLock())
 			{
-				var lockables = _cache.GetMany(keys);
+				var lockables = Cache.GetMany(keys);
 				for (var i = 0; i < lockables.Length; i++)
 				{
 					var o = (ILockable) lockables[i];
@@ -174,7 +159,7 @@ namespace NHibernate.Cache
 					log.Debug("Invalidating: {0}", key);
 				}
 
-				var lockValue = _cache.Lock(key);
+				var lockValue = Cache.Lock(key);
 				try
 				{
 					ILockable lockable = (ILockable) Cache.Get(key);
@@ -187,7 +172,7 @@ namespace NHibernate.Cache
 				}
 				finally
 				{
-					_cache.Unlock(key, lockValue);
+					Cache.Unlock(key, lockValue);
 				}
 			}
 		}
@@ -217,11 +202,11 @@ namespace NHibernate.Cache
 					log.Debug("Caching: {0}", string.Join(",", keys.AsEnumerable()));
 				}
 
-				var lockValue = _cache.LockMany(keys);
+				var lockValue = Cache.LockMany(keys);
 				try
 				{
 					var putBatch = new Dictionary<object, object>();
-					var lockables = _cache.GetMany(keys);
+					var lockables = Cache.GetMany(keys);
 					for (var i = 0; i < keys.Length; i++)
 					{
 						var key = keys[i];
@@ -252,12 +237,12 @@ namespace NHibernate.Cache
 
 					if (putBatch.Count > 0)
 					{
-						_cache.PutMany(putBatch.Keys.ToArray(), putBatch.Values.ToArray());
+						Cache.PutMany(putBatch.Keys.ToArray(), putBatch.Values.ToArray());
 					}
 				}
 				finally
 				{
-					_cache.UnlockMany(keys, lockValue);
+					Cache.UnlockMany(keys, lockValue);
 				}
 			}
 			return result;
@@ -286,7 +271,7 @@ namespace NHibernate.Cache
 					log.Debug("Caching: {0}", key);
 				}
 
-				var lockValue = _cache.Lock(key);
+				var lockValue = Cache.Lock(key);
 				try
 				{
 					ILockable lockable = (ILockable) Cache.Get(key);
@@ -314,7 +299,7 @@ namespace NHibernate.Cache
 				}
 				finally
 				{
-					_cache.Unlock(key, lockValue);
+					Cache.Unlock(key, lockValue);
 				}
 			}
 		}
@@ -338,7 +323,7 @@ namespace NHibernate.Cache
 					log.Debug("Releasing: {0}", key);
 				}
 
-				var lockValue = _cache.Lock(key);
+				var lockValue = Cache.Lock(key);
 				try
 				{
 					ILockable lockable = (ILockable) Cache.Get(key);
@@ -353,7 +338,7 @@ namespace NHibernate.Cache
 				}
 				finally
 				{
-					_cache.Unlock(key, lockValue);
+					Cache.Unlock(key, lockValue);
 				}
 			}
 		}
@@ -399,7 +384,7 @@ namespace NHibernate.Cache
 					log.Debug("Updating: {0}", key);
 				}
 
-				var lockValue = _cache.Lock(key);
+				var lockValue = Cache.Lock(key);
 				try
 				{
 					ILockable lockable = (ILockable) Cache.Get(key);
@@ -431,7 +416,7 @@ namespace NHibernate.Cache
 				}
 				finally
 				{
-					_cache.Unlock(key, lockValue);
+					Cache.Unlock(key, lockValue);
 				}
 			}
 		}
@@ -445,7 +430,7 @@ namespace NHibernate.Cache
 					log.Debug("Inserting: {0}", key);
 				}
 
-				var lockValue = _cache.Lock(key);
+				var lockValue = Cache.Lock(key);
 				try
 				{
 					ILockable lockable = (ILockable) Cache.Get(key);
@@ -465,7 +450,7 @@ namespace NHibernate.Cache
 				}
 				finally
 				{
-					_cache.Unlock(key, lockValue);
+					Cache.Unlock(key, lockValue);
 				}
 			}
 		}

@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using NHibernate.Cfg;
-using NHibernate.Collection;
 using NHibernate.Engine;
 using NHibernate.Persister.Collection;
 using NHibernate.Type;
@@ -17,34 +14,16 @@ namespace NHibernate.Cache
 	/// results and re-running queries when it detects this condition, recaching
 	/// the new results.
 	/// </summary>
-	public partial class StandardQueryCache : IQueryCache, IBatchableQueryCache
+	public partial class StandardQueryCache : IQueryCache
 	{
 		private static readonly INHibernateLogger Log = NHibernateLogger.For(typeof (StandardQueryCache));
-		private readonly string _regionName;
 		private readonly UpdateTimestampsCache _updateTimestampsCache;
-		private readonly CacheBase _cache;
-
-		// Since v5.3
-		[Obsolete("Please use overload with a CacheBase parameter.")]
-		public StandardQueryCache(
-			Settings settings,
-			IDictionary<string, string> props,
-			UpdateTimestampsCache updateTimestampsCache,
-			string regionName)
-			: this(
-				updateTimestampsCache,
-				CacheFactory.BuildCacheBase(
-					settings.GetFullCacheRegionName(regionName ?? typeof(StandardQueryCache).FullName),
-					settings,
-					props))
-		{
-		}
 
 		/// <summary>
 		/// Build a query cache.
 		/// </summary>
 		/// <param name="updateTimestampsCache">The cache of updates timestamps.</param>
-		/// <param name="regionCache">The <see cref="ICache" /> to use for the region.</param>
+		/// <param name="regionCache">The <see cref="CacheBase" /> to use for the region.</param>
 		public StandardQueryCache(
 			UpdateTimestampsCache updateTimestampsCache,
 			CacheBase regionCache)
@@ -52,24 +31,18 @@ namespace NHibernate.Cache
 			if (regionCache == null)
 				throw new ArgumentNullException(nameof(regionCache));
 
-			_regionName = regionCache.RegionName;
-			Log.Info("starting query cache at region: {0}", _regionName);
+			RegionName = regionCache.RegionName;
+			Log.Info("starting query cache at region: {0}", RegionName);
 
-			_cache = regionCache;
+			Cache = regionCache;
 			_updateTimestampsCache = updateTimestampsCache;
 		}
 
 		#region IQueryCache Members
 
-		// 6.0 TODO: type as CacheBase instead
-#pragma warning disable 618
-		public ICache Cache => _cache;
-#pragma warning restore 618
+		public CacheBase Cache { get; }
 
-		public string RegionName
-		{
-			get { return _regionName; }
-		}
+		public string RegionName { get; }
 
 		public void Clear()
 		{
@@ -84,22 +57,12 @@ namespace NHibernate.Cache
 			IList result,
 			ISessionImplementor session)
 		{
-			// 6.0 TODO: inline the call.
-#pragma warning disable 612
-			return Put(key, returnTypes, result, queryParameters.NaturalKeyLookup, session);
-#pragma warning restore 612
-		}
-
-		// Since 5.2
-		[Obsolete]
-		public bool Put(QueryKey key, ICacheAssembler[] returnTypes, IList result, bool isNaturalKeyLookup, ISessionImplementor session)
-		{
-			if (isNaturalKeyLookup && result.Count == 0)
+			if (queryParameters.NaturalKeyLookup && result.Count == 0)
 				return false;
 
 			var ts = session.Factory.Settings.CacheProvider.NextTimestamp();
 
-			Log.Debug("caching query results in region: '{0}'; {1}", _regionName, key);
+			Log.Debug("caching query results in region: '{0}'; {1}", RegionName, key);
 
 			Cache.Put(key, GetCacheableResult(returnTypes, session, result, ts));
 
@@ -124,43 +87,33 @@ namespace NHibernate.Cache
 
 			try
 			{
-				// 6.0 TODO: inline the call.
-#pragma warning disable 612
-				return Get(key, returnTypes, queryParameters.NaturalKeyLookup, spaces, session);
-#pragma warning restore 612
+				if (Log.IsDebugEnabled())
+					Log.Debug("checking cached query results in region: '{0}'; {1}", RegionName, key);
+
+				var cacheable = (IList) Cache.Get(key);
+				if (cacheable == null)
+				{
+					Log.Debug("query results were not found in cache: {0}", key);
+					return null;
+				}
+
+				var timestamp = (long) cacheable[0];
+
+				if (Log.IsDebugEnabled())
+					Log.Debug("Checking query spaces for up-to-dateness [{0}]", StringHelper.CollectionToString(spaces));
+
+				if (!queryParameters.NaturalKeyLookup && !IsUpToDate(spaces, timestamp))
+				{
+					Log.Debug("cached query results were not up to date for: {0}", key);
+					return null;
+				}
+
+				return GetResultFromCacheable(key, returnTypes, queryParameters.NaturalKeyLookup, session, cacheable);
 			}
 			finally
 			{
 				persistenceContext.DefaultReadOnly = defaultReadOnlyOrig;
 			}
-		}
-
-		// Since 5.2
-		[Obsolete]
-		public IList Get(QueryKey key, ICacheAssembler[] returnTypes, bool isNaturalKeyLookup, ISet<string> spaces, ISessionImplementor session)
-		{
-			if (Log.IsDebugEnabled())
-				Log.Debug("checking cached query results in region: '{0}'; {1}", _regionName, key);
-
-			var cacheable = (IList) Cache.Get(key);
-			if (cacheable == null)
-			{
-				Log.Debug("query results were not found in cache: {0}", key);
-				return null;
-			}
-
-			var timestamp = (long) cacheable[0];
-
-			if (Log.IsDebugEnabled())
-				Log.Debug("Checking query spaces for up-to-dateness [{0}]", StringHelper.CollectionToString(spaces));
-
-			if (!isNaturalKeyLookup && !IsUpToDate(spaces, timestamp))
-			{
-				Log.Debug("cached query results were not up to date for: {0}", key);
-				return null;
-			}
-
-			return GetResultFromCacheable(key, returnTypes, isNaturalKeyLookup, session, cacheable);
 		}
 
 		/// <inheritdoc />
@@ -172,7 +125,7 @@ namespace NHibernate.Cache
 			ISessionImplementor session)
 		{
 			if (Log.IsDebugEnabled())
-				Log.Debug("caching query results in region: '{0}'; {1}", _regionName, StringHelper.CollectionToString(keys));
+				Log.Debug("caching query results in region: '{0}'; {1}", RegionName, StringHelper.CollectionToString(keys));
 
 			var cached = new bool[keys.Length];
 			var ts = session.Factory.Settings.CacheProvider.NextTimestamp();
@@ -189,7 +142,7 @@ namespace NHibernate.Cache
 				cachedResults.Add(GetCacheableResult(returnTypes[i], session, result, ts));
 			}
 
-			_cache.PutMany(cachedKeys.ToArray(), cachedResults.ToArray());
+			Cache.PutMany(cachedKeys.ToArray(), cachedResults.ToArray());
 
 			return cached;
 		}
@@ -203,9 +156,9 @@ namespace NHibernate.Cache
 			ISessionImplementor session)
 		{
 			if (Log.IsDebugEnabled())
-				Log.Debug("checking cached query results in region: '{0}'; {1}", _regionName, StringHelper.CollectionToString(keys));
+				Log.Debug("checking cached query results in region: '{0}'; {1}", RegionName, StringHelper.CollectionToString(keys));
 
-			var cacheables = _cache.GetMany(keys);
+			var cacheables = Cache.GetMany(keys);
 
 			var spacesToCheck = new List<ISet<string>>();
 			var checkedSpacesIndexes = new HashSet<int>();

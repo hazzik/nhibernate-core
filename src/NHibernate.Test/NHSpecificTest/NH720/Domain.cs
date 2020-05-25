@@ -51,13 +51,6 @@ namespace NHibernate.Test.NHSpecificTest.NH720
 			return cache;
 		}
 
-		// Since 5.2
-		[Obsolete]
-		ICache ICacheProvider.BuildCache(string regionName, IDictionary<string, string> properties)
-		{
-			return BuildCache(regionName, properties);
-		}
-
 		public CacheBase BuildCache(string regionName, IDictionary<string, string> properties)
 		{
 			return BuildCacheStatic(regionName, properties);

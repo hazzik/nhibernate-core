@@ -51,10 +51,7 @@ namespace NHibernate.Engine
 
 		SQLFunctionRegistry SQLFunctionRegistry { get; }
 
-		// 6.0 TODO: type as CacheBase instead
-#pragma warning disable 618
-		IDictionary<string, ICache> GetAllSecondLevelCacheRegions();
-#pragma warning restore 618
+		IDictionary<string, CacheBase> GetAllSecondLevelCacheRegions();
 
 		/// <summary>
 		/// Get the persister for the named entity
@@ -129,10 +126,7 @@ namespace NHibernate.Engine
 		IIdentifierGenerator GetIdentifierGenerator(string rootEntityName);
 
 		/// <summary> Get a named second-level cache region</summary>
-		// 6.0 TODO: return CacheBase instead
-#pragma warning disable 618
-		ICache GetSecondLevelCacheRegion(string regionName);
-#pragma warning restore 618
+		CacheBase GetSecondLevelCacheRegion(string regionName);
 
 		// Obsolete since v5
 		/// <summary>

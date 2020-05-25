@@ -9,11 +9,9 @@ namespace NHibernate.Cache
 	/// <summary>
 	/// Caches data that is never updated
 	/// </summary>
-	public partial class ReadOnlyCache : IBatchableCacheConcurrencyStrategy
+	public partial class ReadOnlyCache : ICacheConcurrencyStrategy
 	{
 		private static readonly INHibernateLogger log = NHibernateLogger.For(typeof(ReadOnlyCache));
-
-		private CacheBase _cache;
 
 		/// <summary>
 		/// Gets the cache region name.
@@ -23,21 +21,7 @@ namespace NHibernate.Cache
 			get { return Cache.RegionName; }
 		}
 
-		// 6.0 TODO: remove
-#pragma warning disable 618
-		public ICache Cache
-#pragma warning restore 618
-		{
-			get { return _cache; }
-			set { _cache = value?.AsCacheBase(); }
-		}
-
-		// 6.0 TODO: make implicit and switch to auto-property
-		CacheBase IBatchableCacheConcurrencyStrategy.Cache
-		{
-			get => _cache;
-			set => _cache = value;
-		}
+		public CacheBase Cache { get; set; }
 
 		public object Get(CacheKey key, long timestamp)
 		{
@@ -57,7 +41,7 @@ namespace NHibernate.Cache
 				log.Debug("Cache lookup: {0}", string.Join(",", keys.AsEnumerable()));
 			}
 
-			var results = _cache.GetMany(keys);
+			var results = Cache.GetMany(keys);
 			if (log.IsDebugEnabled())
 			{
 				log.Debug("Cache hit: {0}", string.Join(",", keys.Where((k, i) => results[i] != null)));
@@ -100,7 +84,7 @@ namespace NHibernate.Cache
 			var skipKeyIndexes = new HashSet<int>();
 			if (checkKeys.Any())
 			{
-				var objects = _cache.GetMany(checkKeys.ToArray());
+				var objects = Cache.GetMany(checkKeys.ToArray());
 				for (var i = 0; i < objects.Length; i++)
 				{
 					if (objects[i] != null)
@@ -132,7 +116,7 @@ namespace NHibernate.Cache
 				putValues[j++] = values[i];
 				result[i] = true;
 			}
-			_cache.PutMany(putKeys, putValues);
+			Cache.PutMany(putKeys, putValues);
 			return result;
 		}
 

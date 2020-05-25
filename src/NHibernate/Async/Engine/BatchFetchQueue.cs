@@ -65,7 +65,7 @@ namespace NHibernate.Engine
 			// List of collection entries that haven't been checked for their existance in the cache. Besides the collection entry,
 			// the index where the entry was found is also stored in order to correctly order the returning keys.
 			var collectionKeys = new List<KeyValuePair<KeyValuePair<CollectionEntry, IPersistentCollection>, int>>(batchSize);
-			var batchableCache = collectionPersister.Cache?.GetCacheBase();
+			var batchableCache = collectionPersister.Cache?.Cache;
 
 			if (!batchLoadableCollections.TryGetValue(collectionPersister.Role, out var map))
 			{
@@ -257,7 +257,7 @@ namespace NHibernate.Engine
 			// the index where the key was found is also stored in order to correctly order the returning keys.
 			var entityKeys = new List<KeyValuePair<EntityKey, int>>(batchSize);
 			// If there is a cache, obsolete or not, batchableCache will not be null.
-			var batchableCache = persister.Cache?.GetCacheBase();
+			var batchableCache = persister.Cache?.Cache;
 
 			if (!batchLoadableEntityKeys.TryGetValue(persister.EntityName, out var set))
 			{

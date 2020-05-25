@@ -17,7 +17,7 @@ namespace NHibernate.Cache
 {
 	using System.Threading.Tasks;
 	using System.Threading;
-	public partial class NonstrictReadWriteCache : IBatchableCacheConcurrencyStrategy
+	public partial class NonstrictReadWriteCache : ICacheConcurrencyStrategy
 	{
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace NHibernate.Cache
 				log.Debug("Cache lookup: {0}", string.Join(",", keys.AsEnumerable()));
 			}
 
-			var results = await (_cache.GetManyAsync(keys, cancellationToken)).ConfigureAwait(false);
+			var results = await (Cache.GetManyAsync(keys, cancellationToken)).ConfigureAwait(false);
 			if (log.IsDebugEnabled())
 			{
 				log.Debug("Cache hit: {0}", string.Join(",", keys.Where((k, i) => results != null)));
@@ -86,7 +86,7 @@ namespace NHibernate.Cache
 			var skipKeyIndexes = new HashSet<int>();
 			if (checkKeys.Any())
 			{
-				var objects = await (_cache.GetManyAsync(checkKeys.ToArray(), cancellationToken)).ConfigureAwait(false);
+				var objects = await (Cache.GetManyAsync(checkKeys.ToArray(), cancellationToken)).ConfigureAwait(false);
 				for (var i = 0; i < objects.Length; i++)
 				{
 					if (objects[i] != null)
@@ -118,7 +118,7 @@ namespace NHibernate.Cache
 				putValues[j++] = values[i];
 				result[i] = true;
 			}
-			await (_cache.PutManyAsync(putKeys, putValues, cancellationToken)).ConfigureAwait(false);
+			await (Cache.PutManyAsync(putKeys, putValues, cancellationToken)).ConfigureAwait(false);
 			return result;
 		}
 

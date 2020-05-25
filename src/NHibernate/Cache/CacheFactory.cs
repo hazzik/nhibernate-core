@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using NHibernate.Cfg;
 
@@ -25,38 +24,8 @@ namespace NHibernate.Cache
 		/// Creates an <see cref="ICacheConcurrencyStrategy"/> from the parameters.
 		/// </summary>
 		/// <param name="usage">The name of the strategy that <see cref="ICacheProvider"/> should use for the class.</param>
-		/// <param name="name">The name of the class the strategy is being created for.</param>
-		/// <param name="mutable"><see langword="true" /> if the object being stored in the cache is mutable.</param>
-		/// <param name="settings">Used to retrieve the global cache region prefix.</param>
-		/// <param name="properties">Properties the cache provider can use to configure the cache.</param>
-		/// <returns>An <see cref="ICacheConcurrencyStrategy"/> to use for this object in the <see cref="ICache"/>.</returns>
-		// Since v5.3
-		[Obsolete("Please use overload with a CacheBase parameter.")]
-		public static ICacheConcurrencyStrategy CreateCache(
-			string usage,
-			string name,
-			bool mutable,
-			Settings settings,
-			IDictionary<string, string> properties)
-		{
-			if (usage == null || !settings.IsSecondLevelCacheEnabled) return null;
-
-			var cache = BuildCacheBase(name, settings, properties);
-
-			var ccs = CreateCache(usage, cache);
-
-			if (mutable && usage == ReadOnly)
-				log.Warn("read-only cache configured for mutable: {0}", name);
-
-			return ccs;
-		}
-
-		/// <summary>
-		/// Creates an <see cref="ICacheConcurrencyStrategy"/> from the parameters.
-		/// </summary>
-		/// <param name="usage">The name of the strategy that <see cref="ICacheProvider"/> should use for the class.</param>
 		/// <param name="cache">The <see cref="CacheBase"/> used for this strategy.</param>
-		/// <returns>An <see cref="ICacheConcurrencyStrategy"/> to use for this object in the <see cref="ICache"/>.</returns>
+		/// <returns>An <see cref="ICacheConcurrencyStrategy"/> to use for this object in the <see cref="CacheBase"/>.</returns>
 		public static ICacheConcurrencyStrategy CreateCache(string usage, CacheBase cache)
 		{
 			if (log.IsDebugEnabled())
@@ -91,7 +60,7 @@ namespace NHibernate.Cache
 		{
 			try
 			{
-				return settings.CacheProvider.BuildCache(name, properties).AsCacheBase();
+				return settings.CacheProvider.BuildCache(name, properties);
 			}
 			catch (CacheException e)
 			{

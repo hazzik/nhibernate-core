@@ -40,7 +40,7 @@ namespace NHibernate.Cache
 		/// <summary>
 		/// Build the update timestamps cache.
 		/// </summary>x
-		/// <param name="cache">The <see cref="ICache" /> to use.</param>
+		/// <param name="cache">The <see cref="CacheBase" /> to use.</param>
 		public UpdateTimestampsCache(CacheBase cache)
 		{
 			log.Info("starting update timestamps cache at region: {0}", cache.RegionName);
