@@ -1,8 +1,5 @@
-using System;
 using System.Linq;
 using System.Security;
-using NHibernate.Properties;
-using NHibernate.Util;
 
 namespace NHibernate.Bytecode.Lightweight
 {
@@ -17,29 +14,12 @@ namespace NHibernate.Bytecode.Lightweight
 		private readonly GetPropertyValueInvoker _specializedGetter;
 		private readonly SetPropertyValueInvoker _specializedSetter;
 
-		// Since 5.3
-		[Obsolete("This constructor has no usages and will be removed in a future version")]
-		public AccessOptimizer(
-			GetPropertyValuesInvoker getDelegate,
-			SetPropertyValuesInvoker setDelegate,
-			IGetter[] getters,
-			ISetter[] setters)
-			: this(
-				getDelegate,
-				setDelegate,
-				getters.ToArray(o => (GetPropertyValueInvoker) o.Get),
-				setters.ToArray(o => (SetPropertyValueInvoker) o.Set),
-				null,
-				null)
-		{
-		}
-
 		public AccessOptimizer(GetPropertyValuesInvoker getDelegate,
-								SetPropertyValuesInvoker setDelegate,
-								GetPropertyValueInvoker[] getters,
-								SetPropertyValueInvoker[] setters,
-								GetPropertyValueInvoker specializedGetter,
-								SetPropertyValueInvoker specializedSetter)
+		                       SetPropertyValuesInvoker setDelegate,
+		                       GetPropertyValueInvoker[] getters,
+		                       SetPropertyValueInvoker[] setters,
+		                       GetPropertyValueInvoker specializedGetter,
+		                       SetPropertyValueInvoker specializedSetter)
 		{
 			this.getDelegate = getDelegate;
 			this.setDelegate = setDelegate;
