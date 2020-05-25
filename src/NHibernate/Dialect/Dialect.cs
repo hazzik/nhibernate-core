@@ -10,7 +10,6 @@ using NHibernate.Dialect.Lock;
 using NHibernate.Dialect.Schema;
 using NHibernate.Exceptions;
 using NHibernate.Id;
-using NHibernate.Mapping;
 using NHibernate.Persister.Entity;
 using NHibernate.SqlCommand;
 using NHibernate.SqlTypes;
@@ -809,76 +808,6 @@ namespace NHibernate.Dialect
 		public virtual string GetDropForeignKeyConstraintString(string constraintName)
 		{
 			return " drop constraint " + constraintName;
-		}
-
-		/// <summary>
-		/// The syntax that is used to check if a constraint does not exists before creating it
-		/// </summary>
-		/// <param name="table">The table.</param>
-		/// <param name="name">The name.</param>
-		/// <returns></returns>
-		// Since v5.1
-		[Obsolete("Can cause issues when a custom schema is defined (https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
-		public virtual string GetIfNotExistsCreateConstraint(Table table, string name)
-		{
-			var catalog = table.GetQuotedCatalog(this, null);
-			var schema = table.GetQuotedSchema(this, null);
-			var tableName = table.GetQuotedName(this);
-
-			return GetIfNotExistsCreateConstraint(catalog, schema, tableName, name);
-		}
-
-		/// <summary>
-		/// The syntax that is used to close the if for a constraint exists check, used
-		/// for dialects that requires begin/end for ifs
-		/// </summary>
-		/// <param name="table">The table.</param>
-		/// <param name="name">The name.</param>
-		/// <returns></returns>
-		// Since v5.1
-		[Obsolete("Can cause issues when a custom schema is defined (https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
-		public virtual string GetIfNotExistsCreateConstraintEnd(Table table, string name)
-		{
-			var catalog = table.GetQuotedCatalog(this, null);
-			var schema = table.GetQuotedSchema(this, null);
-			var tableName = table.GetQuotedName(this);
-
-			return GetIfNotExistsCreateConstraintEnd(catalog, schema, tableName, name);
-		}
-
-		/// <summary>
-		/// The syntax that is used to check if a constraint exists before dropping it
-		/// </summary>
-		/// <param name="table">The table.</param>
-		/// <param name="name">The name.</param>
-		/// <returns></returns>
-		// Since v5.1
-		[Obsolete("Can cause issues when a custom schema is defined (https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
-		public virtual string GetIfExistsDropConstraint(Table table, string name)
-		{
-			var catalog = table.GetQuotedCatalog(this, null);
-			var schema = table.GetQuotedSchema(this, null);
-			var tableName = table.GetQuotedName(this);
-
-			return GetIfExistsDropConstraint(catalog, schema, tableName, name);
-		}
-
-		/// <summary>
-		/// The syntax that is used to close the if for a constraint exists check, used
-		/// for dialects that requires begin/end for ifs
-		/// </summary>
-		/// <param name="table">The table.</param>
-		/// <param name="name">The name.</param>
-		/// <returns></returns>
-		// Since v5.1
-		[Obsolete("Can cause issues when a custom schema is defined (https://nhibernate.jira.com/browse/NH-1285). The new overload with the defaultSchema parameter should be used instead")]
-		public virtual string GetIfExistsDropConstraintEnd(Table table, string name)
-		{
-			var catalog = table.GetQuotedCatalog(this, null);
-			var schema = table.GetQuotedSchema(this, null);
-			var tableName = table.GetQuotedName(this);
-
-			return GetIfExistsDropConstraintEnd(catalog, schema, tableName, name);
 		}
 
 		/// <summary>
