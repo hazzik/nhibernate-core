@@ -9,9 +9,6 @@ using NHibernate.Transaction;
 namespace NHibernate.Cfg.Loquacious
 {
 	public class DbIntegrationConfigurationProperties
-#pragma warning disable 618
-		: IDbIntegrationConfigurationProperties
-#pragma warning restore 618
 	{
 		private readonly Configuration configuration;
 
@@ -19,8 +16,6 @@ namespace NHibernate.Cfg.Loquacious
 		{
 			this.configuration = configuration;
 		}
-
-		#region Implementation of IDbIntegrationConfigurationProperties
 
 		public void Dialect<TDialect>() where TDialect : Dialect.Dialect
 		{
@@ -134,7 +129,5 @@ namespace NHibernate.Cfg.Loquacious
 		{
 			configuration.SetProperty(Environment.QueryModelRewriterFactory, typeof(TFactory).AssemblyQualifiedName);
 		}
-
-		#endregion
 	}
 }

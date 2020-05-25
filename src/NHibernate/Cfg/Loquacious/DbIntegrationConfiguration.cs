@@ -10,9 +10,6 @@ using NHibernate.Transaction;
 namespace NHibernate.Cfg.Loquacious
 {
 	public class DbIntegrationConfiguration 
-#pragma warning disable 618
-		: IDbIntegrationConfiguration
-#pragma warning restore 618
 	{
 		private readonly Configuration configuration;
 
@@ -72,53 +69,9 @@ namespace NHibernate.Cfg.Loquacious
 		public CommandsConfiguration CreateCommands { get; }
 
 		public DbSchemaIntegrationConfiguration Schema { get; }
-
-		#region Implementation of IDbIntegrationConfiguration
-#pragma warning disable 618
-
-		IDbIntegrationConfiguration IDbIntegrationConfiguration.Using<TDialect>()
-		{
-			return Using<TDialect>();
-		}
-
-		IDbIntegrationConfiguration IDbIntegrationConfiguration.DisableKeywordsAutoImport()
-		{
-			return DisableKeywordsAutoImport();
-		}
-
-		IDbIntegrationConfiguration IDbIntegrationConfiguration.AutoQuoteKeywords()
-		{
-			return AutoQuoteKeywords();
-		}
-
-		IDbIntegrationConfiguration IDbIntegrationConfiguration.LogSqlInConsole()
-		{
-			return LogSqlInConsole();
-		}
-
-		IDbIntegrationConfiguration IDbIntegrationConfiguration.EnableLogFormattedSql()
-		{
-			return EnableLogFormattedSql();
-		}
-
-		IConnectionConfiguration IDbIntegrationConfiguration.Connected => Connected;
-
-		IBatcherConfiguration IDbIntegrationConfiguration.BatchingQueries => BatchingQueries;
-
-		ITransactionConfiguration IDbIntegrationConfiguration.Transactions => Transactions;
-
-		ICommandsConfiguration IDbIntegrationConfiguration.CreateCommands => CreateCommands;
-
-		IDbSchemaIntegrationConfiguration IDbIntegrationConfiguration.Schema => Schema;
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class DbSchemaIntegrationConfiguration 
-#pragma warning disable 618
-		: IDbSchemaIntegrationConfiguration
-#pragma warning restore 618
 	{
 		private readonly DbIntegrationConfiguration dbc;
 
@@ -150,38 +103,9 @@ namespace NHibernate.Cfg.Loquacious
 			dbc.Configuration.SetProperty(Environment.Hbm2ddlAuto, SchemaAutoAction.Validate.ToString());
 			return dbc;
 		}
-
-		#region Implementation of IDbSchemaIntegrationConfiguration
-#pragma warning disable 618
-
-		IDbIntegrationConfiguration IDbSchemaIntegrationConfiguration.Recreating()
-		{
-			return Recreating();
-		}
-
-		IDbIntegrationConfiguration IDbSchemaIntegrationConfiguration.Creating()
-		{
-			return Creating();
-		}
-
-		IDbIntegrationConfiguration IDbSchemaIntegrationConfiguration.Updating()
-		{
-			return Updating();
-		}
-
-		IDbIntegrationConfiguration IDbSchemaIntegrationConfiguration.Validating()
-		{
-			return Validating();
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class CommandsConfiguration 
-#pragma warning disable 618
-		: ICommandsConfiguration
-#pragma warning restore 618
 	{
 		private readonly DbIntegrationConfiguration dbc;
 
@@ -237,53 +161,9 @@ namespace NHibernate.Cfg.Loquacious
 			dbc.Configuration.SetProperty(Environment.MaxFetchDepth, maxFetchDepth.ToString());
 			return this;
 		}
-
-		#region Implementation of ICommandsConfiguration
-#pragma warning disable 618
-
-		ICommandsConfiguration ICommandsConfiguration.Preparing()
-		{
-			return Preparing();
-		}
-
-		ICommandsConfiguration ICommandsConfiguration.WithTimeout(byte seconds)
-		{
-			return WithTimeout(seconds);
-		}
-
-		ICommandsConfiguration ICommandsConfiguration.ConvertingExceptionsThrough<TExceptionConverter>()
-		{
-			return ConvertingExceptionsThrough<TExceptionConverter>();
-		}
-
-		ICommandsConfiguration ICommandsConfiguration.AutoCommentingSql()
-		{
-			return AutoCommentingSql();
-		}
-
-		IDbIntegrationConfiguration ICommandsConfiguration.WithHqlToSqlSubstitutions(string csvQuerySubstitutions)
-		{
-			return WithHqlToSqlSubstitutions(csvQuerySubstitutions);
-		}
-
-		IDbIntegrationConfiguration ICommandsConfiguration.WithDefaultHqlToSqlSubstitutions()
-		{
-			return WithDefaultHqlToSqlSubstitutions();
-		}
-
-		ICommandsConfiguration ICommandsConfiguration.WithMaximumDepthOfOuterJoinFetching(byte maxFetchDepth)
-		{
-			return WithMaximumDepthOfOuterJoinFetching(maxFetchDepth);
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class TransactionConfiguration 
-#pragma warning disable 618
-		: ITransactionConfiguration
-#pragma warning restore 618
 	{
 		private readonly DbIntegrationConfiguration dbc;
 
@@ -297,23 +177,9 @@ namespace NHibernate.Cfg.Loquacious
 			dbc.Configuration.SetProperty(Environment.TransactionStrategy, typeof(TFactory).AssemblyQualifiedName);
 			return dbc;
 		}
-
-		#region Implementation of ITransactionConfiguration
-#pragma warning disable 618
-
-		IDbIntegrationConfiguration ITransactionConfiguration.Through<TFactory>()
-		{
-			return Through<TFactory>();
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class BatcherConfiguration
-#pragma warning disable 618
-		: IBatcherConfiguration
-#pragma warning restore 618
 	{
 		private readonly DbIntegrationConfiguration dbc;
 
@@ -345,38 +211,9 @@ namespace NHibernate.Cfg.Loquacious
 			dbc.Configuration.SetProperty(Environment.OrderInserts, false.ToString().ToLowerInvariant());
 			return this;
 		}
-
-		#region Implementation of IBatcherConfiguration
-#pragma warning disable 618
-
-		IBatcherConfiguration IBatcherConfiguration.Through<TBatcher>()
-		{
-			return Through<TBatcher>();
-		}
-
-		IDbIntegrationConfiguration IBatcherConfiguration.Each(short batchSize)
-		{
-			return Each(batchSize);
-		}
-
-		IBatcherConfiguration IBatcherConfiguration.OrderingInserts()
-		{
-			return OrderingInserts();
-		}
-
-		IBatcherConfiguration IBatcherConfiguration.DisablingInsertsOrdering()
-		{
-			return DisablingInsertsOrdering();
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class ConnectionConfiguration 
-#pragma warning disable 618
-		: IConnectionConfiguration
-#pragma warning restore 618
 	{
 		private readonly DbIntegrationConfiguration dbc;
 
@@ -426,46 +263,5 @@ namespace NHibernate.Cfg.Loquacious
 			dbc.Configuration.SetProperty(Environment.ConnectionStringName, connectionStringName);
 			return dbc;
 		}
-
-		#region Implementation of IConnectionConfiguration
-#pragma warning disable 618
-
-		IConnectionConfiguration IConnectionConfiguration.Through<TProvider>()
-		{
-			return Through<TProvider>();
-		}
-
-		IConnectionConfiguration IConnectionConfiguration.By<TDriver>()
-		{
-			return By<TDriver>();
-		}
-
-		IConnectionConfiguration IConnectionConfiguration.With(IsolationLevel level)
-		{
-			return With(level);
-		}
-
-		IConnectionConfiguration IConnectionConfiguration.Releasing(ConnectionReleaseMode releaseMode)
-		{
-			return Releasing(releaseMode);
-		}
-
-		IDbIntegrationConfiguration IConnectionConfiguration.Using(string connectionString)
-		{
-			return Using(connectionString);
-		}
-
-		IDbIntegrationConfiguration IConnectionConfiguration.Using(DbConnectionStringBuilder connectionStringBuilder)
-		{
-			return Using(connectionStringBuilder);
-		}
-
-		IDbIntegrationConfiguration IConnectionConfiguration.ByAppConfing(string connectionStringName)
-		{
-			return ByAppConfing(connectionStringName);
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 }

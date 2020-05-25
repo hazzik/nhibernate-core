@@ -5,9 +5,6 @@ using NHibernate.Linq;
 namespace NHibernate.Cfg.Loquacious
 {
 	public class FluentSessionFactoryConfiguration 
-#pragma warning disable 618
-		: IFluentSessionFactoryConfiguration
-#pragma warning restore 618
 	{
 		private readonly Configuration configuration;
 
@@ -79,53 +76,9 @@ namespace NHibernate.Cfg.Loquacious
 		public ProxyConfiguration Proxy { get; }
 		public CollectionFactoryConfiguration GeneratingCollections { get; }
 		public MappingsConfiguration Mapping { get; }
-
-		#region Implementation of IFluentSessionFactoryConfiguration
-#pragma warning disable 618
-
-		IFluentSessionFactoryConfiguration IFluentSessionFactoryConfiguration.Named(string sessionFactoryName)
-		{
-			return Named(sessionFactoryName);
-		}
-
-		IDbIntegrationConfiguration IFluentSessionFactoryConfiguration.Integrate => Integrate;
-
-		ICacheConfiguration IFluentSessionFactoryConfiguration.Caching => Caching;
-
-		IFluentSessionFactoryConfiguration IFluentSessionFactoryConfiguration.GenerateStatistics()
-		{
-			return GenerateStatistics();
-		}
-
-		IFluentSessionFactoryConfiguration IFluentSessionFactoryConfiguration.DefaultFlushMode(FlushMode flushMode)
-		{
-			return DefaultFlushMode(flushMode);
-		}
-
-		IFluentSessionFactoryConfiguration IFluentSessionFactoryConfiguration.ParsingHqlThrough<TQueryTranslator>()
-		{
-			return ParsingHqlThrough<TQueryTranslator>();
-		}
-
-		IFluentSessionFactoryConfiguration IFluentSessionFactoryConfiguration.ParsingLinqThrough<TQueryProvider>()
-		{
-			return ParsingLinqThrough<TQueryProvider>();
-		}
-
-		IProxyConfiguration IFluentSessionFactoryConfiguration.Proxy => Proxy;
-
-		ICollectionFactoryConfiguration IFluentSessionFactoryConfiguration.GeneratingCollections => GeneratingCollections;
-
-		IMappingsConfiguration IFluentSessionFactoryConfiguration.Mapping => Mapping;
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class CollectionFactoryConfiguration 
-#pragma warning disable 618
-		: ICollectionFactoryConfiguration
-#pragma warning restore 618
 	{
 		private readonly FluentSessionFactoryConfiguration fc;
 
@@ -141,16 +94,5 @@ namespace NHibernate.Cfg.Loquacious
 										typeof (TCollectionsFactory).AssemblyQualifiedName);
 			return fc;
 		}
-
-		#region Implementation of ICollectionFactoryConfiguration
-#pragma warning disable 618
-
-		IFluentSessionFactoryConfiguration ICollectionFactoryConfiguration.Through<TCollecionsFactory>()
-		{
-			return Through<TCollecionsFactory>();
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 }

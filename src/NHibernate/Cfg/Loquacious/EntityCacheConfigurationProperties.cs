@@ -7,9 +7,6 @@ using NHibernate.Util;
 namespace NHibernate.Cfg.Loquacious
 {
 	public class EntityCacheConfigurationProperties<TEntity>
-#pragma warning disable 618
-		: IEntityCacheConfigurationProperties<TEntity>
-#pragma warning restore 618
 		where TEntity : class
 	{
 		private readonly Dictionary<string, EntityCollectionCacheConfigurationProperties> collections;
@@ -41,18 +38,6 @@ namespace NHibernate.Cfg.Loquacious
 			collections.Add(typeof (TEntity).FullName + "." + mi.Name, ecc);
 		}
 
-#pragma warning disable 618
-		#region Implementation of IEntityCacheConfigurationProperties
-
-		void IEntityCacheConfigurationProperties<TEntity>.Collection<TCollection>(Expression<Func<TEntity, TCollection>> collectionProperty,
-																				Action<IEntityCollectionCacheConfigurationProperties> collectionCacheConfiguration)
-		{
-			Collection(collectionProperty, collectionCacheConfiguration);
-		}
-
-		#endregion
-#pragma warning restore 618
-
 		internal IDictionary<string, EntityCollectionCacheConfigurationProperties> Collections
 		{
 			get { return collections; }
@@ -60,20 +45,13 @@ namespace NHibernate.Cfg.Loquacious
 	}
 
 	public class EntityCollectionCacheConfigurationProperties 
-#pragma warning disable 618
-		: IEntityCollectionCacheConfigurationProperties
-#pragma warning restore 618
 	{
 		public EntityCollectionCacheConfigurationProperties()
 		{
 			Strategy = EntityCacheUsage.ReadWrite;
 		}
 
-		#region Implementation of IEntityCollectionCacheConfigurationProperties
-
 		public EntityCacheUsage Strategy { get; set; }
 		public string RegionName { get; set; }
-
-		#endregion
 	}
 }

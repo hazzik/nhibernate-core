@@ -1,9 +1,6 @@
 namespace NHibernate.Cfg.Loquacious
 {
 	public class MappingsConfiguration 
-#pragma warning disable 618
-		: IMappingsConfiguration
-#pragma warning restore 618
 	{
 		private readonly FluentSessionFactoryConfiguration fc;
 
@@ -23,28 +20,9 @@ namespace NHibernate.Cfg.Loquacious
 			fc.Configuration.SetProperty(Environment.DefaultSchema, defaultSchemaName);
 			return fc;
 		}
-
-		#region Implementation of IMappingsConfiguration
-#pragma warning disable 618
-
-		IMappingsConfiguration IMappingsConfiguration.UsingDefaultCatalog(string defaultCatalogName)
-		{
-			return UsingDefaultCatalog(defaultCatalogName);
-		}
-
-		IFluentSessionFactoryConfiguration IMappingsConfiguration.UsingDefaultSchema(string defaultSchemaName)
-		{
-			return UsingDefaultSchema(defaultSchemaName);
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 
 	public class MappingsConfigurationProperties
-#pragma warning disable 618
-		:IMappingsConfigurationProperties
-#pragma warning restore 618
 	{
 		private readonly Configuration configuration;
 
@@ -52,8 +30,6 @@ namespace NHibernate.Cfg.Loquacious
 		{
 			this.configuration = configuration;
 		}
-
-		#region Implementation of IMappingsConfigurationProperties
 
 		public string DefaultCatalog
 		{
@@ -64,7 +40,5 @@ namespace NHibernate.Cfg.Loquacious
 		{
 			set { configuration.SetProperty(Environment.DefaultSchema, value); }
 		}
-
-		#endregion
 	}
 }

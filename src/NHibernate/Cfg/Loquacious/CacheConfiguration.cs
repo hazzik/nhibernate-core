@@ -4,9 +4,6 @@ using NHibernate.Cache;
 namespace NHibernate.Cfg.Loquacious
 {
 	public class CacheConfigurationProperties
-#pragma warning disable 618
-		: ICacheConfigurationProperties
-#pragma warning restore 618
 	{
 		private readonly Configuration cfg;
 
@@ -14,8 +11,6 @@ namespace NHibernate.Cfg.Loquacious
 		{
 			this.cfg = cfg;
 		}
-
-		#region Implementation of ICacheConfigurationProperties
 
 		public bool UseMinimalPuts
 		{
@@ -43,14 +38,6 @@ namespace NHibernate.Cfg.Loquacious
 			cfg.SetProperty(Environment.CacheProvider, typeof(TProvider).AssemblyQualifiedName);
 		}
 
-		[Obsolete("This method is invalid and should not be used. Use QueryCacheFactory method instead.", true)]
-		public void QueryCache<TFactory>() where TFactory : IQueryCache
-		{
-			throw new InvalidOperationException("This method is invalid and should not be used. Use QueryCacheFactory method instead.");
-		}
-
-		#endregion
-
 		public void QueryCacheFactory<TFactory>() where TFactory : IQueryCacheFactory
 		{
 			UseSecondLevelCache = true;
@@ -65,9 +52,6 @@ namespace NHibernate.Cfg.Loquacious
 	}
 
 	public class CacheConfiguration 
-#pragma warning disable 618
-		: ICacheConfiguration
-#pragma warning restore 618
 	{
 		private readonly FluentSessionFactoryConfiguration fc;
 
@@ -108,40 +92,9 @@ namespace NHibernate.Cfg.Loquacious
 		}
 
 		public QueryCacheConfiguration Queries { get; }
-
-#pragma warning disable 618
-		#region Implementation of ICacheConfiguration
-
-		ICacheConfiguration ICacheConfiguration.Through<TProvider>()
-		{
-			return Through<TProvider>();
-		}
-
-		ICacheConfiguration ICacheConfiguration.PrefixingRegionsWith(string regionPrefix)
-		{
-			return PrefixingRegionsWith(regionPrefix);
-		}
-
-		ICacheConfiguration ICacheConfiguration.UsingMinimalPuts()
-		{
-			return UsingMinimalPuts();
-		}
-
-		IFluentSessionFactoryConfiguration ICacheConfiguration.WithDefaultExpiration(int seconds)
-		{
-			return WithDefaultExpiration(seconds);
-		}
-
-		IQueryCacheConfiguration ICacheConfiguration.Queries => Queries;
-
-		#endregion
-#pragma warning restore 618
 	}
 
 	public class QueryCacheConfiguration 
-#pragma warning disable 618
-		: IQueryCacheConfiguration
-#pragma warning restore 618
 	{
 		private readonly CacheConfiguration cc;
 
@@ -150,8 +103,7 @@ namespace NHibernate.Cfg.Loquacious
 			this.cc = cc;
 		}
 
-		// 6.0 TODO: enable constraint and remove runtime type check
-		public CacheConfiguration Through<TFactory>() //where TFactory : IQueryCacheFactory
+		public CacheConfiguration Through<TFactory>() where TFactory : IQueryCacheFactory
 		{
 			if (!typeof(IQueryCacheFactory).IsAssignableFrom(typeof(TFactory)))
 				throw new ArgumentException($"{nameof(TFactory)} must be an {nameof(IQueryCacheFactory)}", nameof(TFactory));
@@ -161,16 +113,5 @@ namespace NHibernate.Cfg.Loquacious
 			cc.Configuration.SetProperty(Environment.QueryCacheFactory, typeof(TFactory).AssemblyQualifiedName);
 			return cc;
 		}
-
-		#region Implementation of IQueryCacheConfiguration
-#pragma warning disable 618
-
-		ICacheConfiguration IQueryCacheConfiguration.Through<TFactory>()
-		{
-			return Through<TFactory>();
-		}
-
-#pragma warning restore 618
-		#endregion
 	}
 }
