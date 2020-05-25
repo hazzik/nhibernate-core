@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using NHibernate.AdoNet;
@@ -89,10 +88,6 @@ namespace NHibernate.Cfg
 		public bool IsStatisticsEnabled { get; internal set; }
 
 		public bool IsIdentifierRollbackEnabled { get; internal set; }
-
-		// Since v5
-		[Obsolete("Please use DefaultFlushMode instead.")]
-		public bool IsFlushBeforeCompletionEnabled { get; internal set; }
 
 		public bool IsAutoCloseSessionEnabled { get; internal set; }
 
