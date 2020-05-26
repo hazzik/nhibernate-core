@@ -16,6 +16,7 @@ using NHibernate.Type;
 namespace NHibernate.Test.NHSpecificTest.GH1486
 {
 	using System.Threading.Tasks;
+	using System.Threading;
 	[TestFixture]
 	public class FixtureAsync : BugTestCase
 	{
@@ -141,12 +142,12 @@ namespace NHibernate.Test.NHSpecificTest.GH1486
 
 					var checkable = new [] { true, true, true };
 					Assert.That(
-						() => componentType.IsModified(new object[] { "", "", "" }, person.Address, checkable, sessionImplementor),
+						() => componentType.IsModifiedAsync(new object[] { "", "", "" }, person.Address, checkable, sessionImplementor, CancellationToken.None),
 						Throws.Nothing,
 						"Checking component against an array snapshot failed");
-					var isModified = componentType.IsModified(person.Address, person.Address, checkable, sessionImplementor);
+					var isModified = await (componentType.IsModifiedAsync(person.Address, person.Address, checkable, sessionImplementor, CancellationToken.None));
 					Assert.That(isModified, Is.False, "Checking same component failed");
-					isModified = componentType.IsModified(new Address("1", "A", "B"), person.Address, checkable, sessionImplementor);
+					isModified = await (componentType.IsModifiedAsync(new Address("1", "A", "B"), person.Address, checkable, sessionImplementor, CancellationToken.None));
 					Assert.That(isModified, Is.False, "Checking equal component failed");
 				}
 				await (transaction.RollbackAsync());

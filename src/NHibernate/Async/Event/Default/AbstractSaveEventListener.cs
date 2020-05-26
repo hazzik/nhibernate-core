@@ -361,7 +361,7 @@ namespace NHibernate.Event.Default
 				//try interceptor and unsaved-value
 				var assumed = AssumedUnsaved;
 				if (assumed.HasValue
-					? ForeignKeys.IsTransientFast(entityName, entity, source).GetValueOrDefault(assumed.Value)
+					? (await (ForeignKeys.IsTransientFastAsync(entityName, entity, source, cancellationToken)).ConfigureAwait(false)).GetValueOrDefault(assumed.Value)
 					: await (ForeignKeys.IsTransientSlowAsync(entityName, entity, source, cancellationToken)).ConfigureAwait(false))
 				{
 					if (log.IsDebugEnabled())

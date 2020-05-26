@@ -47,15 +47,15 @@ namespace NHibernate.Dialect.Lock
 					var st = await (session.Batcher.PrepareCommandAsync(CommandType.Text, sql, lockable.IdAndVersionSqlTypes, cancellationToken)).ConfigureAwait(false);
 					try
 					{
-						lockable.VersionType.NullSafeSet(st, version, 1, session);
+						await (lockable.VersionType.NullSafeSetAsync(st, version, 1, session, cancellationToken)).ConfigureAwait(false);
 						int offset = 2;
 
-						lockable.IdentifierType.NullSafeSet(st, id, offset, session);
+						await (lockable.IdentifierType.NullSafeSetAsync(st, id, offset, session, cancellationToken)).ConfigureAwait(false);
 						offset += lockable.IdentifierType.GetColumnSpan(factory);
 
 						if (lockable.IsVersioned)
 						{
-							lockable.VersionType.NullSafeSet(st, version, offset, session);
+							await (lockable.VersionType.NullSafeSetAsync(st, version, offset, session, cancellationToken)).ConfigureAwait(false);
 						}
 
 						int affected = await (session.Batcher.ExecuteNonQueryAsync(st, cancellationToken)).ConfigureAwait(false);
