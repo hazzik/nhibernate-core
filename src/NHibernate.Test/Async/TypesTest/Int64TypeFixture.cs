@@ -23,6 +23,23 @@ namespace NHibernate.Test.TypesTest
 	[TestFixture]
 	public class Int64TypeFixtureAsync: TestCase
 	{
+		[Test]
+		public async Task NextAsync()
+		{
+			Int64Type type = NHibernateUtil.Int64;
+			object current = (long)1;
+			object next = await (type.NextAsync(current, null, CancellationToken.None));
+
+			Assert.IsTrue(next is Int64, "Next should be Int64");
+			Assert.AreEqual((long)2, (long)next, "current should have been incremented to 2");
+		}
+
+		[Test]
+		public async Task SeedAsync()
+		{
+			Int64Type type = NHibernateUtil.Int64;
+			Assert.IsTrue(await (type.SeedAsync(null, CancellationToken.None)) is Int64, "seed should be int64");
+		}
 
 		[Test]
 		public async Task NullableWrapperDirtyAsync()

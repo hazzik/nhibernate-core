@@ -165,45 +165,47 @@ namespace NHibernate.Engine
 		/// <remarks>
 		/// Don't hit the database to make the determination, instead return null; 
 		/// </remarks>
-		public static Task<bool?> IsTransientFastAsync(string entityName, object entity, ISessionImplementor session, CancellationToken cancellationToken)
+		public static async Task<bool?> IsTransientFastAsync(string entityName, object entity, ISessionImplementor session, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (Equals(Intercept.LazyPropertyInitializer.UnfetchedProperty, entity))
+			{
+				// an unfetched association can only point to
+				// an entity that already exists in the db
+				return false;
+			}
+
+			var proxy = entity as INHibernateProxy;
+			if (proxy?.HibernateLazyInitializer.IsUninitialized == true)
+			{
+				return false;
+			}
+
+			// let the interceptor inspect the instance to decide
+			var interceptorResult = session.Interceptor.IsTransient(entity);
+			if (interceptorResult.HasValue)
+				return interceptorResult;
+
+			// let the persister inspect the instance to decide
+			// The persister only deals with unproxied entities.
+			entity = await (UnproxyForInitializedAsync(proxy, cancellationToken)).ConfigureAwait(false) ?? entity;
+			return await (session
+				.GetEntityPersister(
+					entityName,
+					entity)
+				.IsTransientAsync(entity, session, cancellationToken)).ConfigureAwait(false);
+		}
+
+		private static Task<object> UnproxyForInitializedAsync(INHibernateProxy proxy, CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
 			{
-				return Task.FromCanceled<bool?>(cancellationToken);
+				return Task.FromCanceled<object>(cancellationToken);
 			}
-			try
-			{
-				if (Equals(Intercept.LazyPropertyInitializer.UnfetchedProperty, entity))
-				{
-					// an unfetched association can only point to
-					// an entity that already exists in the db
-					return Task.FromResult<bool?>(false);
-				}
-
-				var proxy = entity as INHibernateProxy;
-				if (proxy?.HibernateLazyInitializer.IsUninitialized == true)
-				{
-					return Task.FromResult<bool?>(false);
-				}
-
-				// let the interceptor inspect the instance to decide
-				var interceptorResult = session.Interceptor.IsTransient(entity);
-				if (interceptorResult.HasValue)
-					return Task.FromResult<bool?>(interceptorResult);
-
-				// let the persister inspect the instance to decide
-				// The persister only deals with unproxied entities.
-				entity = UnproxyForInitialized(proxy) ?? entity;
-				return session
-					.GetEntityPersister(
-						entityName,
-						entity)
-					.IsTransientAsync(entity, session, cancellationToken);
-			}
-			catch (System.Exception ex)
-			{
-				return Task.FromException<bool?>(ex);
-			}
+			return
+				proxy?.HibernateLazyInitializer.IsUninitialized == false
+					? proxy.HibernateLazyInitializer.GetImplementationAsync(cancellationToken)
+					: Task.FromResult<object>(null);
 		}
 
 		/// <summary> 
