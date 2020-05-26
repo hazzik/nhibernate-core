@@ -37,12 +37,12 @@ using Property=NHibernate.Mapping.Property;
 using NHibernate.SqlTypes;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using NHibernate.Bytecode;
 
 namespace NHibernate.Persister.Entity
 {
-	using System.Threading.Tasks;
-	using System.Threading;
 	public abstract partial class AbstractEntityPersister : IOuterJoinLoadable, IQueryable, IClassMetadata,
 		IUniqueKeyLoadable, ISqlLoadable, ILazyPropertyInitializer, IPostInsertIdentityPersister, ILockable,
 		ISupportSelectModeJoinable, ICompositeKeyPostInsertIdentityPersister, ISupportLazyPropsJoinable
@@ -1157,18 +1157,6 @@ namespace NHibernate.Persister.Entity
 			{
 				LogDirtyProperties(props);
 				return props;
-			}
-		}
-
-		public virtual Task<bool?> IsTransientAsync(object entity, ISessionImplementor session)
-		{
-			try
-			{
-				return Task.FromResult<bool?>(IsTransient(entity, session));
-			}
-			catch (Exception ex)
-			{
-				return Task.FromException<bool?>(ex);
 			}
 		}
 

@@ -194,12 +194,11 @@ namespace NHibernate.Engine
 				// let the persister inspect the instance to decide
 				// The persister only deals with unproxied entities.
 				entity = UnproxyForInitialized(proxy) ?? entity;
-				cancellationToken.ThrowIfCancellationRequested();
 				return session
 					.GetEntityPersister(
 						entityName,
 						entity)
-					.IsTransientAsync(entity, session);
+					.IsTransientAsync(entity, session, cancellationToken);
 			}
 			catch (System.Exception ex)
 			{

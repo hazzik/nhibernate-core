@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using NHibernate.Cache;
 using NHibernate.Cache.Entry;
 using NHibernate.Engine;
@@ -520,5 +522,21 @@ namespace NHibernate.DomainModel
 		public IEntityTuplizer EntityTuplizer => null;
 
 		#endregion
+
+		public Task<bool?> IsTransientAsync(object obj, ISessionImplementor session, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+			{
+				return Task.FromCanceled<bool?>(cancellationToken);
+			}
+			try
+			{
+				return Task.FromResult<bool?>(((Custom) obj).Id == null);
+			}
+			catch (Exception ex)
+			{
+				return Task.FromException<bool?>(ex);
+			}
+		}
 	}
 }

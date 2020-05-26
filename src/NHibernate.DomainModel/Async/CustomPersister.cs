@@ -10,6 +10,8 @@
 
 using System;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using NHibernate.Cache;
 using NHibernate.Cache.Entry;
 using NHibernate.Engine;
@@ -25,8 +27,6 @@ using Array = System.Array;
 
 namespace NHibernate.DomainModel
 {
-	using System.Threading.Tasks;
-	using System.Threading;
 	public partial class CustomPersister : IEntityPersister
 	{
 
@@ -163,18 +163,6 @@ namespace NHibernate.DomainModel
 		public Task<object> ForceVersionIncrementAsync(object id, object currentVersion, ISessionImplementor session, CancellationToken cancellationToken)
 		{
 			return Task.FromResult<object>(null);
-		}
-
-		public Task<bool?> IsTransientAsync(object obj, ISessionImplementor session)
-		{
-			try
-			{
-				return Task.FromResult<bool?>(((Custom) obj).Id == null);
-			}
-			catch (Exception ex)
-			{
-				return Task.FromException<bool?>(ex);
-			}
 		}
 
 		public Task ProcessInsertGeneratedPropertiesAsync(object id, object entity, object[] state, ISessionImplementor session, CancellationToken cancellationToken)

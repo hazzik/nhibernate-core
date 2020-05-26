@@ -18,13 +18,13 @@ using NHibernate.Tuple.Entity;
 using NHibernate.Type;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using NHibernate.Intercept;
 using NHibernate.Util;
 
 namespace NHibernate.Persister.Entity
 {
-	using System.Threading;
 
 	public partial interface IEntityPersister : IOptimisticCacheSource
 	{
@@ -135,9 +135,6 @@ namespace NHibernate.Persister.Entity
 
 		#endregion
 		#region stuff that is tuplizer-centric, but is passed a session
-
-		/// <summary> Is this a new transient instance?</summary>
-		Task<bool?> IsTransientAsync(object obj, ISessionImplementor session);
 
 		/// <summary>
 		/// Perform a select to retrieve the values of any generated properties

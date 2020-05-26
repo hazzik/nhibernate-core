@@ -8,6 +8,7 @@ using NHibernate.Tuple.Entity;
 using NHibernate.Type;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using NHibernate.Intercept;
 using NHibernate.Util;
@@ -605,6 +606,9 @@ namespace NHibernate.Persister.Entity
 		EntityMode EntityMode { get; }
 
 		IEntityTuplizer EntityTuplizer { get; }
+
+		/// <summary> Is this a new transient instance?</summary>
+		Task<bool?> IsTransientAsync(object obj, ISessionImplementor session, CancellationToken cancellationToken);
 	}
 
 	internal static class EntityPersisterExtensions

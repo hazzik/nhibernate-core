@@ -27,6 +27,8 @@ using Property=NHibernate.Mapping.Property;
 using NHibernate.SqlTypes;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using NHibernate.Bytecode;
 
 namespace NHibernate.Persister.Entity
@@ -4796,6 +4798,22 @@ namespace NHibernate.Persister.Entity
 
 			//render the SQL
 			return RenderSelect(tableNumbers.ToArray(), columnNumbers.ToArray(), formulaNumbers.ToArray());
+		}
+
+		public virtual Task<bool?> IsTransientAsync(object entity, ISessionImplementor session, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+			{
+				return Task.FromCanceled<bool?>(cancellationToken);
+			}
+			try
+			{
+				return Task.FromResult(IsTransient(entity, session));
+			}
+			catch (Exception ex)
+			{
+				return Task.FromException<bool?>(ex);
+			}
 		}
 	}
 }

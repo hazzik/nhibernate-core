@@ -7,9 +7,6 @@
   - pattern: ^.*(Hql\.g).*$
   analyzation:
     methodConversion:
-    - conversion: ToAsync
-      name: IsTransient
-      containingTypeName: IEntityPersister
 #TODO 6.0: Remove ignore rule for IQueryBatchItem.ProcessResults
     - conversion: Ignore
       name: ProcessResults
