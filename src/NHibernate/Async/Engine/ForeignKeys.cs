@@ -199,7 +199,7 @@ namespace NHibernate.Engine
 					.GetEntityPersister(
 						entityName,
 						entity)
-					.IsTransientAsync(entity);
+					.IsTransientAsync(entity, session);
 			}
 			catch (System.Exception ex)
 			{

@@ -1160,11 +1160,11 @@ namespace NHibernate.Persister.Entity
 			}
 		}
 
-		public virtual Task<bool?> IsTransientAsync(object entity)
+		public virtual Task<bool?> IsTransientAsync(object entity, ISessionImplementor session)
 		{
 			try
 			{
-				return Task.FromResult<bool?>(IsTransient(entity));
+				return Task.FromResult<bool?>(IsTransient(entity, session));
 			}
 			catch (Exception ex)
 			{

@@ -165,7 +165,7 @@ namespace NHibernate.DomainModel
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<bool?> IsTransientAsync(object obj)
+		public Task<bool?> IsTransientAsync(object obj, ISessionImplementor session)
 		{
 			try
 			{

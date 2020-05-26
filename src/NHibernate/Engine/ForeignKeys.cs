@@ -190,7 +190,7 @@ namespace NHibernate.Engine
 				.GetEntityPersister(
 					entityName,
 					entity)
-				.IsTransient(entity);
+				.IsTransient(entity, session);
 		}
 
 		private static object UnproxyForInitialized(INHibernateProxy proxy)

@@ -459,7 +459,7 @@ namespace NHibernate.Persister.Entity
 		object CreateProxy(object id, ISessionImplementor session);
 
 		/// <summary> Is this a new transient instance?</summary>
-		bool? IsTransient(object obj);
+		bool? IsTransient(object obj, ISessionImplementor session);
 
 		/// <summary> Return the values of the insertable properties of the object (including backrefs)</summary>
 		object[] GetPropertyValuesToInsert(object obj, IDictionary mergeMap, ISessionImplementor session);

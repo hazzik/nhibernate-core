@@ -399,7 +399,7 @@ namespace NHibernate.DomainModel
 			throw new NotSupportedException("no proxy for this class");
 		}
 
-		public bool? IsTransient(object obj)
+		public bool? IsTransient(object obj, ISessionImplementor session)
 		{
 			return ((Custom) obj).Id == null;
 		}

@@ -4201,7 +4201,7 @@ namespace NHibernate.Persister.Entity
 			}
 		}
 
-		public virtual bool? IsTransient(object entity)
+		public virtual bool? IsTransient(object entity, ISessionImplementor session)
 		{
 			object id;
 			if (CanExtractIdOutOfEntity)
