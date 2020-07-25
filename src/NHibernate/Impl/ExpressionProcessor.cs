@@ -247,13 +247,13 @@ namespace NHibernate.Impl
 			return property.CreateCriterion(Restrictions.Le, Restrictions.Le, value);
 		}
 
-		/// <summary>
-		/// Invoke the expression to extract its runtime value
-		/// </summary>
-		public static object FindValue(Expression expression)
+		private static bool FindValueFast(Expression expression, out object value)
 		{
 			if (expression.NodeType == ExpressionType.Constant)
-				return ((ConstantExpression) expression).Value;
+			{
+				value = ((ConstantExpression) expression).Value;
+				return true;
+			}
 
 			if (expression.NodeType == ExpressionType.MemberAccess)
 			{
@@ -265,16 +265,45 @@ namespace NHibernate.Impl
 					switch (member.MemberType)
 					{
 						case MemberTypes.Field:
-							return ((FieldInfo) member).GetValue(constantValue);
+						{
+							value = ((FieldInfo) member).GetValue(constantValue);
+							return true;
+						}
 						case MemberTypes.Property:
-							return ((PropertyInfo) member).GetValue(constantValue);
+						{
+							value = ((PropertyInfo) member).GetValue(constantValue);
+							return true;
+						}
 					}
 				}
 			}
 
+			value = null;
+			return false;
+		}
+
+		/// <summary>
+		/// Invoke the expression to extract its runtime value
+		/// </summary>
+		internal static T FindValue<T>(Expression expression)
+		{
+			// if (FindValueFast(expression, out var value))
+			// 	return (T) value;
+
+			var valueExpression = Expression.Lambda<Func<T>>(expression).Compile();
+			return valueExpression.Invoke();
+		}
+
+		/// <summary>
+		/// Invoke the expression to extract its runtime value
+		/// </summary>
+		public static object FindValue(Expression expression)
+		{
+			if (FindValueFast(expression, out var value))
+				return value;
+
 			var valueExpression = Expression.Lambda(expression).Compile();
-			object value = valueExpression.DynamicInvoke();
-			return value;
+			return valueExpression.DynamicInvoke();
 		}
 
 		/// <summary>
@@ -472,7 +501,7 @@ namespace NHibernate.Impl
 			if (methodCallExpression == null)
 				throw new ArgumentException("right operand should be detachedQueryInstance.As<T>() - " + expression, nameof(expression));
 
-			return ((QueryOver) FindValue(methodCallExpression.Object)).DetachedCriteria;
+			return FindValue<QueryOver>(methodCallExpression.Object).DetachedCriteria;
 		}
 
 		private static bool EvaluatesToNull(Expression expression)
@@ -511,8 +540,7 @@ namespace NHibernate.Impl
 			if (expression is ParameterExpression)
 				return true;
 
-			var memberExpression = expression as MemberExpression;
-			if (memberExpression != null)
+			if (expression is MemberExpression memberExpression)
 			{
 				if (memberExpression.Expression == null)
 					return false; // it's a member of a static class
