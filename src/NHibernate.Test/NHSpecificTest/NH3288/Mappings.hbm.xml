@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test" namespace="NHibernate.Test.NHSpecificTest.NH3288">
+
+  <class name="BranchLocation">
+    <id name="Id" type="Guid" column="Id">
+      <generator class="assigned" />
+    </id>
+    <version name="Version" column="Version" type="Int32" unsaved-value="0" />
+    <property name="Name" />
+    <one-to-one name="BusinessUnitAssociation" class="BusinessUnitContainsBranchLocation"
+         cascade="save-update, merge" fetch="select" property-ref="BranchLocation"
+         />
+  </class>
+
+  <class name="BusinessUnit">
+    <id name="Id" type="Guid" column="Id">
+      <generator class="assigned" />
+    </id>
+    <version name="Version" column="Version" type="Int32" unsaved-value="0" />
+    <property name="Name" />
+    <bag name="BranchLocations" inverse="true" cascade="none" generic="true"
+         fetch="select">
+      <key column="BusinessUnitId" />
+      <one-to-many class="BusinessUnitContainsBranchLocation" />
+    </bag>
+  </class>
+
+  <class name="BusinessUnitContainsBranchLocation">
+    <id name="Id" type="Guid" column="Id">
+      <generator class="assigned" />
+    </id>
+    <version name="Version" column="Version" type="Int32" unsaved-value="0" />
+    <property name="Name" />
+    <many-to-one name="BusinessUnit"
+         class="BusinessUnit" column="BusinessUnitId" cascade="none" fetch="select" />
+    <many-to-one name="BranchLocation"
+         class="BranchLocation" column="BranchLocationId" unique="true" cascade="none"
+         fetch="select" />
+  </class>
+
+</hibernate-mapping>
