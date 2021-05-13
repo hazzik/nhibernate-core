@@ -47,6 +47,7 @@ namespace NHibernate.Engine
 			private readonly JoinType joinType;
 			private readonly string alias;
 			private readonly string[] lhsColumns;
+			private readonly string[] rhsColumns;
 
 			public Join(ISessionFactoryImplementor factory, IAssociationType associationType, string alias, JoinType joinType,
 						string[] lhsColumns)
@@ -56,6 +57,9 @@ namespace NHibernate.Engine
 				this.alias = alias;
 				this.joinType = joinType;
 				this.lhsColumns = lhsColumns;
+				this.rhsColumns = lhsColumns.Length > 0
+					? JoinHelper.GetRHSColumnNames(joinable, associationType)
+					: Array.Empty<string>();
 			}
 
 			public string Alias
@@ -81,6 +85,11 @@ namespace NHibernate.Engine
 			public string[] LHSColumns
 			{
 				get { return lhsColumns; }
+			}
+
+			public string[] RHSColumns
+			{
+				get { return rhsColumns; }
 			}
 
 			public override string ToString()
@@ -195,7 +204,7 @@ namespace NHibernate.Engine
 					join.Joinable.TableName,
 					join.Alias,
 					join.LHSColumns,
-					JoinHelper.GetRHSColumnNames(join.AssociationType, factory),
+					join.RHSColumns,
 					join.JoinType,
 					withClauses[i]
 				);
@@ -237,9 +246,9 @@ namespace NHibernate.Engine
 			else if (string.IsNullOrEmpty(on))
 			{
 				// NH Different behavior : NH1179 and NH1293
-				// Apply filters in Many-To-One association
+				// Apply filters for entity joins and Many-To-One association
 				var enabledForManyToOne = FilterHelper.GetEnabledForManyToOne(enabledFilters);
-				if (enabledForManyToOne.Count > 0)
+				if (ForceFilter || enabledForManyToOne.Count > 0)
 					withConditions.Add(join.Joinable.FilterFragment(join.Alias, enabledForManyToOne));
 			}
 
@@ -345,6 +354,8 @@ namespace NHibernate.Engine
 		internal string RootAlias => rootAlias;
 
 		public ISessionFactoryImplementor Factory => factory;
+
+		internal bool ForceFilter { get; set; }
 
 		public JoinSequence AddJoin(FromElement fromElement)
 		{

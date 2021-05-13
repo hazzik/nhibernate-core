@@ -388,7 +388,8 @@ namespace NHibernate.Loader
 					GetWithClause(path, pathAlias),
 					Factory,
 					enabledFilters,
-					GetSelectMode(path)), path);
+					GetSelectMode(path)) {ForceFilter = true},
+				path);
 			AddAssociation(assoc);
 		}
 
@@ -750,8 +751,9 @@ namespace NHibernate.Loader
 			}
 			else
 			{
-				foreignKeyTable = type.GetAssociatedJoinable(Factory).TableName;
-				foreignKeyColumns = JoinHelper.GetRHSColumnNames(type, Factory);
+				var joinable = type.GetAssociatedJoinable(Factory);
+				foreignKeyTable = joinable.TableName;
+				foreignKeyColumns = JoinHelper.GetRHSColumnNames(joinable, type);
 			}
 
 			return IsDuplicateAssociation(foreignKeyTable, foreignKeyColumns);
@@ -849,9 +851,9 @@ namespace NHibernate.Loader
 				else
 				{
 					// NH Different behavior : NH1179 and NH1293
-					// Apply filters in Many-To-One association
+					// Apply filters for entity joins and Many-To-One associations
 					SqlString filter = null;
-					if (enabledFiltersForManyToOne.Count > 0)
+					if (oj.ForceFilter || enabledFiltersForManyToOne.Count > 0)
 					{
 						string manyToOneFilterFragment = oj.Joinable.FilterFragment(oj.RHSAlias, enabledFiltersForManyToOne);
 						bool joinClauseDoesNotContainsFilterAlready =
@@ -1058,10 +1060,9 @@ namespace NHibernate.Loader
 			}
 		}
 
-		private static void ColumnFragment(SqlStringBuilder builder, string alias, string[] columnNames)
+		private void ColumnFragment(SqlStringBuilder builder, string alias, string[] columnNames)
 		{
 			//foo = ? and bar = ?
-			var prefix = alias + StringHelper.Dot;
 			var added = false;
 			foreach (var columnName in columnNames)
 			{
@@ -1071,8 +1072,7 @@ namespace NHibernate.Loader
 				}
 
 				builder
-					.Add(prefix)
-					.Add(columnName)
+					.Add(StringHelper.Qualify(GenerateAliasForColumn(alias, columnName), columnName))
 					.Add("=")
 					.Add(Parameter.Placeholder);
 

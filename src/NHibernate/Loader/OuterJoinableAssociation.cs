@@ -46,7 +46,7 @@ namespace NHibernate.Loader
 			this.rhsAlias = rhsAlias;
 			this.joinType = joinType;
 			joinable = joinableType.GetAssociatedJoinable(factory);
-			rhsColumns = JoinHelper.GetRHSColumnNames(joinableType, factory);
+			rhsColumns = JoinHelper.GetRHSColumnNames(joinable, joinableType);
 			on = new SqlString(joinableType.GetOnCondition(rhsAlias, factory, enabledFilters));
 			if (SqlStringHelper.IsNotEmpty(withClause))
 				on = on.Append(" and ( ", withClause, " )");
@@ -100,9 +100,12 @@ namespace NHibernate.Loader
 
 		public ISet<string> EntityFetchLazyProperties { get; set; }
 
+		internal bool ForceFilter { get; set; }
+
 		string[] IJoin.LHSColumns => lhsColumns;
 		string IJoin.Alias => RHSAlias;
 		IAssociationType IJoin.AssociationType => JoinableType;
+		string[] IJoin.RHSColumns => rhsColumns;
 
 		public int GetOwner(IList<OuterJoinableAssociation> associations)
 		{
