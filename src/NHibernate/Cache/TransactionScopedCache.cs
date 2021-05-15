@@ -1,67 +1,65 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
 using System.Transactions;
 
 namespace NHibernate.Cache
 {
-	public class TransactionScopedCache : ICache
+	public class TransactionScopedCache : CacheBase
 	{
-		private readonly ICache _rootCache;
-		private ConcurrentDictionary<System.Transactions.Transaction, ActionRecordingCache> _caches = new ConcurrentDictionary<System.Transactions.Transaction, ActionRecordingCache>();
+		private readonly CacheBase _rootCache;
+		private readonly ConcurrentDictionary<System.Transactions.Transaction, ActionRecordingCache> _caches = new ConcurrentDictionary<System.Transactions.Transaction, ActionRecordingCache>();
 
-		public TransactionScopedCache(ICache rootCache)
+		public TransactionScopedCache(CacheBase rootCache)
 		{
 			_rootCache = rootCache;
 			Timeout = rootCache.Timeout;
 			RegionName = rootCache.RegionName;
 		}
 
-		public object Get(object key)
+		public override object Get(object key)
 		{
 			return GetCache().Get(key);
 		}
 
-		public void Put(object key, object value)
+		public override void Put(object key, object value)
 		{
 			GetCache().Put(key, value);
 		}
 
-		public void Remove(object key)
+		public override void Remove(object key)
 		{
 			GetCache().Remove(key);
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			GetCache().Clear();
 		}
 
-		public void Destroy()
+		public override void Destroy()
 		{
 			GetCache().Destroy();
 		}
 
-		public void Lock(object key)
+		public override object Lock(object key)
 		{
-			GetCache().Lock(key);
+			return GetCache().Lock(key);
 		}
 
-		public void Unlock(object key)
+		public override void Unlock(object key, object lockValue)
 		{
-			GetCache().Unlock(key);
+			GetCache().Unlock(key, lockValue);
 		}
 
-		public long NextTimestamp()
+		public override long NextTimestamp()
 		{
 			return GetCache().NextTimestamp();
 		}
 
-		public int Timeout { get; private set; }
-		public string RegionName { get; private set; }
+		public override int Timeout { get; }
+		public override string RegionName { get; }
 
-		private ICache GetCache()
+		private CacheBase GetCache()
 		{
 			var currentTx = System.Transactions.Transaction.Current;
 			if (currentTx != null)
@@ -88,8 +86,7 @@ namespace NHibernate.Cache
 
 			void IEnlistmentNotification.Commit(Enlistment enlistment)
 			{
-				ActionRecordingCache cache;
-				_cache._caches.TryRemove(_transaction, out cache);
+				_cache._caches.TryRemove(_transaction, out _);
 			}
 
 			void IEnlistmentNotification.InDoubt(Enlistment enlistment)
@@ -101,8 +98,7 @@ namespace NHibernate.Cache
 			{
 				try
 				{
-					ActionRecordingCache cache;
-					if (_cache._caches.TryGetValue(_transaction, out cache))
+					if (_cache._caches.TryGetValue(_transaction, out var cache))
 					{
 						cache.Replay();
 					}
@@ -116,10 +112,8 @@ namespace NHibernate.Cache
 
 			void IEnlistmentNotification.Rollback(Enlistment enlistment)
 			{
-				ActionRecordingCache cache;
-				_cache._caches.TryRemove(_transaction, out cache);
+				_cache._caches.TryRemove(_transaction, out _);
 			}
 		}
-
 	}
 }

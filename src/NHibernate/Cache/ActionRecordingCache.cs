@@ -3,25 +3,25 @@ using System.Collections.Generic;
 
 namespace NHibernate.Cache
 {
-	internal class ActionRecordingCache : ICache
+	internal class ActionRecordingCache : CacheBase
 	{
-		private readonly ICache _innerCache;
-		private readonly ICache _outerCache;
-		private readonly Queue<Action<ICache>> _actions;
+		private readonly CacheBase _innerCache;
+		private readonly CacheBase _outerCache;
+		private readonly Queue<Action<CacheBase>> _actions;
 
-		public ActionRecordingCache(string regionName, ICache outerCache)
+		public ActionRecordingCache(string regionName, CacheBase outerCache)
 			: this(new HashtableCache(regionName), outerCache)
 		{
 		}
 
-		public ActionRecordingCache(ICache innerCache, ICache outerCache)
+		public ActionRecordingCache(CacheBase innerCache, CacheBase outerCache)
 		{
 			_innerCache = innerCache;
 			_outerCache = outerCache;
-			_actions = new Queue<Action<ICache>>();
+			_actions = new Queue<Action<CacheBase>>();
 		}
 
-		public object Get(object key)
+		public override object Get(object key)
 		{
 			var instance = _innerCache.Get(key);
 			if (instance != null)
@@ -31,54 +31,55 @@ namespace NHibernate.Cache
 			return _outerCache.Get(key);
 		}
 
-		public void Put(object key, object value)
+		public override void Put(object key, object value)
 		{
 			_innerCache.Put(key, value);
 			_actions.Enqueue(c => c.Put(key, value));
 		}
 
-		public void Remove(object key)
+		public override void Remove(object key)
 		{
 			_innerCache.Remove(key);
 			_actions.Enqueue(c => c.Remove(key));
 		}
 
-		public void Clear()
+		public override void Clear()
 		{
 			_innerCache.Clear();
 			_actions.Clear();
 			_actions.Enqueue(c => c.Clear());
 		}
 
-		public void Destroy()
+		public override void Destroy()
 		{
 			_innerCache.Destroy();
 			_outerCache.Destroy();
 		}
 
-		public void Lock(object key)
+		public override object Lock(object key)
 		{
-			_innerCache.Lock(key);
+			var @lock = _innerCache.Lock(key);
 			_actions.Enqueue(c => c.Lock(key));
+			return @lock;
 		}
 
-		public void Unlock(object key)
+		public override void Unlock(object key, object lockValue)
 		{
-			_innerCache.Unlock(key);
-			_actions.Enqueue(c => c.Unlock(key));
+			_innerCache.Unlock(key, lockValue);
+			_actions.Enqueue(c => c.Unlock(key, lockValue));
 		}
 
-		public long NextTimestamp()
+		public override  long NextTimestamp()
 		{
 			return _innerCache.NextTimestamp();
 		}
 
-		public int Timeout
+		public override int Timeout
 		{
 			get { return _innerCache.Timeout; }
 		}
 
-		public string RegionName
+		public override string RegionName
 		{
 			get { return _innerCache.RegionName; }
 		}
