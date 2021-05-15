@@ -4,7 +4,7 @@ using System.Transactions;
 
 namespace NHibernate.Cache
 {
-	public class TransactionScopedCache : CacheBase
+	public partial class TransactionScopedCache : CacheBase
 	{
 		private readonly CacheBase _rootCache;
 		private readonly ConcurrentDictionary<System.Transactions.Transaction, ActionRecordingCache> _caches = new ConcurrentDictionary<System.Transactions.Transaction, ActionRecordingCache>();
@@ -91,7 +91,6 @@ namespace NHibernate.Cache
 
 			void IEnlistmentNotification.InDoubt(Enlistment enlistment)
 			{
-
 			}
 
 			void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
@@ -102,9 +101,10 @@ namespace NHibernate.Cache
 					{
 						cache.Replay();
 					}
+
 					preparingEnlistment.Prepared();
 				}
-				catch(Exception exception)
+				catch (Exception exception)
 				{
 					preparingEnlistment.ForceRollback(exception);
 				}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NHibernate.Cache
 {
-	internal class ActionRecordingCache : CacheBase
+	internal partial class ActionRecordingCache : CacheBase
 	{
 		private readonly CacheBase _innerCache;
 		private readonly CacheBase _outerCache;
