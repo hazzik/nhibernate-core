@@ -4,7 +4,6 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-    time: "17:00"
   open-pull-requests-limit: 10
   ignore:
   - dependency-name: Microsoft.AspNetCore
