@@ -25,6 +25,7 @@ namespace NHibernate.Test.CfgTest
 			Assert.IsTrue(results.Count > 0); // 54
 		}
 
+#if !NET5_0_OR_GREATER
 		[Test]
 		public void CanSerializeAndDeserializeDomainModelAssembly()
 		{
@@ -48,6 +49,7 @@ namespace NHibernate.Test.CfgTest
 				Assert.IsTrue(newList.Count == originalList.Count);
 			}
 		}
+#endif
 
 		[Test]
 		public void CompareDeserializationTimes()

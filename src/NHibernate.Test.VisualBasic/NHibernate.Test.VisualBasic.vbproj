@@ -11,7 +11,7 @@
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <DefineConstants>NETCOREAPP2_0_OR_GREATER,$(DefineConstants)</DefineConstants>
     <OutputType>Exe</OutputType>
     <GenerateProgramFile>false</GenerateProgramFile>

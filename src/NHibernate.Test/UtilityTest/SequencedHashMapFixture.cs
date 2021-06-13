@@ -416,6 +416,7 @@ namespace NHibernate.Test.UtilityTest
 			}
 		}
 
+#if !NET5_0_OR_GREATER
 		[Test]
 		public void Serialize()
 		{
@@ -443,5 +444,6 @@ namespace NHibernate.Test.UtilityTest
 
 			Assert.AreEqual(3, index);
 		}
+#endif
 	}
 }

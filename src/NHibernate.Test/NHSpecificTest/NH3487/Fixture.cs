@@ -46,6 +46,7 @@ namespace NHibernate.Test.NHSpecificTest.NH3487
 			}
 		}
 
+#if !NET5_0_OR_GREATER
 		[Test]
 		public void CanDeserializeSessionWithEntityHashCollision()
 		{
@@ -79,5 +80,6 @@ namespace NHibernate.Test.NHSpecificTest.NH3487
 				formatter.Deserialize(serializationStream);
 			}
 		}
+#endif
 	}
 }
