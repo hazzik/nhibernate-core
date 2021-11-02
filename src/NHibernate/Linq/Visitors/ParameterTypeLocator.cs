@@ -93,7 +93,8 @@ namespace NHibernate.Linq.Visitors
 					continue;
 				}
 
-				namedParameter.Type = GetParameterType(sessionFactory, constantExpressions, visitor, namedParameter);
+				namedParameter.Type = GetParameterType(sessionFactory, constantExpressions, visitor, namedParameter, out var tryProcessInHql);
+				namedParameter.IsGuessedType = tryProcessInHql;
 			}
 		}
 
@@ -145,8 +146,10 @@ namespace NHibernate.Linq.Visitors
 			ISessionFactoryImplementor sessionFactory,
 			HashSet<ConstantExpression> constantExpressions,
 			ConstantTypeLocatorVisitor visitor,
-			NamedParameter namedParameter)
+			NamedParameter namedParameter,
+			out bool tryProcessInHql)
 		{
+			tryProcessInHql = false;
 			// All constant expressions have the same type/value
 			var constantExpression = constantExpressions.First();
 			var constantType = constantExpression.Type.UnwrapIfNullable();
@@ -154,6 +157,11 @@ namespace NHibernate.Linq.Visitors
 			if (candidateType != null)
 			{
 				return candidateType;
+			}
+
+			if (visitor.NotGuessableConstants.Contains(constantExpression) && constantExpression.Value != null)
+			{
+				tryProcessInHql = true;
 			}
 
 			// No related MemberExpressions was found, guess the type by value or its type when null.
@@ -166,10 +174,13 @@ namespace NHibernate.Linq.Visitors
 
 		private class ConstantTypeLocatorVisitor : RelinqExpressionVisitor
 		{
+			private bool _hqlGenerator;
 			private readonly bool _removeMappedAsCalls;
 			private readonly System.Type _targetType;
 			private readonly IDictionary<ConstantExpression, NamedParameter> _parameters;
 			private readonly ISessionFactoryImplementor _sessionFactory;
+			private readonly ILinqToHqlGeneratorsRegistry _functionRegistry;
+			public readonly HashSet<ConstantExpression> NotGuessableConstants = new HashSet<ConstantExpression>();
 			public readonly Dictionary<ConstantExpression, IType> ConstantExpressions =
 				new Dictionary<ConstantExpression, IType>();
 			public readonly Dictionary<NamedParameter, HashSet<ConstantExpression>> ParameterConstants =
@@ -187,6 +198,7 @@ namespace NHibernate.Linq.Visitors
 				_targetType = targetType;
 				_sessionFactory = sessionFactory;
 				_parameters = parameters;
+				_functionRegistry = sessionFactory.Settings.LinqToHqlGeneratorsRegistry;
 			}
 
 			protected override Expression VisitBinary(BinaryExpression node)
@@ -257,6 +269,16 @@ namespace NHibernate.Linq.Visitors
 					return node;
 				}
 
+				// For hql method generators we do not want to guess the parameter type here, let hql logic figure it out.
+				if (_functionRegistry.TryGetGenerator(node.Method, out _))
+				{
+					var origHqlGenerator = _hqlGenerator;
+					_hqlGenerator = true;
+					var expression = base.VisitMethodCall(node);
+					_hqlGenerator = origHqlGenerator;
+					return expression;
+				}
+
 				return base.VisitMethodCall(node);
 			}
 
@@ -265,6 +287,11 @@ namespace NHibernate.Linq.Visitors
 				if (node.Value is IEntityNameProvider || RelatedExpressions.ContainsKey(node) || !_parameters.TryGetValue(node, out var param))
 				{
 					return node;
+				}
+
+				if (_hqlGenerator)
+				{
+					NotGuessableConstants.Add(node);
 				}
 
 				RelatedExpressions.Add(node, new HashSet<Expression>());

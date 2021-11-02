@@ -170,11 +170,14 @@ namespace NHibernate.Impl
 		[NonSerialized]
 		private readonly ConcurrentDictionary<string, string[]> entityNameImplementorsMap = new ConcurrentDictionary<string, string[]>(4 * System.Environment.ProcessorCount, 100);
 		private readonly string uuid;
+
+		[NonSerialized]
 		private bool disposed;
 
 		[NonSerialized]
 		private bool isClosed = false;
 
+		[NonSerialized]
 		private QueryPlanCache queryPlanCache;
 		[NonSerialized]
 		private StatisticsImpl statistics;
@@ -748,7 +751,7 @@ namespace NHibernate.Impl
 			{
 				// try to get the class from imported names
 				string importedName = GetImportedClassName(entityOrClassName);
-				if (importedName != null)
+				if (importedName != entityOrClassName)
 				{
 					clazz = System.Type.GetType(importedName, false);
 				}
