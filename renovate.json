@@ -6,7 +6,7 @@
   "labels": [
     "t: Task",
     "p: Lowest"
-  ]
+  ],
   "packageRules": [
     {
       "matchPackagePrefixes": [
