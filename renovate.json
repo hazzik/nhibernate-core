@@ -3,6 +3,8 @@
   "extends": [
     "config:base"
   ],
+  "pruneStaleBranches": false,
+  "automerge": true,
   "labels": [
     "t: Task",
     "p: Lowest"
