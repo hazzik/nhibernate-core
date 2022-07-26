@@ -9,6 +9,12 @@
   ],
   "packageRules": [
     {
+      "matchPaths": [
+        "src/NHibernate.Test*/*.csproj"
+      ],
+      "labels": [ "c: Tests" ]
+    },
+    {
       "matchPackagePrefixes": [
         "NUnit"
       ],
