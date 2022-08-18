@@ -6,6 +6,7 @@
   "configMigration": true,
   "pruneStaleBranches": false,
   "automerge": true,
+  "automergeStrategy": "squash",
   "platformAutomerge": true,
   "rebaseWhen": "never",
   "labels": [
