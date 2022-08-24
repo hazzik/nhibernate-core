@@ -1,0 +1,32 @@
+name: Generate Async code
+
+on: [pull_request]
+
+jobs:
+  generate-async:
+    runs-on: ubuntu-latest
+    name: Generate Async code
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: refs/heads/${{ github.head_ref }}
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Generate Async code
+      run: |
+        pushd src
+        dotnet tool restore
+        dotnet restore ./NHibernate.sln
+        dotnet async-generator
+        popd
+
+    - name: Push changes
+      run: |
+        git config user.name github-actions[bot]
+        git config user.email github-actions[bot]@users.noreply.github.com
+        git commit -m "Generate async files" -a
+        git push
