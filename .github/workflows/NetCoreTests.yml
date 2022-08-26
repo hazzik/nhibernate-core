@@ -8,6 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
+        DB: [ SqlServer2008, PostgreSQL, Firebird, MySQL, Oracle, SQLite ]
         include:
           - DB: SqlServer2008
             CONNECTION_STRING: "Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
@@ -24,7 +25,7 @@ jobs:
     continue-on-error: ${{matrix.ALLOW_FAILURE == true}}
     env:
       LANG: en-US.UTF-8 #default POSIX locale doesn't support ignore case comparisons
-    name: ${{matrix.DB}}
+    name: ${{matrix.DB}} - ${{ matrix.os }}
 
     steps:
     - name: Set up SqlServer
