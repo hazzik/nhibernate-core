@@ -12,8 +12,8 @@ jobs:
           #   CONNECTION_STRING: "Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
           # - DB: PostgreSQL
           #   CONNECTION_STRING: "Host=localhost;Username=nhibernate;Password=nhibernate;Database=nhibernate;Enlist=true;"
-          # - DB: Firebird
-          #   CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
+          - DB: Firebird
+            CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
           # - DB: MySQL
           #   CONNECTION_STRING: "Server=localhost;Uid=root;Password=nhibernate;Database=nhibernate;Old Guids=True;SslMode=none;"
           # - DB: Oracle
@@ -43,6 +43,7 @@ jobs:
     - name: Set up PostgreSQL
       if: matrix.DB == 'PostgreSQL'
       run: |
+       dockercli -SwitchLinuxEngine
        docker run -d -e POSTGRES_USER=nhibernate  -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
 
     - name: Set up Firebird
