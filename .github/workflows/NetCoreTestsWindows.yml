@@ -10,10 +10,10 @@ jobs:
         include:
           # - DB: SqlServer2008
           #   CONNECTION_STRING: "Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
-          # - DB: PostgreSQL
-          #   CONNECTION_STRING: "Host=localhost;Username=nhibernate;Password=nhibernate;Database=nhibernate;Enlist=true;"
-          - DB: Firebird
-            CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
+          - DB: PostgreSQL
+            CONNECTION_STRING: "Host=localhost;Username=postgres;Password=root;Database=nhibernate;Enlist=true;"
+          # - DB: Firebird
+          #   CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
           # - DB: MySQL
           #   CONNECTION_STRING: "Server=localhost;Uid=root;Password=nhibernate;Database=nhibernate;Old Guids=True;SslMode=none;"
           # - DB: Oracle
@@ -40,12 +40,12 @@ jobs:
     - name: Set up PostgreSQL
       if: matrix.DB == 'PostgreSQL'
       run: |
-       docker run -d -e POSTGRES_USER=nhibernate  -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
+        Add-Content -Path "$Env:PGDATA\postgresql.conf" -Value "`r`nmax_prepared_transactions = 100"
+        Start-Service 'postgresql-x64-14'
 
     - name: Set up Firebird
       if: matrix.DB == 'Firebird'
       run: |
-        & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
         docker run --name firebird -e EnableWireCrypt=true -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e ISC_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d jacobalberty/firebird:v3.0
 
     - name: Set up Oracle
