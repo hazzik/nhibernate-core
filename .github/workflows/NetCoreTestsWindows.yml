@@ -19,9 +19,6 @@ jobs:
           # - DB: Oracle
           #   CONNECTION_STRING: "User ID=nhibernate;Password=nhibernate;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XEPDB1)))"
           - DB: SQLite
-    services:
-      firebird:
-        image: jacobalberty/firebird:v3.0
     runs-on: windows-latest
     continue-on-error: ${{matrix.ALLOW_FAILURE == true}}
     env:
