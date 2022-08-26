@@ -40,7 +40,7 @@ jobs:
     - name: Set up PostgreSQL
       if: matrix.DB == 'PostgreSQL'
       run: |
-       dockercli -SwitchLinuxEngine
+       & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
        docker run -d -e POSTGRES_USER=nhibernate  -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
 
     - name: Set up Firebird
