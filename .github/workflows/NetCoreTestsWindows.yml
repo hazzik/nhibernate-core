@@ -40,13 +40,12 @@ jobs:
     - name: Set up PostgreSQL
       if: matrix.DB == 'PostgreSQL'
       run: |
-       & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
        docker run -d -e POSTGRES_USER=nhibernate  -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
 
     - name: Set up Firebird
       if: matrix.DB == 'Firebird'
       run: |
-        dockercli -SwitchLinuxEngine
+        & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
         docker run --name firebird -e EnableWireCrypt=true -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e ISC_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d jacobalberty/firebird:v3.0
 
     - name: Set up Oracle
