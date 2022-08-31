@@ -110,7 +110,7 @@ Task Build {
 
 Task Test -depends Build {
     @(
-        'NHibernate.TestDatabaseSetup',
+        'NHibernate.TestDatabaseSetup'#,
 #        'NHibernate.Test',
 #        'NHibernate.Test.VisualBasic'
     ) | ForEach-Object { 
