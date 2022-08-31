@@ -8,9 +8,14 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: test-results
+    - name: Convert NUnit3 to JUnit
+      run: |
+        xsltproc Tools/nunit3-junit.xslt *-TestResult.xml
     - uses: dorny/test-reporter@v1
       with:
-        artifact: test-results
         name: Tests
         path: '*.xml'
         reporter: java-junit
