@@ -12,5 +12,5 @@ jobs:
       with:
         artifact: test-results
         name: Tests
-        path: '*.trx'
-        reporter: dotnet-trx
+        path: '*.xml'
+        reporter: java-junit
