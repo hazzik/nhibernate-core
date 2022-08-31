@@ -65,5 +65,13 @@ jobs:
     - uses: actions/upload-artifact@v2
       if: success() || failure()
       with:
-        name: test-results
+        name: ${{matrix.DB}} test results
         path: '*-TestResult.xml'
+
+  upload-test-results:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+    - name: Convert NUnit3 to JUnit
+      run: |
+        xsltproc Tools/nunit3-junit.xslt *-TestResult.xml
