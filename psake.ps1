@@ -111,8 +111,8 @@ Task Build {
 Task Test -depends Build {
     @(
         'NHibernate.TestDatabaseSetup',
-        'NHibernate.Test',
-        'NHibernate.Test.VisualBasic'
+#        'NHibernate.Test',
+#        'NHibernate.Test.VisualBasic'
     ) | ForEach-Object { 
         $assembly = [IO.Path]::Combine("src", $_, "bin", "Release", "net6.0", "$_.dll")
         Exec {
