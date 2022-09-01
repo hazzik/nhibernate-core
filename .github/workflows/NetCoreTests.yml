@@ -71,9 +71,10 @@ jobs:
   upload-test-results:
     runs-on: ubuntu-latest
     needs: db
+    name: Upload Artifacts
     steps:
     - uses: actions/download-artifact@v3
     - name: Convert NUnit3 to JUnit
       run: |
-        apt install xsltproc
+        sudo apt-get install xsltproc
         xsltproc Tools/nunit3-junit.xslt *-TestResult.xml
