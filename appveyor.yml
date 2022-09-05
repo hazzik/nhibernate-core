@@ -57,7 +57,7 @@ before_test:
 test_script:
 - cmd: |-
     dotnet tool restore
-    dotnet script build.csx -- --database "%DB%" --connection-string\ "%CONNECTION_STRING%"
+    dotnet script build.csx -- --database "%DB%" --connection-string "%CONNECTION_STRING%"
 deploy: off
 on_finish:
 - ps: |-
