@@ -1,6 +1,6 @@
 #!/usr/bin/env dotnet-script
-#r "nuget: SimpleExec, 11.0.0"
 #r "nuget: Bullseye, 4.0.0"
+#r "nuget: SimpleExec, 11.0.0"
 #r "nuget: Mono.Options, 6.12.0.148"
 
 using Mono.Options;
