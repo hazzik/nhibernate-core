@@ -61,4 +61,4 @@ jobs:
     - name: Build and Test
       run: |
         dotnet tool restore
-        dotnet script build.csx -- --database '${{matrix.DB}}' --connection-string\ '${{matrix.CONNECTION_STRING}}'
+        dotnet script build.csx -- --database '${{matrix.DB}}' --connection-string '${{matrix.CONNECTION_STRING}}'
