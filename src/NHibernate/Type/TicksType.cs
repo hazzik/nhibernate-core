@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using NHibernate.Driver;
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
 
@@ -43,7 +44,14 @@ namespace NHibernate.Type
 			// hour with daylight shift to be always wrongly converted. So better just fail.
 			if (Kind != DateTimeKind.Unspecified && dateValue.Kind != Kind)
 				throw new ArgumentException($"{Name} expect date kind {Kind} but it is {dateValue.Kind}", nameof(value));
-			st.Parameters[index].Value = dateValue.Ticks;
+			
+			var parameter = st.Parameters[index];
+			var adjustedValue = dateValue.Ticks;
+			
+			//Allow the driver to adjust the parameter for the value
+			session.Factory.ConnectionProvider.Driver.AdjustParameterForValue(parameter, SqlType, adjustedValue);
+
+			parameter.Value = adjustedValue;
 		}
 
 		/// <inheritdoc />
