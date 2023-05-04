@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Text;
 using NHibernate.AdoNet.Util;
+using NHibernate.Driver;
 using NHibernate.Exceptions;
 using NHibernate.SqlCommand;
 
@@ -223,12 +224,14 @@ namespace NHibernate.AdoNet
 					{
 						var parameter = _parameters[i];
 						var cmdParam = batcherCommand.Parameters[i];
+						_batcher.Driver.AdjustParameterForValue(cmdParam, _sqlTypes[i], parameter.Value);
 						cmdParam.Value = parameter.Value;
 						cmdParam.Direction = parameter.Direction;
 						cmdParam.Precision = parameter.Precision;
 						cmdParam.Scale = parameter.Scale;
 						cmdParam.Size = parameter.Size;
 					}
+
 					_batcher.Prepare(batcherCommand);
 					return batcherCommand.ExecuteNonQuery();
 				}
