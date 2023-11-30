@@ -55,9 +55,6 @@ jobs:
     name: ${{matrix.DB}} (${{ matrix.os }})
 
     steps:
-    - name: Prepare Docker
-      run: |
-        & DockerCli.exe -SwitchDaemon
     - name: Set up ${{matrix.DB}}
       run: ${{matrix.DB_INIT}}
     - uses: actions/checkout@v3
