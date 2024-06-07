@@ -8,6 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
+        DB: [SqlServer2008, SqlServer2008-MicrosoftDataSqlClientDriver]
         include:
           - DB: SqlServer2008
             CONNECTION_STRING: "Data Source=.\\SQLEXPRESS;initial catalog=nhibernate;Integrated Security=True;Encrypt=False;"
