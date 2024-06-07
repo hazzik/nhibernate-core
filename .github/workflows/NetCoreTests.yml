@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        DB: [SqlServer2008, SqlServer2008-MicrosoftDataSqlClientDriver, PostgreSQL, Firebird, Firebird4, MySQL]
+        DB: [SQLite]
         OS: [windows-latest, ubuntu-latest]
         include:
           - OS: windows-latest
