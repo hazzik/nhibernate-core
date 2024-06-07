@@ -7,47 +7,55 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        DB: [SqlServer2008, SqlServer2008-MicrosoftDataSqlClientDriver]
+        db: [SqlServer2008, SqlServer2008-MicrosoftDataSqlClientDriver]
         os: [windows-latest, ubuntu-latest]
         include:
-          - DB: SqlServer2008
+          - os: windows-latest
+            db: SqlServer2008
             CONNECTION_STRING: "Data Source=.\\SQLEXPRESS;initial catalog=nhibernate;Integrated Security=True;Encrypt=False;"
             DB_INIT: |
               choco install sql-server-express --no-progress
-          - DB: SqlServer2008-MicrosoftDataSqlClientDriver
+          - os: windows-latest
+            db: SqlServer2008-MicrosoftDataSqlClientDriver
             CONNECTION_STRING: "Data Source=.\\SQLEXPRESS;initial catalog=nhibernate;Integrated Security=True;Encrypt=False;"
             DB_INIT: |
               choco install sql-server-express --no-progress
-          - DB: PostgreSQL
+          - os: windows-latest
+            db: PostgreSQL
             CONNECTION_STRING: "Host=localhost;Username=nhibernate;Password=nhibernate;Database=nhibernate;Enlist=true;"
             DB_INIT: |
              docker run -d -e POSTGRES_USER=nhibernate  -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
-          - DB: Firebird
+          - os: windows-latest
+            db: Firebird
             CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
             DB_INIT: |
               docker run --name firebird -e EnableWireCrypt=true -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e ISC_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d jacobalberty/firebird:v3.0
-          - DB: Firebird4
+          - os: windows-latest
+            db: Firebird4
             CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
             DB_INIT: |
               docker run --name firebird -e EnableWireCrypt=true -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e ISC_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d jacobalberty/firebird:v4.0
-          - DB: MySQL
+          - os: windows-latest
+            db: MySQL
             CONNECTION_STRING: "Server=localhost;Uid=root;Password=nhibernate;Database=nhibernate;Old Guids=True;SslMode=none;"
             DB_INIT: |
               sudo service mysql stop
               docker run --name mysql -e MYSQL_ROOT_PASSWORD=nhibernate -e MYSQL_USER=nhibernate -e MYSQL_PASSWORD=nhibernate -e MYSQL_DATABASE=nhibernate -p 3306:3306 --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -d mysql:5.7 mysqld --lower_case_table_names=1 --character-set-server=utf8 --collation-server=utf8_general_ci
-          - DB: Oracle
+          - os: windows-latest
+            db: Oracle
             CONNECTION_STRING: "User ID=nhibernate;Password=nhibernate;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XEPDB1)))"
             DB_INIT: |
               docker run -d -p 1521:1521 -e APP_USER=nhibernate -e APP_USER_PASSWORD=nhibernate -e ORACLE_PASSWORD=nhibernate gvenzl/oracle-xe:21-slim
-          - DB: SQLite
+          - os: windows-latest
+            db: SQLite
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{matrix.ALLOW_FAILURE == true}}
     env:
       LANG: en-US.UTF-8 #default POSIX locale doesn't support ignore case comparisons
-    name: ${{ matrix.DB }} - ${{ matrix.os }}
+    name: ${{ matrix.db }} - ${{ matrix.os }}
 
     steps:
-    - name: Set up ${{matrix.DB}}
+    - name: Set up ${{matrix.db}}
       run: ${{matrix.DB_INIT}}
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -57,4 +65,4 @@ jobs:
 
     - name: Build and Test
       run: |
-        pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{'Database' = '${{matrix.DB}}';'ConnectionString'='${{matrix.CONNECTION_STRING}}'}"
+        pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{'Database' = '${{matrix.db}}';'ConnectionString'='${{matrix.CONNECTION_STRING}}'}"
