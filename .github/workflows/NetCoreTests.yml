@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         DB: [SQLite]
-        OS: [ubuntu-latest]
+        OS: [ubuntu-latest, windows-latest, macos-14-large]
         include:
           - OS: windows-latest
             DB: SqlServer2008
