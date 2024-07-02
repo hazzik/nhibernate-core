@@ -5,8 +5,8 @@ on:
     paths:
       - '**.cs'
 
-permissions:
-  contents: write
+permissions: {}
+  # contents: write
 
 jobs:
   generate-async:
@@ -39,7 +39,6 @@ jobs:
             echo "No changes to commit"
             exit 0
         fi
-        # git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.pull_request.head.repo.full_name }}
         git add -A
         git commit -am "Generate async files"
         git push
