@@ -301,7 +301,7 @@ namespace NHibernate.Impl
 		{
 			using (BeginContext())
 			{
-				log.Debug("transaction completion");
+				log.Debug("transaction ffff completion");
 
 				persistenceContext.AfterTransactionCompletion();
 				actionQueue.AfterTransactionCompletion(success);
@@ -1721,7 +1721,7 @@ namespace NHibernate.Impl
 					}
 					catch (Exception sqle)
 					{
-						throw Convert(sqle, "Unable to perform find");
+						throw Convert(sqle, "Unable to perform find33333333");
 					}
 					finally
 					{
