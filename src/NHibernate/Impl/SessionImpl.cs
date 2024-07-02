@@ -1721,7 +1721,7 @@ namespace NHibernate.Impl
 					}
 					catch (Exception sqle)
 					{
-						throw Convert(sqle, "Unable to perform find");
+						throw Convert(sqle, "Unable to perform find33333333");
 					}
 					finally
 					{
