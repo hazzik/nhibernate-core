@@ -461,3 +461,5 @@ namespace NHibernate
 		IDetachedQuery SetCacheMode(CacheMode cacheMode);
 	}
 }
+
+
