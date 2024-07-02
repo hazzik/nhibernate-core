@@ -1,7 +1,7 @@
 name: Generate Async code
 
 on: 
-  pull_request:
+  pull_request_target:
     paths:
       - '**.cs'
 
@@ -39,7 +39,7 @@ jobs:
             echo "No changes to commit"
             exit 0
         fi
-        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.pull_request.head.repo.full_name }}
+        # git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.pull_request.head.repo.full_name }}
         git add -A
         git commit -am "Generate async files"
         git push
