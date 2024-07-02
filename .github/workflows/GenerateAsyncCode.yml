@@ -14,8 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
+      # with:
+        # ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
