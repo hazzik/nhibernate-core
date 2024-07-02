@@ -301,7 +301,7 @@ namespace NHibernate.Impl
 		{
 			using (BeginContext())
 			{
-				log.Debug("transaction completion");
+				log.Debug("transaction ffff completion");
 
 				persistenceContext.AfterTransactionCompletion();
 				actionQueue.AfterTransactionCompletion(success);
