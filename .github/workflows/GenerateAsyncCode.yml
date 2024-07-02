@@ -5,8 +5,8 @@ on:
     paths:
       - '**.cs'
 
-permissions: {}
-  # contents: write
+permissions:
+  contents: write
 
 jobs:
   generate-async:
