@@ -24,7 +24,7 @@ jobs:
             CONNECTION_STRING: "Host=localhost;Username=nhibernate;Password=nhibernate;Database=nhibernate;Enlist=true;"
             OS: ubuntu-latest
             DB_INIT: |
-             docker run -d -e POSTGRES_USER=nhibernate -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
+             docker run -d -e POSTGRES_USER=nhibernate -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13 -c fsync=off
           - DB: PostgreSQL
             CONNECTION_STRING: "Host=localhost;Username=postgres;Password=nhibernate;Database=nhibernate;Enlist=true;"
             OS: windows-latest
