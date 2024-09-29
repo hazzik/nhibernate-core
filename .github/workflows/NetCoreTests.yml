@@ -30,7 +30,7 @@ jobs:
             OS: windows-latest
             DB_INIT: |
               choco install postgresql13 --no-progress --params '/Password:nhibernate'
-              Add-Content -Path 'C:\Program Files\PostgreSQL\13\data\postgresql.conf' -Value "`r`nmax_prepared_transactions = 100"
+              Add-Content -Path 'C:\Program Files\PostgreSQL\13\data\postgresql.conf' -Value "`r`nmax_prepared_transactions = 100`r`fsync = off"
               Start-Service 'postgresql-x64-13'
           - DB: Firebird
             CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
