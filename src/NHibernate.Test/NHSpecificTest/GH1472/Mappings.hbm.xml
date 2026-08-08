@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="NHibernate.Test"
+                   namespace="NHibernate.Test.NHSpecificTest.GH1472">
+
+  <class name="Contact">
+    <id name="Id" generator="guid.comb" />
+    <property name="DateOfBirth" not-null="true" />
+  </class>
+
+  <class name="Customer">
+    <id name="Id" generator="guid.comb" />
+    <property name="Name" />
+    <many-to-one name="BillingContact" column="BillingContactId" not-null="false" />
+    <set name="Purchases" inverse="true" cascade="all-delete-orphan">
+      <key column="CustomerId" />
+      <one-to-many class="Purchase" />
+    </set>
+  </class>
+
+  <class name="Purchase">
+    <id name="Id" generator="guid.comb" />
+    <many-to-one name="Customer" column="CustomerId" not-null="true" />
+    <many-to-one name="DeliveryContact" column="DeliveryContactId" not-null="false" />
+  </class>
+
+</hibernate-mapping>
