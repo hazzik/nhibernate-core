@@ -327,6 +327,129 @@ namespace NHibernate.Test.Linq
 			}
 		}
 
+#if NET10_0_OR_GREATER
+		[Test]
+		public void LeftJoinShouldProduceLeftOuterJoin()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				db.Customers
+					.LeftJoin(
+						db.Orders,
+						c => c.CustomerId,
+						o => o.Customer.CustomerId,
+						(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+					.ToList();
+
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(1));
+				Assert.That(CountJoins(spy), Is.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void LeftJoinShouldYieldOuterElementsWithoutMatch()
+		{
+			var expected =
+				(from c in db.Customers
+				 join o in db.Orders on c.CustomerId equals o.Customer.CustomerId into orders
+				 from o in orders.DefaultIfEmpty()
+				 select new { c.CustomerId, OrderId = (int?) o.OrderId })
+				.ToList();
+
+			var actual = db.Customers
+				.LeftJoin(
+					db.Orders,
+					c => c.CustomerId,
+					o => o.Customer.CustomerId,
+					(c, o) => new { c.CustomerId, OrderId = (int?) o.OrderId })
+				.ToList();
+
+			Assert.That(expected.Any(x => x.OrderId == null), Is.True, "Test data does not exercise unmatched rows");
+			Assert.That(actual, Is.EquivalentTo(expected));
+		}
+
+		[Test]
+		public void LeftJoinShouldYieldNullForUnmatchedInnerEntity()
+		{
+			var result = db.Customers
+				.LeftJoin(db.Orders, c => c.CustomerId, o => o.Customer.CustomerId, (c, o) => new { c, o })
+				.Where(x => x.o == null)
+				.ToList();
+
+			Assert.That(result, Is.Not.Empty);
+			Assert.That(result.Select(x => x.c), Has.All.Not.Null);
+		}
+
+		[Test]
+		public void LeftJoinShouldSupportCompositeKey()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				db.Customers
+					.LeftJoin(
+						db.Orders,
+						c => new { c.CustomerId, HasContactTitle = c.ContactTitle != null },
+						o => new { o.Customer.CustomerId, HasContactTitle = o.Customer.ContactTitle != null },
+						(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+					.ToList();
+
+				// The explicit join, plus the one implied by the inner key selector referencing the
+				// customer of the order.
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void LeftJoinShouldSupportBeingChained()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				var result = db.Orders
+					.LeftJoin(db.Customers, o => o.Customer.CustomerId, c => c.CustomerId, (o, c) => new { o, c })
+					.LeftJoin(db.Employees, x => x.o.Employee.EmployeeId, e => e.EmployeeId, (x, e) => new { x.o.OrderId, x.c.ContactName, e.FirstName })
+					.ToList();
+
+				Assert.That(result, Is.Not.Empty);
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void LeftJoinShouldSupportFilteredInnerSequence()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				db.Customers
+					.LeftJoin(
+						db.Orders.Where(o => o.Freight > 100),
+						c => c.CustomerId,
+						o => o.Customer.CustomerId,
+						(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+					.ToList();
+
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void LeftJoinShouldSupportSubsequentOperators()
+		{
+			var result = db.Customers
+				.LeftJoin(
+					db.Orders,
+					c => c.CustomerId,
+					o => o.Customer.CustomerId,
+					(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+				.Where(x => x.OrderId == null)
+				.OrderBy(x => x.ContactName)
+				.Select(x => x.ContactName)
+				.ToList();
+
+			Assert.That(result, Is.Not.Empty);
+			Assert.That(result, Is.Ordered);
+		}
+#endif
+
 		private static int CountJoins(LogSpy sqlLog)
 		{
 			return Count(sqlLog, "join");

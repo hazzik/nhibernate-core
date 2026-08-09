@@ -309,6 +309,129 @@ namespace NHibernate.Test.Linq
 			}
 		}
 
+#if NET10_0_OR_GREATER
+		[Test]
+		public async Task LeftJoinShouldProduceLeftOuterJoinAsync()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				await (db.Customers
+					.LeftJoin(
+						db.Orders,
+						c => c.CustomerId,
+						o => o.Customer.CustomerId,
+						(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+					.ToListAsync());
+
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(1));
+				Assert.That(CountJoins(spy), Is.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public async Task LeftJoinShouldYieldOuterElementsWithoutMatchAsync()
+		{
+			var expected =
+				await ((from c in db.Customers
+				 join o in db.Orders on c.CustomerId equals o.Customer.CustomerId into orders
+				 from o in orders.DefaultIfEmpty()
+				 select new { c.CustomerId, OrderId = (int?) o.OrderId })
+				.ToListAsync());
+
+			var actual = await (db.Customers
+				.LeftJoin(
+					db.Orders,
+					c => c.CustomerId,
+					o => o.Customer.CustomerId,
+					(c, o) => new { c.CustomerId, OrderId = (int?) o.OrderId })
+				.ToListAsync());
+
+			Assert.That(expected.Any(x => x.OrderId == null), Is.True, "Test data does not exercise unmatched rows");
+			Assert.That(actual, Is.EquivalentTo(expected));
+		}
+
+		[Test]
+		public async Task LeftJoinShouldYieldNullForUnmatchedInnerEntityAsync()
+		{
+			var result = await (db.Customers
+				.LeftJoin(db.Orders, c => c.CustomerId, o => o.Customer.CustomerId, (c, o) => new { c, o })
+				.Where(x => x.o == null)
+				.ToListAsync());
+
+			Assert.That(result, Is.Not.Empty);
+			Assert.That(result.Select(x => x.c), Has.All.Not.Null);
+		}
+
+		[Test]
+		public async Task LeftJoinShouldSupportCompositeKeyAsync()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				await (db.Customers
+					.LeftJoin(
+						db.Orders,
+						c => new { c.CustomerId, HasContactTitle = c.ContactTitle != null },
+						o => new { o.Customer.CustomerId, HasContactTitle = o.Customer.ContactTitle != null },
+						(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+					.ToListAsync());
+
+				// The explicit join, plus the one implied by the inner key selector referencing the
+				// customer of the order.
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public async Task LeftJoinShouldSupportBeingChainedAsync()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				var result = await (db.Orders
+					.LeftJoin(db.Customers, o => o.Customer.CustomerId, c => c.CustomerId, (o, c) => new { o, c })
+					.LeftJoin(db.Employees, x => x.o.Employee.EmployeeId, e => e.EmployeeId, (x, e) => new { x.o.OrderId, x.c.ContactName, e.FirstName })
+					.ToListAsync());
+
+				Assert.That(result, Is.Not.Empty);
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public async Task LeftJoinShouldSupportFilteredInnerSequenceAsync()
+		{
+			using (var spy = new SqlLogSpy())
+			{
+				await (db.Customers
+					.LeftJoin(
+						db.Orders.Where(o => o.Freight > 100),
+						c => c.CustomerId,
+						o => o.Customer.CustomerId,
+						(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+					.ToListAsync());
+
+				Assert.That(Count(spy, "left outer join"), Is.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public async Task LeftJoinShouldSupportSubsequentOperatorsAsync()
+		{
+			var result = await (db.Customers
+				.LeftJoin(
+					db.Orders,
+					c => c.CustomerId,
+					o => o.Customer.CustomerId,
+					(c, o) => new { c.ContactName, OrderId = (int?) o.OrderId })
+				.Where(x => x.OrderId == null)
+				.OrderBy(x => x.ContactName)
+				.Select(x => x.ContactName)
+				.ToListAsync());
+
+			Assert.That(result, Is.Not.Empty);
+			Assert.That(result, Is.Ordered);
+		}
+#endif
+
 		private static int CountJoins(LogSpy sqlLog)
 		{
 			return Count(sqlLog, "join");

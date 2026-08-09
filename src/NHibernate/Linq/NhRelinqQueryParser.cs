@@ -123,6 +123,7 @@ namespace NHibernate.Linq
 					ReflectHelper.FastGetMethodDefinition(LinqExtensionMethods.WithLock, default(IEnumerable<object>), default(LockMode))
 				}, 
 				typeof(LockExpressionNode));
+			methodInfoRegistry.Register(GetLeftJoinMethods(), typeof(LeftJoinExpressionNode));
 
 			var nodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
 			nodeTypeProvider.InnerProviders.Add(methodInfoRegistry);
@@ -141,6 +142,29 @@ namespace NHibernate.Linq
 		public System.Type GetNodeType(MethodInfo method)
 		{
 			return defaultNodeTypeProvider.GetNodeType(method);
+		}
+
+		/// <summary>
+		/// Gets the <c>LeftJoin</c> operators added to <see cref="Queryable"/> and <see cref="Enumerable"/>
+		/// by .NET 10. They are looked up by reflection, so that they get supported whenever the running
+		/// framework supplies them, whatever the framework NHibernate was built for. The overloads taking
+		/// an equality comparer are left out, as NHibernate cannot honor a comparer, the same way it does
+		/// not support them for <see cref="Queryable.Join{TOuter, TInner, TKey, TResult}(IQueryable{TOuter}, IEnumerable{TInner}, Expression{Func{TOuter, TKey}}, Expression{Func{TInner, TKey}}, Expression{Func{TOuter, TInner, TResult}}, IEqualityComparer{TKey})"/>.
+		/// </summary>
+		private static IEnumerable<MethodInfo> GetLeftJoinMethods()
+		{
+			return GetLeftJoinMethods(typeof(Queryable)).Concat(GetLeftJoinMethods(typeof(Enumerable)));
+		}
+
+		private static IEnumerable<MethodInfo> GetLeftJoinMethods(System.Type declaringType)
+		{
+			return declaringType
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.Where(
+					m => m.Name == "LeftJoin" &&
+						m.IsGenericMethodDefinition &&
+						m.GetGenericArguments().Length == 4 &&
+						m.GetParameters().Length == 5);
 		}
 	}
 }
