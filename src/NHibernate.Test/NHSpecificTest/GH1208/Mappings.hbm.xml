@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+				   namespace="NHibernate.Test.NHSpecificTest.GH1208"
+				   assembly="NHibernate.Test">
+
+  <class name="Invoice">
+    <id name="Id">
+      <generator class="guid.comb" />
+    </id>
+    <property name="Name" />
+    <many-to-one name="Category" class="Category" fetch="join" />
+  </class>
+
+  <class name="Category">
+    <id name="Id">
+      <generator class="guid.comb" />
+    </id>
+    <property name="Name" />
+    <property name="ValidUntil" />
+    <filter name="validCategory" condition=":asOf &lt; ValidUntil" />
+  </class>
+
+  <filter-def name="validCategory">
+    <filter-param name="asOf" type="DateTime"/>
+  </filter-def>
+
+</hibernate-mapping>
