@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+					assembly="NHibernate.Test"
+					namespace="NHibernate.Test.NHSpecificTest.GH1001">
+
+	<typedef name="AnsiStringTrimmed" class="NHibernate.Test.NHSpecificTest.GH1001.AnsiStringTrimmedType, NHibernate.Test" />
+
+	<class name="Widget" table="GH1001Widget">
+		<composite-id name="Id" class="WidgetKey">
+			<key-property name="Number" type="Int32" />
+			<key-property name="Code" type="AnsiStringTrimmed" length="6" />
+		</composite-id>
+		<property name="Description" length="50" />
+	</class>
+
+</hibernate-mapping>
