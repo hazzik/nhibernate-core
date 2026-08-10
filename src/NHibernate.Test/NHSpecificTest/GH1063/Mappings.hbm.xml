@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+					namespace="NHibernate.Test.NHSpecificTest.GH1063"
+					assembly="NHibernate.Test">
+
+	<!-- Mapped with the implicit entity-name (the class full name). This is the mapping the
+	     reported behaviour says NHibernate should prefer when the caller does not specify an
+	     entity-name explicitly, e.g. session.Save(new Person()). -->
+	<class name="Person" table="PersonDefault">
+		<id name="Id">
+			<generator class="native" />
+		</id>
+		<property name="Name" />
+	</class>
+
+	<!-- A second mapping of the very same class under a different, explicit entity-name. Because
+	     this mapping is declared last, NH-1967 says NHibernate incorrectly binds the CLR type to
+	     this persister instead of to the one above. -->
+	<class name="Person" entity-name="PersonAlt" table="PersonAlt">
+		<id name="Id">
+			<generator class="native" />
+		</id>
+		<property name="Name" />
+	</class>
+
+</hibernate-mapping>
