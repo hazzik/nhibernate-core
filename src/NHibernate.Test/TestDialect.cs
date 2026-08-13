@@ -56,6 +56,11 @@ namespace NHibernate.Test
 		public virtual bool HasBrokenDecimalType => false;
 
 		/// <summary>
+		/// Some dialects cast a floating point value to a decimal type, which loses the precision.
+		/// </summary>
+		public virtual bool SupportsPreciseFloatingPointCast => true;
+
+		/// <summary>
 		/// Some data providers cannot interrupt a query waiting for a lock.
 		/// </summary>
 		public virtual bool HasBrokenQueryTimeoutOnLockWait => false;

@@ -1026,6 +1026,29 @@ namespace NHibernate.Test.Hql
 		}
 
 		[Test]
+		public async Task CastToDoubleKeepsPrecisionAsync()
+		{
+			AssumeFunctionSupported("cast");
+			if (!TestDialect.SupportsPreciseFloatingPointCast)
+				Assert.Ignore("Dialect casts floating point values to a decimal type");
+
+			const float weight = 0.000123456789f;
+			using (var s = OpenSession())
+			{
+				var a1 = new Animal("abcdef", weight);
+				await (s.SaveAsync(a1));
+				await (s.FlushAsync());
+			}
+			using (var s = OpenSession())
+			{
+				var hql = "select cast(a.BodyWeight as Double) from Animal a";
+				var result = await (s.CreateQuery(hql).UniqueResultAsync<double>());
+				// A cast to a decimal type with a scale of five rounds the value to 0.00012.
+				Assert.That(result, Is.EqualTo((double) weight).Within(0.001).Percent);
+			}
+		}
+
+		[Test]
 		public async Task CastNH1979Async()
 		{
 			AssumeFunctionSupported("cast");

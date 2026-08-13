@@ -4,4 +4,5 @@ override NHibernate.Dialect.Firebird3Dialect.GetLimitString(NHibernate.SqlComman
 override NHibernate.Dialect.MySQL8Dialect.ForUpdateNowaitString.get -> string
 override NHibernate.Dialect.MySQL8Dialect.GetForUpdateNowaitString(string aliases) -> string
 override NHibernate.Dialect.MySQL8Dialect.GetForUpdateString(string aliases) -> string
+override NHibernate.Dialect.MySQL8Dialect.RegisterCastTypes() -> void
 override NHibernate.Dialect.MySQL8Dialect.SupportsForUpdateOf.get -> bool

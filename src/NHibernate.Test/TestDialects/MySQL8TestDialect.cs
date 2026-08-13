@@ -10,5 +10,7 @@ namespace NHibernate.Test.TestDialects
 		public override bool SupportsNoWaitLock => true;
 
 		public override bool SupportsCorrelatedColumnsInSubselectJoin => true;
+
+		public override bool SupportsPreciseFloatingPointCast => true;
 	}
 }

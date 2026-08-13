@@ -19,5 +19,13 @@ namespace NHibernate.Dialect
 		public override string GetForUpdateString(string aliases) => ForUpdateString + " of " + aliases;
 
 		public override string GetForUpdateNowaitString(string aliases) => ForUpdateString + " of " + aliases + " nowait";
+
+		protected override void RegisterCastTypes()
+		{
+			base.RegisterCastTypes();
+			// MySQL accepts a floating point cast target from version 8.0.17.
+			RegisterCastType(DbType.Double, "DOUBLE");
+			RegisterCastType(DbType.Single, "FLOAT");
+		}
 	}
 }

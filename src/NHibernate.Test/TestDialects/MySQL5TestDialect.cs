@@ -12,6 +12,11 @@ namespace NHibernate.Test.TestDialects
 		public override bool SupportsAggregateInSubSelect => true;
 
 		/// <summary>
+		/// MySQL accepts a floating point cast target only from version 8.0.17.
+		/// </summary>
+		public override bool SupportsPreciseFloatingPointCast => false;
+
+		/// <summary>
 		/// In MySQL, you can't modify the same table which you use in the SELECT part.
 		/// This behaviour is documented at: http://dev.mysql.com/doc/refman/5.6/en/update.html
 		/// </summary>
