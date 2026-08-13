@@ -81,9 +81,10 @@ jobs:
             OS: windows-latest
             DB_INIT: |
               # The chocolatey package downloads from the CDN, which keeps only the newest patch release of a series.
-              iwr 'https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.6-winx64.zip' -OutFile mysql.zip
+              $mysql = 'mysql-8.4.6-winx64'
+              iwr "https://downloads.mysql.com/archives/get/p/23/file/$mysql.zip" -OutFile mysql.zip
               Expand-Archive mysql.zip C:\
-              $bin = 'C:\mysql-8.4.6-winx64\bin'
+              $bin = "C:\$mysql\bin"
               & "$bin\mysqld" --initialize-insecure
               & "$bin\mysqld" --install MySQL
               Start-Service MySQL
