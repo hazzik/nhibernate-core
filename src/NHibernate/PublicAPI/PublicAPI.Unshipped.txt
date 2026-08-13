@@ -4,4 +4,8 @@ override NHibernate.Dialect.Firebird3Dialect.GetLimitString(NHibernate.SqlComman
 override NHibernate.Dialect.MySQL8Dialect.ForUpdateNowaitString.get -> string
 override NHibernate.Dialect.MySQL8Dialect.GetForUpdateNowaitString(string aliases) -> string
 override NHibernate.Dialect.MySQL8Dialect.GetForUpdateString(string aliases) -> string
+override NHibernate.Dialect.MySQL8Dialect.SupportsColumnCheck.get -> bool
 override NHibernate.Dialect.MySQL8Dialect.SupportsForUpdateOf.get -> bool
+override NHibernate.Dialect.MySQL8Dialect.SupportsTableCheck.get -> bool
+override NHibernate.Dialect.MySQLDialect.SupportsColumnCheck.get -> bool
+override NHibernate.Dialect.MySQLDialect.SupportsTableCheck.get -> bool

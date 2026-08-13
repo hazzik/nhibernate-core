@@ -537,6 +537,14 @@ namespace NHibernate.Dialect
 		public override bool SupportsConcurrentWritingConnectionsInSameTransaction => false;
 
 		/// <inheritdoc />
+		/// <remarks>MySQL accepts a column check constraint but ignores it before 8.0.16.</remarks>
+		public override bool SupportsColumnCheck => false;
+
+		/// <inheritdoc />
+		/// <remarks>MySQL accepts a table check constraint but ignores it before 8.0.16.</remarks>
+		public override bool SupportsTableCheck => false;
+
+		/// <inheritdoc />
 		/// <remarks><see langword="true" /> by default for MySQL,
 		/// <see href="https://dev.mysql.com/doc/refman/8.0/en/string-literals.html" />.</remarks>
 		protected override bool EscapeBackslashInStrings { get; set; } = true;

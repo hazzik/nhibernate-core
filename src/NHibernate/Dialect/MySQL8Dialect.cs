@@ -19,5 +19,13 @@ namespace NHibernate.Dialect
 		public override string GetForUpdateString(string aliases) => ForUpdateString + " of " + aliases;
 
 		public override string GetForUpdateNowaitString(string aliases) => ForUpdateString + " of " + aliases + " nowait";
+
+		/// <inheritdoc />
+		/// <remarks>MySQL applies a column check constraint since 8.0.16.</remarks>
+		public override bool SupportsColumnCheck => true;
+
+		/// <inheritdoc />
+		/// <remarks>MySQL applies a table check constraint since 8.0.16.</remarks>
+		public override bool SupportsTableCheck => true;
 	}
 }
