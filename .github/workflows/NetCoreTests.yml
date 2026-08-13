@@ -80,8 +80,15 @@ jobs:
             CONNECTION_STRING: "Server=127.0.0.1;Uid=root;Database=nhibernate;SslMode=none;CharSet=utf8;"
             OS: windows-latest
             DB_INIT: |
-              choco install mysql --version 8.4.6 --no-progress
-              & 'C:\tools\mysql\current\bin\mysql' --user=root -e 'CREATE DATABASE nhibernate CHARACTER SET utf8 COLLATE utf8_general_ci;'
+              # The chocolatey package downloads from the CDN, which keeps only the newest patch release of a series.
+              # The archives keep all the releases.
+              Invoke-WebRequest -Uri 'https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.6-winx64.zip' -OutFile mysql.zip
+              Expand-Archive -Path mysql.zip -DestinationPath C:\mysql
+              Set-Content C:\mysql\my.ini @('[mysqld]', 'basedir=C:/mysql/mysql-8.4.6-winx64', 'datadir=C:/mysql/data', 'character-set-server=utf8', 'collation-server=utf8_general_ci')
+              & 'C:\mysql\mysql-8.4.6-winx64\bin\mysqld' --defaults-file=C:\mysql\my.ini --initialize-insecure
+              & 'C:\mysql\mysql-8.4.6-winx64\bin\mysqld' --defaults-file=C:\mysql\my.ini --install MySQL
+              Start-Service MySQL
+              & 'C:\mysql\mysql-8.4.6-winx64\bin\mysql' --user=root -e 'CREATE DATABASE nhibernate CHARACTER SET utf8 COLLATE utf8_general_ci;'
           - DB: Oracle
             CONNECTION_STRING: "User ID=nhibernate;Password=nhibernate;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XEPDB1)))"
             OS: ubuntu-latest
