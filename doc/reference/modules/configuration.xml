@@ -1410,6 +1410,15 @@ in the parameter binding.</programlisting>
                 other properties listed above, saving you the effort of specifying them manually.
             </para>
 
+            <para>
+                When a dialect refers to a version of a database engine, that is the minimal version
+                supported by the dialect. The dialect will support later versions of the engine, unless
+                the newer engine version has some incompatible breaking changes (which happens seldomly).
+                Dialects targeting higher versions of an engine are provided when new features in these
+                versions may be used by the dialect, like enabling the use of sequences with SQL Server
+                2012 or later.
+            </para>
+
             <table frame="topbot" id="sql-dialects" revision="2">
                 <title>NHibernate SQL Dialects (<literal>dialect</literal>)</title>
                 <tgroup cols="3">
@@ -1425,12 +1434,12 @@ in the parameter binding.</programlisting>
                     </thead>
                     <tbody>
                         <row>
-                            <entry>DB2</entry> 
+                            <entry>DB2 for Linux, UNIX and Windows</entry>
                             <entry><literal>NHibernate.Dialect.DB2Dialect</literal></entry>
                             <entry></entry>
                         </row>
                         <row>
-                            <entry>DB2 for iSeries (OS/400)</entry> 
+                            <entry>DB2 for IBM i (formerly iSeries, formerly OS/400)</entry> 
                             <entry><literal>NHibernate.Dialect.DB2400Dialect</literal></entry>
                             <entry></entry>
                         </row>
@@ -1442,6 +1451,19 @@ in the parameter binding.</programlisting>
                                 <literal>NHibernate.Driver.FirebirdClientDriver</literal>
                                 for Firebird ADO.NET provider 2.0.
                             </entry>
+                        </row>
+                        <row>
+                            <entry>Firebird 3</entry>
+                            <entry><literal>NHibernate.Dialect.Firebird3Dialect</literal></entry>
+                            <entry>
+                                Uses the SQL standard <literal>offset</literal>/<literal>fetch</literal>
+                                clause for paging.
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>Firebird 4</entry>
+                            <entry><literal>NHibernate.Dialect.Firebird4Dialect</literal></entry>
+                            <entry></entry>
                         </row>
                         <row>
                             <entry>Informix</entry>
@@ -1604,6 +1626,11 @@ in the parameter binding.</programlisting>
                         <row>
                             <entry>Sybase Adaptive Server Enterprise 15</entry>
                             <entry><literal>NHibernate.Dialect.SybaseASE15Dialect</literal></entry>
+                            <entry></entry>
+                        </row>
+                        <row>
+                            <entry>Sybase Adaptive Server Enterprise 16</entry>
+                            <entry><literal>NHibernate.Dialect.SybaseASE16Dialect</literal></entry>
                             <entry></entry>
                         </row>
                         <row>

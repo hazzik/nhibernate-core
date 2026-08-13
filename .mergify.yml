@@ -1,0 +1,12 @@
+pull_request_rules:
+  - name: Backport patches to the release branch
+    conditions:
+      - label = backport
+    actions:
+      backport:
+        branches:
+          - "5.6.x"
+        assignees:
+          - "{{ author }}"
+merge_protections_settings:
+  reporting_method: check-runs

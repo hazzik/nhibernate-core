@@ -89,6 +89,9 @@ namespace NHibernate.Dialect
 			RegisterFunction("power", new StandardSQLFunction("power", NHibernateUtil.Double));
 			RegisterFunction("bxor", new Function.BitwiseNativeOperation("#"));
 
+			RegisterFunction("greatest", new StandardSQLFunction("greatest"));
+			RegisterFunction("least", new StandardSQLFunction("least"));
+
 			RegisterFunction("floor", new StandardSQLFunction("floor"));
 			RegisterFunction("ceiling", new StandardSQLFunction("ceiling"));
 			RegisterFunction("ceil", new StandardSQLFunction("ceil"));
@@ -104,6 +107,8 @@ namespace NHibernate.Dialect
 			// The uuid_generate_v4 is not native and must be installed, but SelectGUIDString property already uses it,
 			// and NHibernate.TestDatabaseSetup does install it.
 			RegisterFunction("new_uuid", new NoArgSQLFunction("uuid_generate_v4", NHibernateUtil.Guid));
+
+			RegisterFunction("secondtruncated", new SQLFunctionTemplate(NHibernateUtil.Int32, "cast(floor(extract(second from ?1)) as int)"));
 
 			RegisterKeywords();
 		}

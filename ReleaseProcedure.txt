@@ -7,10 +7,11 @@ These are the tasks typically needed to create an official NHibernate release.
 
   * Create a draft release in Github with GitReleaseManager. For example:
 
-dotnet gitreleasemanager create -o nhibernate -r nhibernate-core -m 5.3 --token yourGitHubTokenWithRepoScope
+dotnet gitreleasemanager create -o nhibernate -r nhibernate-core -m 5.3 --token yourGitHubTokenWithRepoContentWritePermission
 
     (Adjust the -m milestone parameter above, and add "-c branchname" if
-    releasing another branch than master)
+    releasing another branch than master. The command must be run from the
+    nhibernate-core folder.)
 
   * Update releasenotes.txt with the list of issues generated in the GitHub
     draft release. Add to the list the release task.
@@ -26,6 +27,13 @@ dotnet gitreleasemanager create -o nhibernate -r nhibernate-core -m 5.3 --token 
 
   * Check/update version number in NHibernate.props under build-common folder.
     Clear VersionSuffix if present.
+
+  * Move the public API added since the previous release into the shipped files: under
+    src/NHibernate/PublicAPI, append PublicAPI.Unshipped.txt to PublicAPI.Shipped.txt, empty
+    the former, and drop the entries marked with *REMOVED* along with the lines they refer to.
+    See the "Tracking the public API" section of CONTRIBUTING.md.
+
+  * If releasing a new minor or major, check whether SECURITY.md should be updated or not.
 
   * Don't forget to commit the above.
 

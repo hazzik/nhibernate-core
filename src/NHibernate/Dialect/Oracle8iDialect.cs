@@ -265,9 +265,11 @@ namespace NHibernate.Dialect
 
 			// Cast is needed because EXTRACT treats DATE not as legacy Oracle DATE but as ANSI DATE, without time elements.
 			// Therefore, you can extract only YEAR, MONTH, and DAY from a DATE value.
+			// Oracle returns the seconds with fractional precision. It has to be truncated to return the actual second part
 			RegisterFunction("second", new SQLFunctionTemplate(NHibernateUtil.Int32, "extract(second from cast(?1 as timestamp))"));
 			RegisterFunction("minute", new SQLFunctionTemplate(NHibernateUtil.Int32, "extract(minute from cast(?1 as timestamp))"));
 			RegisterFunction("hour", new SQLFunctionTemplate(NHibernateUtil.Int32, "extract(hour from cast(?1 as timestamp))"));
+			RegisterFunction("secondtruncated", new SQLFunctionTemplate(NHibernateUtil.Int32, "cast(floor(extract(second from cast(?1 as timestamp))) as int)"));
 
 			RegisterFunction("date", new StandardSQLFunction("trunc", NHibernateUtil.Date));
 
@@ -297,6 +299,8 @@ namespace NHibernate.Dialect
 
 			// Multi-param numeric dialect functions...
 			RegisterFunction("atan2", new StandardSQLFunction("atan2", NHibernateUtil.Double));
+			RegisterFunction("greatest", new StandardSQLFunction("greatest"));
+			RegisterFunction("least", new StandardSQLFunction("least"));
 			RegisterFunction("log", new StandardSQLFunction("log", NHibernateUtil.Int32));
 			RegisterFunction("mod", new ModulusFunction(true, true));
 			RegisterFunction("nvl", new StandardSQLFunction("nvl"));

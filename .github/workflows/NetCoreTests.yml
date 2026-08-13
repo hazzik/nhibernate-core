@@ -1,6 +1,12 @@
 name: .NET Core
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - gh-readonly-queue/**
+      - renovate/**
+  pull_request:
+  merge_group:
 
 jobs:
   db:
@@ -8,7 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         DB: [SQLite]
-        OS: [ubuntu-latest, windows-latest, macos-13]
+        # macos: System.Data.SQLite.Core 1.x lacks an arm64 interop lib and so requires an intel macos image. There are
+        # no latest such images, excepted -large but they require a paying GitHub account. https://github.com/actions/runner-images
+        # Switching to System.Data.SQLite 2 (without .Core suffix) might allow to run on arm64. See https://system.data.sqlite.org
+        OS: [ubuntu-latest, windows-latest, macos-26-intel]
         include:
           - DB: SqlServer2008
             CONNECTION_STRING: "Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
@@ -16,7 +25,7 @@ jobs:
             DB_INIT: |
               docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress mcr.microsoft.com/mssql/server:2019-latest;
           - DB: SqlServer2008-MicrosoftDataSqlClientDriver
-            CONNECTION_STRING: "Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;"
+            CONNECTION_STRING: "Server=localhost;initial catalog=nhibernate;User Id=sa;Password=P@ssw0rd;packet size=4096;TrustServerCertificate=true;"
             OS: ubuntu-latest
             DB_INIT: |
               docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -e "MSSQL_PID=Express" -p 1433:1433 -d --name sqlexpress mcr.microsoft.com/mssql/server:2019-latest;
@@ -36,18 +45,43 @@ jobs:
             CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
             OS: ubuntu-latest
             DB_INIT: |
-              docker run --name firebird -e EnableWireCrypt=true -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e ISC_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d jacobalberty/firebird:v3.0
+              # ISC_INET_SERVER_HOME points the server at the data directory, otherwise it resolves the relative database name under /tmp.
+              docker run --name firebird -e ISC_INET_SERVER_HOME=/var/lib/firebird/data -e FIREBIRD_CONF_WireCrypt=Enabled -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e FIREBIRD_ROOT_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d firebirdsql/firebird:3
           - DB: Firebird4
             CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
             OS: ubuntu-latest
             DB_INIT: |
-              docker run --name firebird -e EnableWireCrypt=true -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e ISC_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d jacobalberty/firebird:v4.0
+              # ISC_INET_SERVER_HOME points the server at the data directory, otherwise it resolves the relative database name under /tmp.
+              docker run --name firebird -e ISC_INET_SERVER_HOME=/var/lib/firebird/data -e FIREBIRD_CONF_WireCrypt=Enabled -e FIREBIRD_USER=nhibernate -e FIREBIRD_PASSWORD=nhibernate -e FIREBIRD_ROOT_PASSWORD=nhibernate -e FIREBIRD_DATABASE=nhibernate -p 3050:3050 -d firebirdsql/firebird:4
+          # Windows runners can only run Windows containers, so the Linux Firebird image cannot be reused here.
+          # MaxUnflushedWrites and MaxUnflushedWriteTime default to -1 everywhere but Windows, where they make the
+          # engine flush the whole database file every 100 commits and every 5 seconds.
+          - DB: Firebird
+            CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
+            OS: windows-latest
+            DB_INIT: |
+              choco install firebird --version 3.0.14 --no-progress --install-arguments '/DIR=C:\firebird /SYSDBAPASSWORD=nhibernate'
+              Add-Content -Path 'C:\firebird\databases.conf' -Value "`r`nnhibernate = C:\firebird\nhibernate.fdb`r`n{`r`n    MaxUnflushedWrites = -1`r`n    MaxUnflushedWriteTime = -1`r`n}"
+              Restart-Service FirebirdServerDefaultInstance
+          - DB: Firebird4
+            CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
+            OS: windows-latest
+            DB_INIT: |
+              choco install firebird --version 4.0.7 --no-progress --install-arguments '/DIR=C:\firebird /SYSDBAPASSWORD=nhibernate'
+              Add-Content -Path 'C:\firebird\databases.conf' -Value "`r`nnhibernate = C:\firebird\nhibernate.fdb`r`n{`r`n    MaxUnflushedWrites = -1`r`n    MaxUnflushedWriteTime = -1`r`n}"
+              Restart-Service FirebirdServerDefaultInstance
           - DB: MySQL
             CONNECTION_STRING: "Server=localhost;Uid=root;Password=nhibernate;Database=nhibernate;Old Guids=True;SslMode=none;"
             OS: ubuntu-latest
             DB_INIT: |
               sudo service mysql stop
               docker run --name mysql -e MYSQL_ROOT_PASSWORD=nhibernate -e MYSQL_USER=nhibernate -e MYSQL_PASSWORD=nhibernate -e MYSQL_DATABASE=nhibernate -p 3306:3306 --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -d mysql:5.7 mysqld --lower_case_table_names=1 --character-set-server=utf8 --collation-server=utf8_general_ci
+          - DB: MySQL
+            CONNECTION_STRING: "Server=127.0.0.1;Uid=root;Database=nhibernate;Old Guids=True;SslMode=none;CharSet=utf8;"
+            OS: windows-latest
+            DB_INIT: |
+              choco install mysql --version 5.7.44 --no-progress
+              & 'C:\tools\mysql\current\bin\mysql' --user=root -e 'CREATE DATABASE nhibernate CHARACTER SET utf8 COLLATE utf8_general_ci;'
           - DB: Oracle
             CONNECTION_STRING: "User ID=nhibernate;Password=nhibernate;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XEPDB1)))"
             OS: ubuntu-latest
@@ -63,15 +97,15 @@ jobs:
     - name: Set up ${{matrix.DB}}
       run: ${{matrix.DB_INIT}}
 
-    - name: Set up .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         show-progress: false
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        global-json-file: global.json
 
     - name: Build and Test
       run: |
