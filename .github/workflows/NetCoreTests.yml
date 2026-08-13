@@ -84,12 +84,11 @@ jobs:
               $mysql = 'mysql-8.4.6-winx64'
               iwr "https://downloads.mysql.com/archives/get/p/23/file/$mysql.zip" -OutFile mysql.zip
               Expand-Archive mysql.zip C:\
-              pushd C:\$mysql\bin
+              cd C:\$mysql\bin
               ./mysqld --initialize-insecure
               ./mysqld --install MySQL
               Start-Service MySQL
               ./mysql --user=root -e 'CREATE DATABASE nhibernate CHARACTER SET utf8 COLLATE utf8_general_ci;'
-              popd
           - DB: Oracle
             CONNECTION_STRING: "User ID=nhibernate;Password=nhibernate;Metadata Pooling=false;Self Tuning=false;Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XEPDB1)))"
             OS: ubuntu-latest
