@@ -84,7 +84,6 @@ jobs:
               $mysql = 'C:\Program Files\MySQL\MySQL Server 8.4'
               winget install --exact --id Oracle.MySQL --version 8.4.9 --silent --no-progress --disable-interactivity --accept-source-agreements --accept-package-agreements
               # The MSI installs the files only. The configurator makes the data directory and the service.
-              # The tests do not need a binary log.
               & "$mysql\bin\mysql_configurator.exe" --console --action=configure --password=nhibernate --windows-service-name=MySQL --enable-log-bin=false
               & "$mysql\bin\mysql" --user=root --password=nhibernate -e 'CREATE DATABASE nhibernate CHARACTER SET utf8 COLLATE utf8_general_ci;'
           - DB: Oracle
