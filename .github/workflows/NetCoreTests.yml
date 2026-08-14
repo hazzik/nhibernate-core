@@ -103,6 +103,14 @@ jobs:
     name: ${{matrix.DB}} - ${{matrix.OS}}
 
     steps:
+    # The progress bar writes a line to the log for each frame, because the log keeps the carriage returns.
+    - name: Silence the winget progress bar
+      if: runner.os == 'Windows'
+      run: |
+        $settings = "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\settings.json"
+        New-Item (Split-Path $settings) -ItemType Directory -Force | Out-Null
+        Set-Content $settings '{"visual":{"progressBar":"disabled"}}'
+
     - name: Set up ${{matrix.DB}}
       run: ${{matrix.DB_INIT}}
 
