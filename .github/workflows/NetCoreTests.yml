@@ -100,10 +100,12 @@ jobs:
     - name: Set up Podman
       if: matrix.PODMAN
       run: |
-        winget install --id Podman.CLI --exact --source winget --scope machine --silent --disable-interactivity --accept-package-agreements --accept-source-agreements
-        $env:PATH = "$env:ProgramFiles\RedHat\Podman;$env:PATH"
+        winget install --id Podman.CLI --exact --source winget --location C:\podman --disable-interactivity --accept-package-agreements --accept-source-agreements
+        # winget reports success when it finds no applicable installer, so make sure the client is there.
+        if (-not (Test-Path 'C:\podman\podman.exe')) { throw 'Podman was not installed.' }
+        $env:PATH = "C:\podman;$env:PATH"
         $env:DOCKER_HOST = 'npipe:////./pipe/podman-machine-default'
-        Add-Content -Path $env:GITHUB_PATH -Value "$env:ProgramFiles\RedHat\Podman"
+        Add-Content -Path $env:GITHUB_PATH -Value 'C:\podman'
         Add-Content -Path $env:GITHUB_ENV -Value "DOCKER_HOST=$env:DOCKER_HOST"
         podman machine init --now
         docker version
