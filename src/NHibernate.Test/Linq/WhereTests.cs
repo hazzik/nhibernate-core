@@ -489,6 +489,47 @@ namespace NHibernate.Test.Linq
 		}
 
 		[Test]
+		public void UsersWithTypedArrayContains()
+		{
+			var names = new string[] { "ayende", "rahien" };
+
+			var query = (from user in db.Users
+						 where names.Contains(user.Name)
+						 select user).ToList();
+
+			Assert.That(query.Count, Is.EqualTo(2));
+		}
+
+#nullable enable
+		[Test]
+		public void UsersWithArrayContainsNullableEnabled()
+		{
+			var names = new[] { "ayende", "rahien" };
+
+			var query = (from user in db.Users
+						 where names.Contains(user.Name)
+						 select user).ToList();
+
+			Assert.That(query.Count, Is.EqualTo(2));
+		}
+
+		// The compiler casts the array to its own type before it converts it to a span, because an expression
+		// tree cannot hold the nullable annotations. The cast must not hide the evaluated array from the
+		// generator. GH-3802
+		[Test]
+		public void UsersWithTypedArrayContainsNullableEnabled()
+		{
+			var names = new string[] { "ayende", "rahien" };
+
+			var query = (from user in db.Users
+						 where names.Contains(user.Name)
+						 select user).ToList();
+
+			Assert.That(query.Count, Is.EqualTo(2));
+		}
+#nullable restore
+
+		[Test]
 		public void UsersWithListContains()
 		{
 			var names = new List<string> { "ayende", "rahien" };
