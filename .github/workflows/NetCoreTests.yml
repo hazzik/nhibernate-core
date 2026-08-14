@@ -34,13 +34,13 @@ jobs:
             OS: ubuntu-latest
             DB_INIT: |
              docker run -d -e POSTGRES_USER=nhibernate -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13
+          # max_prepared_transactions is 0 by default, but distributed transactions need it above 0.
           - DB: PostgreSQL
-            CONNECTION_STRING: "Host=localhost;Username=postgres;Password=nhibernate;Database=nhibernate;Enlist=true;"
+            CONNECTION_STRING: "Host=localhost;Username=nhibernate;Password=nhibernate;Database=nhibernate;Enlist=true;"
             OS: windows-latest
+            PODMAN: true
             DB_INIT: |
-              choco install postgresql13 --no-progress --params '/Password:nhibernate'
-              Add-Content -Path 'C:\Program Files\PostgreSQL\13\data\postgresql.conf' -Value "`r`nmax_prepared_transactions = 100"
-              Start-Service 'postgresql-x64-13'
+              docker run -d -e POSTGRES_USER=nhibernate -e POSTGRES_PASSWORD=nhibernate -e POSTGRES_DB=nhibernate -p 5432:5432 postgres:13 -c max_prepared_transactions=100
           - DB: Firebird
             CONNECTION_STRING: "DataSource=localhost;Database=nhibernate;User=SYSDBA;Password=nhibernate;charset=utf8;"
             OS: ubuntu-latest
@@ -94,6 +94,20 @@ jobs:
     name: ${{matrix.DB}} - ${{matrix.OS}}
 
     steps:
+    # Windows runners run Windows containers only. Podman starts a Linux container engine in a WSL2 virtual
+    # machine and publishes the container ports on the Windows loopback address. DOCKER_HOST sends the
+    # commands of the preinstalled Docker client to Podman. Then the database setup is the same as on Linux.
+    - name: Set up Podman
+      if: matrix.PODMAN
+      run: |
+        winget install --id Podman.CLI --exact --source winget --scope machine --silent --disable-interactivity --accept-package-agreements --accept-source-agreements
+        $env:PATH = "$env:ProgramFiles\RedHat\Podman;$env:PATH"
+        $env:DOCKER_HOST = 'npipe:////./pipe/podman-machine-default'
+        Add-Content -Path $env:GITHUB_PATH -Value "$env:ProgramFiles\RedHat\Podman"
+        Add-Content -Path $env:GITHUB_ENV -Value "DOCKER_HOST=$env:DOCKER_HOST"
+        podman machine init --now
+        docker version
+
     - name: Set up ${{matrix.DB}}
       run: ${{matrix.DB_INIT}}
 
