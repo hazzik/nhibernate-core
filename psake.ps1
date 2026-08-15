@@ -126,7 +126,10 @@ Task Build {
     } -MaxRetries 1
 }
 
-Task Test -depends Build {
+Task Test -depends Build, Invoke-Tests
+
+# Runs the tests against the binaries already in the output folders, which lets a build on one agent feed the tests on others.
+Task Invoke-Tests {
     @(
         'NHibernate.TestDatabaseSetup',
         'NHibernate.Test',

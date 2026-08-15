@@ -9,7 +9,44 @@ on:
   merge_group:
 
 jobs:
+  build:
+    # Windows fully signs the assemblies. The other agents only public sign them, refer to the PublicSign property.
+    runs-on: windows-latest
+    name: Build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+      with:
+        show-progress: false
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        global-json-file: global.json
+
+    - name: Build
+      run: |
+        pwsh -noprofile -command "& ./build.ps1 -TaskList Build"
+
+    # The test assemblies are IL, and the packages put the native libraries of all the runtimes in the output.
+    # One build serves the Linux, Windows and macOS test jobs.
+    - name: Pack the test binaries
+      # Bash expands the wildcard, which the default shell of the Windows agents does not do for a native command.
+      shell: bash
+      run: tar -czf test-binaries.tar.gz src/*/bin/Release/net10.0
+
+    - name: Upload the test binaries
+      uses: actions/upload-artifact@v7
+      with:
+        name: test-binaries
+        path: test-binaries.tar.gz
+        retention-days: 1
+        # The tarball is compressed already.
+        compression-level: 0
+
   db:
+    needs: build
     strategy:
       fail-fast: false
       matrix:
@@ -129,6 +166,14 @@ jobs:
       with:
         global-json-file: global.json
 
-    - name: Build and Test
+    - name: Download the test binaries
+      uses: actions/download-artifact@v8
+      with:
+        name: test-binaries
+
+    - name: Unpack the test binaries
+      run: tar -xzf test-binaries.tar.gz
+
+    - name: Test
       run: |
-        pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{'Database' = '${{matrix.DB}}';'ConnectionString'='${{matrix.CONNECTION_STRING}}'}"
+        pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Invoke-Tests -properties @{'Database' = '${{matrix.DB}}';'ConnectionString'='${{matrix.CONNECTION_STRING}}'}"
